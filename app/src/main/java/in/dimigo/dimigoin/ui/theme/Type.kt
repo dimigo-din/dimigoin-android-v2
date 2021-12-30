@@ -1,7 +1,6 @@
 package `in`.dimigo.dimigoin.ui.theme
 
 import `in`.dimigo.dimigoin.R
-import androidx.compose.material.Text
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -9,13 +8,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-// Set of Material typography styles to start with
 val AppleSDGothicNeoFontFamily = FontFamily(
     Font(R.font.b, weight = FontWeight.Bold),
     Font(R.font.eb, weight = FontWeight.ExtraBold),
     Font(R.font.l, weight = FontWeight.Light),
     Font(R.font.m, weight = FontWeight.Medium)
 )
+
 val Typography = Typography(
     defaultFontFamily = AppleSDGothicNeoFontFamily,
     h1 = TextStyle(
@@ -37,6 +36,11 @@ val Typography = Typography(
         fontWeight = FontWeight.W700,
         fontSize = 18.sp,
         lineHeight = 3.6.sp,
+    ),
+    subtitle1 = TextStyle(
+        fontWeight = FontWeight.W700,
+        fontSize = 14.sp,
+        lineHeight = 2.8.sp,
     ),
     body1 = TextStyle(
         fontWeight = FontWeight.W500,
