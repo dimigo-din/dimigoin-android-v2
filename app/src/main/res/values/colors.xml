@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="dimigoMagenta">#FFE83C77</color>
+	<color name="grey250">#FFE5E5E5</color>
+	<color name="black">#FF000000</color>
+	<color name="white">#FFFFFFFF</color>
+</resources>
