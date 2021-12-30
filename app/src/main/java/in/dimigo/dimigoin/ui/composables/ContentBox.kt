@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ContentBox(
     modifier: Modifier = Modifier,
-    title: String,
+    title: String? = null,
     summary: AnnotatedString? = null,
     onNavigate: (() -> Unit)? = null,
     contentPadding: Dp = 25.dp,
@@ -61,7 +61,7 @@ fun ContentBox(
         verticalArrangement = Arrangement.spacedBy(contentPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Header(title = title, onNavigate = onNavigate)
+        title?.let { Header(title = title, onNavigate = onNavigate) }
         content()
         summary?.let { Summary(text = it) }
     }
@@ -160,6 +160,16 @@ fun ContentBoxPreview4() {
         title = "테스트",
     ) {
         Text(text = "아무 것도 없어요!")
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xe5e5e5, name = "Content Box only with content")
+@Composable
+fun ContentBoxPreview5() {
+    ContentBox(
+        modifier = Modifier.padding(20.dp),
+    ) {
+        Text(text = "진짜 아무 것도 없어요!!!!")
     }
 }
 // endregion
