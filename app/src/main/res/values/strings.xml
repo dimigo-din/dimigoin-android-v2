@@ -1,4 +1,4 @@
 <resources>
 	<string name="app_name">Dimigoin</string>
-	<string name="move_to_destination">Move</string>
+	<string name="move_to_destination" translatable="false">Move</string>
 </resources>
