@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
+import androidx.compose.material.SnackbarData
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import java.util.UUID
 import kotlinx.coroutines.delay
@@ -90,38 +92,43 @@ fun CustomSnackbarHost(
                     enter = slideInVertically() + fadeIn(),
                     exit = slideOutVertically() + fadeOut(),
                 ) {
-                    Card(
-                        modifier = Modifier
-                            .padding(20.dp)
-                            .width(310.dp)
-                            .height(50.dp),
-                        shape = RoundedCornerShape(25.dp),
-                        elevation = 7.dp,
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(vertical = 13.dp, horizontal = 20.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Icon(
-                                painter = it.painter,
-                                contentDescription = null,
-                                tint = MagentaDimigo,
-                                modifier = Modifier.size(24.dp),
-                            )
-                            Text(
-                                text = it.message,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(1f),
-                                textAlign = TextAlign.Center,
-                                style = Typography.subtitle1,
-                            )
-                        }
-                    }
+                    CustomSnackbar(it)
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun CustomSnackbar(snackbarData: CustomSnackbarData) {
+    Card(
+        modifier = Modifier
+            .padding(20.dp)
+            .width(310.dp)
+            .height(50.dp),
+        shape = RoundedCornerShape(25.dp),
+        elevation = 7.dp,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 13.dp, horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                painter = snackbarData.painter,
+                contentDescription = null,
+                tint = MagentaDimigo,
+                modifier = Modifier.size(24.dp),
+            )
+            Text(
+                text = snackbarData.message,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                textAlign = TextAlign.Center,
+                style = Typography.subtitle1,
+            )
         }
     }
 }
