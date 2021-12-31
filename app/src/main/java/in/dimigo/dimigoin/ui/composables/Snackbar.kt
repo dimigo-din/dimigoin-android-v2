@@ -82,11 +82,6 @@ fun CustomSnackbarHost(
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
         hostState.snackbarItems.forEach {
             key(it.id) {
-                LaunchedEffect(Unit) {
-                    it.isVisible.value = true
-                    delay(it.duration)
-                    it.isVisible.value = false
-                }
                 AnimatedVisibility(
                     visible = it.isVisible.value,
                     enter = slideInVertically() + fadeIn(),
