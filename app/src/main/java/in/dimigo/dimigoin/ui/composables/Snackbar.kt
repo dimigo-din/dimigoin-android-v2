@@ -133,6 +133,7 @@ fun CustomSnackbar(snackbarData: CustomSnackbarData) {
                 )
                 snackbarData.description?.let {
                     Text(
+                        modifier = Modifier.padding(top = 1.dp),
                         text = it,
                         textAlign = TextAlign.Center,
                         style = DTypography.t6,
