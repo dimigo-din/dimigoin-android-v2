@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,6 +39,7 @@ interface CustomSnackbarData {
     val id: Long
     val painter: Painter
     val message: AnnotatedString
+    val description: String?
     val duration: Long
     var isVisible: MutableState<Boolean>
 }
@@ -49,9 +51,11 @@ class CustomSnackbarHostState {
     suspend fun showSnackbar(
         painter: Painter,
         message: AnnotatedString,
+        description: String? = null,
         duration: Long = 5000L,
     ) {
-        val currentSnackbar = CustomSnackbarDataImpl(painter = painter, message = message, duration = duration)
+        val currentSnackbar =
+            CustomSnackbarDataImpl(painter = painter, message = message, description = description, duration = duration)
         snackbarItems.add(currentSnackbar)
         delay(50L)
         currentSnackbar.isVisible.value = true
@@ -65,6 +69,7 @@ class CustomSnackbarHostState {
         override val id: Long = UUID.randomUUID().mostSignificantBits,
         override val painter: Painter,
         override val message: AnnotatedString,
+        override val description: String?,
         override val duration: Long,
     ) : CustomSnackbarData {
         override var isVisible: MutableState<Boolean> = mutableStateOf(false)
@@ -113,14 +118,26 @@ fun CustomSnackbar(snackbarData: CustomSnackbarData) {
                 tint = Point,
                 modifier = Modifier.size(24.dp),
             )
-            Text(
-                text = snackbarData.message,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                textAlign = TextAlign.Center,
-                style = DTypography.t5,
-            )
+            Column {
+                Text(
+                    text = snackbarData.message,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    textAlign = TextAlign.Center,
+                    style = DTypography.t5,
+                )
+                snackbarData.description?.let {
+                    Text(
+                        text = it,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        textAlign = TextAlign.Center,
+                        style = DTypography.t6,
+                    )
+                }
+            }
         }
     }
 }
