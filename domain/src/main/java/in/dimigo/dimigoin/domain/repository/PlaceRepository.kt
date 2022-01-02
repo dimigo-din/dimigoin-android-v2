@@ -1,5 +1,6 @@
 package `in`.dimigo.dimigoin.domain.repository
 
+import `in`.dimigo.dimigoin.domain.entity.Building
 import `in`.dimigo.dimigoin.domain.entity.Place
 
 interface PlaceRepository {
@@ -45,4 +46,11 @@ interface PlaceRepository {
      * @return favorite places
      */
     suspend fun getFavoritePlacesId(): List<String>
+
+    /**
+     * Get buildings ordered by grade.
+     *
+     * @return buildings
+     */
+    suspend fun getRecommendedBuildingsByGrade(grade: Int): List<Building>
 }
