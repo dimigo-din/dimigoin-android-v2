@@ -11,50 +11,65 @@ import androidx.compose.ui.unit.sp
 val AppleSDGothicNeoFontFamily = FontFamily(
     Font(R.font.b, weight = FontWeight.Bold),
     Font(R.font.eb, weight = FontWeight.ExtraBold),
-    Font(R.font.l, weight = FontWeight.Light),
-    Font(R.font.m, weight = FontWeight.Medium)
 )
 
-val Typography = Typography(
-    defaultFontFamily = AppleSDGothicNeoFontFamily,
-    h1 = TextStyle(
+object DTypography {
+    val t1 = TextStyle(
+        fontFamily = AppleSDGothicNeoFontFamily,
         fontWeight = FontWeight.W700,
         fontSize = 24.sp,
-        lineHeight = 4.8.sp,
-    ),
-    h2 = TextStyle(
+        lineHeight = 28.8.sp,
+    )
+    val t2 = TextStyle(
+        fontFamily = AppleSDGothicNeoFontFamily,
         fontWeight = FontWeight.W700,
         fontSize = 22.sp,
-        lineHeight = 4.4.sp,
-    ),
-    h3 = TextStyle(
-        fontWeight = FontWeight.W700,
-        fontSize = 20.sp,
-        lineHeight = 4.sp,
-    ),
-    h4 = TextStyle(
+        lineHeight = 26.4.sp,
+    )
+    val t3 = TextStyle(
+        fontFamily = AppleSDGothicNeoFontFamily,
         fontWeight = FontWeight.W700,
         fontSize = 18.sp,
-        lineHeight = 3.6.sp,
-    ),
-    subtitle1 = TextStyle(
+        lineHeight = 21.6.sp,
+    )
+    val t4 = TextStyle(
+        fontFamily = AppleSDGothicNeoFontFamily,
+        fontWeight = FontWeight.W700,
+        fontSize = 16.sp,
+        lineHeight = 19.2.sp,
+    )
+    val t5 = TextStyle(
+        fontFamily = AppleSDGothicNeoFontFamily,
         fontWeight = FontWeight.W700,
         fontSize = 14.sp,
-        lineHeight = 2.8.sp,
-    ),
-    body1 = TextStyle(
+        lineHeight = 16.8.sp,
+    )
+    val t6 = TextStyle(
+        fontFamily = AppleSDGothicNeoFontFamily,
+        fontWeight = FontWeight.W700,
+        fontSize = 12.sp,
+        lineHeight = 14.4.sp,
+    )
+    val pageTitle = t1.copy(color = C2)
+    val explainText = TextStyle(
+        fontFamily = AppleSDGothicNeoFontFamily,
         fontWeight = FontWeight.W500,
         fontSize = 16.sp,
-        lineHeight = 3.2.sp,
-    ),
-    body2 = TextStyle(
+        lineHeight = 19.2.sp,
+        color = C2,
+    )
+    val pageSubtitle = TextStyle(
+        fontFamily = AppleSDGothicNeoFontFamily,
         fontWeight = FontWeight.W500,
         fontSize = 14.sp,
-        lineHeight = 11.sp,
-    ),
-    button = TextStyle(
+        lineHeight = 16.8.sp,
+        color = C2,
+    )
+    val mealMenu = TextStyle(
+        fontFamily = AppleSDGothicNeoFontFamily,
         fontWeight = FontWeight.W500,
         fontSize = 14.sp,
-        lineHeight = 2.8.sp,
-    ),
-)
+        lineHeight = 25.sp,
+        color = C2,
+    )
+}
