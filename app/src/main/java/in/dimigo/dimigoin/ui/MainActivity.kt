@@ -8,7 +8,12 @@ import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -16,6 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -43,37 +50,21 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun App(
-    screens: List<Screen>,
+    navBarScreens: List<Screen>,
 ) {
     val navController = rememberNavController()
 
     Scaffold(
         bottomBar = {
-            BottomNavigation {
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentDestination = navBackStackEntry?.destination
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentDestination = navBackStackEntry?.destination
 
-                screens.forEach { screen ->
-                    BottomNavigationItem(
-                        icon = {
-                            Icon(painter = painterResource(screen.icon),
-                                contentDescription = null)
-                        },
-                        label = { Text(screen.name, style = DTypography.t6) },
-                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                        onClick = {
-                            navController.navigate(screen.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                    )
-                }
+            val navBarVisible = navBarScreens.any { currentDestination?.route == it.route }
+            AnimatedVisibility(visible = navBarVisible, enter = fadeIn(), exit = fadeOut()) {
+                BottomNavBarImpl(navController, navBarScreens, currentDestination)
             }
         }
     ) { innerPadding ->
@@ -82,11 +73,41 @@ fun App(
             startDestination = Screen.Main.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Screen.Main.route) { Text(text = "메인") }
+            composable(Screen.Main.route) {
+                Button(onClick = { navController.navigate("test") }) {
+                    Text("메인")
+                }
+            }
             composable(Screen.Meal.route) { Text(text = "급식") }
             composable(Screen.Calendar.route) { Text(text = "일정") }
             composable(Screen.Application.route) { Text(text = "신청") }
             composable(Screen.MyInfo.route) { Text(text = "내 정보") }
+            composable("test") { Text(text = "Test") } // This route is for test and should be removed in the future.
+        }
+    }
+}
+
+@Composable
+fun BottomNavBarImpl(navController: NavController, screens: List<Screen>, currentDestination: NavDestination?) {
+    BottomNavigation {
+        screens.forEach { screen ->
+            BottomNavigationItem(
+                icon = {
+                    Icon(painter = painterResource(screen.icon),
+                        contentDescription = null)
+                },
+                label = { Text(screen.name, style = DTypography.t6) },
+                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                onClick = {
+                    navController.navigate(screen.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+            )
         }
     }
 }
