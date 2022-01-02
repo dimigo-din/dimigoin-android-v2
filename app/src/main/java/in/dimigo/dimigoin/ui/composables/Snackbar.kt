@@ -1,7 +1,7 @@
 package `in`.dimigo.dimigoin.ui.composables
 
-import `in`.dimigo.dimigoin.ui.theme.MagentaDimigo
-import `in`.dimigo.dimigoin.ui.theme.Typography
+import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.Point
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
@@ -19,10 +19,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
-import androidx.compose.material.SnackbarData
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
@@ -32,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import java.util.UUID
 import kotlinx.coroutines.delay
@@ -113,7 +110,7 @@ fun CustomSnackbar(snackbarData: CustomSnackbarData) {
             Icon(
                 painter = snackbarData.painter,
                 contentDescription = null,
-                tint = MagentaDimigo,
+                tint = Point,
                 modifier = Modifier.size(24.dp),
             )
             Text(
@@ -122,7 +119,7 @@ fun CustomSnackbar(snackbarData: CustomSnackbarData) {
                     .fillMaxWidth()
                     .weight(1f),
                 textAlign = TextAlign.Center,
-                style = Typography.subtitle1,
+                style = DTypography.t5,
             )
         }
     }
