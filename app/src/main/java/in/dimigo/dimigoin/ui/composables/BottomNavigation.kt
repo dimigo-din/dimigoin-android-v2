@@ -3,6 +3,7 @@ package `in`.dimigo.dimigoin.ui.composables
 import `in`.dimigo.dimigoin.ui.theme.C3
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.Point
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -67,6 +68,7 @@ fun RowScope.BottomNavigationItem(
     unSelectedColor: Color = C3,
 ) {
     val color = if (selected) selectedColor else unSelectedColor
+    val animatedColor = animateColorAsState(targetValue = color)
     val ripple = rememberRipple(bounded = false, color = color)
 
     Column(
@@ -83,7 +85,7 @@ fun RowScope.BottomNavigationItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        CompositionLocalProvider(LocalContentColor provides color) {
+        CompositionLocalProvider(LocalContentColor provides animatedColor.value) {
             icon()
             label()
         }
