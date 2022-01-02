@@ -2,10 +2,10 @@ package `in`.dimigo.dimigoin.ui.composables
 
 import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
-import `in`.dimigo.dimigoin.ui.theme.Grey400
-import `in`.dimigo.dimigoin.ui.theme.MagentaDimigo
+import `in`.dimigo.dimigoin.ui.theme.C3
+import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.theme.Shapes
-import `in`.dimigo.dimigoin.ui.theme.Typography
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
  *
  * @param modifier Modifiers to apply.
  * @param title The title to display.
- * @param summary Short description for the content. When null, the summary is not displayed when null.
+ * @param summary Short description for the content. The summary is not displayed when null.
  * @param onNavigate `onNavigate` is called when the icon is touched. The icon is not displayed when null.
  * @param contentPadding The padding between header and contents. Only vertical padding affects the layout, defaults
  *                       to 25dp.
@@ -83,13 +83,13 @@ private fun Header(
 ) {
     Text(
         text = title,
-        style = Typography.h2,
+        style = DTypography.t2,
     )
     onNavigate?.let {
         Icon(
             painter = painterResource(id = R.drawable.ic_arrow_right),
             contentDescription = stringResource(R.string.move_to_destination),
-            tint = Grey400,
+            tint = C3,
         )
     }
 }
@@ -100,7 +100,7 @@ private fun Summary(
 ) {
     Text(
         text = text,
-        style = Typography.subtitle1,
+        style = DTypography.t5,
     )
 }
 
@@ -114,7 +114,7 @@ fun ContentBoxPreview1() {
         title = "테스트",
         summary = buildAnnotatedString {
             append("테스트용 ")
-            withStyle(SpanStyle(color = MagentaDimigo)) { append("메시지") }
+            withStyle(SpanStyle(color = Point)) { append("메시지") }
             append("입니다.")
         },
         onNavigate = { text = "이제 있어요!" },
@@ -144,7 +144,7 @@ fun ContentBoxPreview3() {
         title = "테스트",
         summary = buildAnnotatedString {
             append("테스트용 ")
-            withStyle(SpanStyle(color = MagentaDimigo)) { append("메시지") }
+            withStyle(SpanStyle(color = Point)) { append("메시지") }
             append("입니다.")
         },
     ) {
@@ -161,5 +161,11 @@ fun ContentBoxPreview4() {
     ) {
         Text(text = "아무 것도 없어요!")
     }
+}
+
+@Preview
+@Composable
+fun AAA() {
+    Text("")
 }
 // endregion

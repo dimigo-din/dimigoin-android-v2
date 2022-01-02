@@ -8,9 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColors(
-    primary = MagentaDimigo,
+    primary = Point,
     background = Grey250,
-    onBackground = GreyBlue,
+    onBackground = C2,
     surface = Color.White,
     onPrimary = Color.White,
     onSurface = Color.Black,
@@ -18,9 +18,9 @@ private val DarkColorPalette = darkColors(
 )
 
 private val LightColorPalette = lightColors(
-    primary = MagentaDimigo,
+    primary = Point,
     background = Grey250,
-    onBackground = GreyBlue,
+    onBackground = C2,
     surface = Color.White,
     onPrimary = Color.White,
     onSurface = Color.Black,
@@ -37,7 +37,6 @@ fun DimigoinTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composab
 
     MaterialTheme(
         colors = colors,
-        typography = Typography,
         shapes = Shapes,
         content = content
     )
