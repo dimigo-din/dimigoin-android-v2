@@ -16,7 +16,7 @@ interface PlaceRepository {
      *
      * @return true if the request was successful
      */
-    suspend fun setCurrentPlace(placeId: String): Boolean
+    suspend fun setCurrentPlace(placeId: String, remark: String): Boolean
 
     /**
      * Get current place.
