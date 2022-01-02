@@ -8,13 +8,14 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -102,14 +103,14 @@ fun CustomSnackbar(snackbarData: CustomSnackbarData) {
         modifier = Modifier
             .padding(20.dp)
             .width(310.dp)
-            .height(50.dp),
+            .requiredHeight(50.dp),
         shape = RoundedCornerShape(25.dp),
         elevation = 7.dp,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(vertical = 13.dp, horizontal = 20.dp),
+                .padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
@@ -118,21 +119,21 @@ fun CustomSnackbar(snackbarData: CustomSnackbarData) {
                 tint = Point,
                 modifier = Modifier.size(24.dp),
             )
-            Column {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
                 Text(
                     text = snackbarData.message,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
                     textAlign = TextAlign.Center,
                     style = DTypography.t5,
                 )
                 snackbarData.description?.let {
                     Text(
                         text = it,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
                         textAlign = TextAlign.Center,
                         style = DTypography.t6,
                     )
