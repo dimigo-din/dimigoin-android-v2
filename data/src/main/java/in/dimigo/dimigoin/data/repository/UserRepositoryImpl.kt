@@ -21,7 +21,7 @@ class UserRepositoryImpl(
             }
             true
         } else {
-            false
+            throw IllegalStateException(response.errorBody()?.string())
         }
     }
 }
