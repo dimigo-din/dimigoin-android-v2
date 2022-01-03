@@ -47,13 +47,13 @@ fun ContentBox(
     modifier: Modifier = Modifier,
     title: String? = null,
     summary: AnnotatedString? = null,
-    elevation: Dp = 0.dp,
     onNavigate: (() -> Unit)? = null,
     contentPadding: Dp = 25.dp,
     content: @Composable () -> Unit,
 ) = Card(
     modifier = modifier,
     shape = Shapes.medium,
+    elevation = 0.dp
 ) {
     Column(
         modifier = Modifier
