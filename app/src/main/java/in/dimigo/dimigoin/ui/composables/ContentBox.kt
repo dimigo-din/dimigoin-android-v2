@@ -53,6 +53,7 @@ fun ContentBox(
 ) = Card(
     modifier = modifier,
     shape = Shapes.medium,
+    elevation = 0.dp
 ) {
     Column(
         modifier = Modifier
@@ -105,7 +106,9 @@ private fun Summary(
 }
 
 // region Previews
-@Preview(showBackground = true, backgroundColor = 0xe5e5e5, name = "Content Box with navigation, summary")
+@Preview(showBackground = true,
+    backgroundColor = 0xe5e5e5,
+    name = "Content Box with navigation, summary")
 @Composable
 fun ContentBoxPreview1() {
     var text by remember { mutableStateOf("아무 것도 없어요... :(") }
