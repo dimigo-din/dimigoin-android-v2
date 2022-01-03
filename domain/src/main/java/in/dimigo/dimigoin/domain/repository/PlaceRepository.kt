@@ -10,47 +10,47 @@ interface PlaceRepository {
      *
      * @return list of places
      */
-    suspend fun getAllPlaces(): List<Place>
+    suspend fun getAllPlaces(): Result<List<Place>>
 
     /**
      * Set current place.
      *
      * @return true if the request was successful
      */
-    suspend fun setCurrentPlace(placeId: String, remark: String?): Boolean
+    suspend fun setCurrentPlace(placeId: String, remark: String?): Result<Boolean>
 
     /**
      * Get current place.
      *
      * @return current place
      */
-    suspend fun getCurrentPlace(): Place?
+    suspend fun getCurrentPlace(): Result<Place?>
 
     /**
      * Mark the place as favorite.
      *
      * @return true if the request was successful
      */
-    suspend fun addFavoritePlace(placeId: String): Boolean
+    suspend fun addFavoritePlace(placeId: String): Result<Boolean>
 
     /**
      * Remove favorite from the place.
      *
      * @return true if the request was successful
      */
-    suspend fun removeFavoritePlace(placeId: String): Boolean
+    suspend fun removeFavoritePlace(placeId: String): Result<Boolean>
 
     /**
      * Get all favorite places.
      *
      * @return favorite places
      */
-    suspend fun getFavoritePlacesId(): List<String>
+    suspend fun getFavoritePlacesId(): Result<List<String>>
 
     /**
-     * Get buildings ordered by grade.
+     * Get buildings.
      *
      * @return buildings
      */
-    suspend fun getRecommendedBuildingsByGrade(grade: Int): List<Building>
+    suspend fun getBuildings(): Result<List<Building>>
 }

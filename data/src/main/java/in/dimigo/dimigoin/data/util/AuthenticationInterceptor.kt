@@ -5,10 +5,12 @@ import okhttp3.Response
 
 class AuthenticationInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        return chain.request().apply {
-            this.newBuilder()
-                .addHeader("Authorization", "Bearer ${SessionDataStore.accessToken}")
-                .build()
-        }.let { chain.proceed(it) }
+        return chain.request()
+            .newBuilder()
+            .apply {
+                if (SessionDataStore.accessToken != null)
+                    addHeader("Authorization", "Bearer ${SessionDataStore.accessToken}")
+            }
+            .build().let { chain.proceed(it) }
     }
 }

@@ -23,7 +23,7 @@ fun LoginScreen(
 
     when (val v = loginViewModel.loginResult.collectAsState().value) {
         is Future.Success<*> -> onLoginSuccess()
-        is Future.Failure<*> -> Text(text = "Login failed. ${v.message}")
+        is Future.Failure<*> -> Text(text = "Login failed. ${v.throwable.message}")
         is Future.Loading<*> -> CircularProgressIndicator()
         is Future.Nothing<*> -> {}
     }

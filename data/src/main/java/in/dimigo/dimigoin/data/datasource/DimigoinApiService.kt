@@ -1,12 +1,12 @@
 package `in`.dimigo.dimigoin.data.datasource
 
-import `in`.dimigo.dimigoin.data.model.place.AllPlaceResponseModel
-import `in`.dimigo.dimigoin.data.model.place.AttendanceLogRequestModel
-import `in`.dimigo.dimigoin.data.model.place.AttendanceLogResponseModel
-import `in`.dimigo.dimigoin.data.model.place.AttendanceLogsResponseModel
+import `in`.dimigo.dimigoin.data.model.place.GetAttendanceResponseModel
+import `in`.dimigo.dimigoin.data.model.place.GetPlacesResponseModel
+import `in`.dimigo.dimigoin.data.model.place.PostAttendanceRequestModel
+import `in`.dimigo.dimigoin.data.model.place.PostAttendanceResponseModel
 import `in`.dimigo.dimigoin.data.model.user.LoginRequestModel
 import `in`.dimigo.dimigoin.data.model.user.LoginResponseModel
-import retrofit2.Response
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -14,14 +14,14 @@ import retrofit2.http.POST
 interface DimigoinApiService {
 
     @POST("/auth")
-    suspend fun login(@Body loginRequestModel: LoginRequestModel): Response<LoginResponseModel>
+    fun login(@Body loginRequestModel: LoginRequestModel): Call<LoginResponseModel>
 
     @GET("/place")
-    suspend fun getPlaces(): Response<AllPlaceResponseModel>
+    fun getPlaces(): Call<GetPlacesResponseModel>
 
     @GET("/attendance")
-    suspend fun getAttendanceLogs(): Response<AttendanceLogsResponseModel>
+    fun getAttendanceLogs(): Call<GetAttendanceResponseModel>
 
     @POST("/attendance")
-    suspend fun addAttendanceLog(@Body attendanceLogRequestModel: AttendanceLogRequestModel): Response<AttendanceLogResponseModel>
+    fun addAttendanceLog(@Body attendanceLogRequestModel: PostAttendanceRequestModel): Call<PostAttendanceResponseModel>
 }
