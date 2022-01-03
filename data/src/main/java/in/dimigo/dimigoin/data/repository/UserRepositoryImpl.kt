@@ -1,27 +1,34 @@
 package `in`.dimigo.dimigoin.data.repository
 
 import `in`.dimigo.dimigoin.data.datasource.DimigoinApiService
+import `in`.dimigo.dimigoin.data.datasource.LocalSharedPreferenceManager
 import `in`.dimigo.dimigoin.data.mapper.toEntity
 import `in`.dimigo.dimigoin.data.model.user.LoginRequestModel
-import `in`.dimigo.dimigoin.data.util.SessionDataStore
 import `in`.dimigo.dimigoin.data.util.resultFromCall
 import `in`.dimigo.dimigoin.domain.entity.User
 import `in`.dimigo.dimigoin.domain.repository.UserRepository
 
 class UserRepositoryImpl(
     private val service: DimigoinApiService,
+    private val localSharedPreferenceManager: LocalSharedPreferenceManager,
 ) : UserRepository {
+
+    private var me: User? = null
 
     override suspend fun login(username: String, password: String) = resultFromCall(
         service.login(LoginRequestModel(username, password))
     ) { response ->
-        SessionDataStore.accessToken = response.accessToken
+        localSharedPreferenceManager.accessToken = response.accessToken
+        localSharedPreferenceManager.refreshToken = response.refreshToken
         true
     }
 
     override suspend fun me(): Result<User> = resultFromCall(
-        service.getMyIdentity()
+        service.getMyIdentity(),
+        cached = me
     ) { response ->
-        response.identity.toEntity()
+        response.identity.toEntity().also {
+            me = it
+        }
     }
 }

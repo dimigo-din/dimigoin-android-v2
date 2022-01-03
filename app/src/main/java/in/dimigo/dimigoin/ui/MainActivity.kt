@@ -6,9 +6,11 @@ import `in`.dimigo.dimigoin.ui.composables.CustomSnackbarHost
 import `in`.dimigo.dimigoin.ui.composables.CustomSnackbarHostState
 import `in`.dimigo.dimigoin.ui.screen.LoginScreen
 import `in`.dimigo.dimigoin.ui.screen.Screen
+import `in`.dimigo.dimigoin.ui.screen.SplashScreen
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
 import `in`.dimigo.dimigoin.viewmodel.LoginViewModel
+import `in`.dimigo.dimigoin.viewmodel.SplashViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -37,6 +39,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
+    private val splashViewModel by viewModel<SplashViewModel>()
     private val loginViewModel by viewModel<LoginViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +55,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             DimigoinTheme {
-                App(screens, loginViewModel)
+                App(screens, splashViewModel, loginViewModel)
             }
         }
     }
@@ -62,6 +65,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun App(
     navBarScreens: List<Screen>,
+    splashViewModel: SplashViewModel,
     loginViewModel: LoginViewModel,
 ) {
     val navController = rememberNavController()
@@ -81,9 +85,24 @@ fun App(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = "login",
+            startDestination = "splash",
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable("splash") {
+                SplashScreen(
+                    splashViewModel = splashViewModel,
+                    onAutoLoginSuccess = {
+                        navController.navigate(Screen.Main.route) {
+                            popUpTo("splash") { inclusive = true }
+                        }
+                    },
+                    onAutoLoginFail = {
+                        navController.navigate("login") {
+                            popUpTo("splash") { inclusive = true }
+                        }
+                    },
+                )
+            }
             composable("login") {
                 LoginScreen(
                     loginViewModel = loginViewModel,

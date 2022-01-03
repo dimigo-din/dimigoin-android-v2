@@ -17,7 +17,8 @@ class TokenAuthenticator(
 
     override fun authenticate(route: Route?, response: Response): Request? {
         if (isRecentlyRefreshed()) return null
-        val newToken = runBlocking { refreshAndGetAccessToken() }
+        val newToken = runBlocking { refreshAndGetAccessToken() } ?: return null
+
         return response.request.newBuilder()
             .header(AUTHORIZATION_HEADER, "Bearer $newToken")
             .build()
