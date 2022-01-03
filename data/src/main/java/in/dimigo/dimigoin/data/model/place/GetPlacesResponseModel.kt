@@ -1,6 +1,6 @@
 package `in`.dimigo.dimigoin.data.model.place
 
-data class AllPlaceResponseModel(
+data class GetPlacesResponseModel(
     val places: List<PlaceResponseModel>,
 )
 

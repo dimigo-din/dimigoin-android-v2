@@ -136,5 +136,5 @@ fun PlaceItemPreview4() {
     )
 }
 
-private val TestPlace = Place("", "1층 복도", "본관", "1층", "복도에 계신가요?", false)
+private val TestPlace = Place("", "1층 복도", "본관", "1층", "복도에 계신가요?")
 // endregion

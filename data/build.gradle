@@ -1,11 +1,74 @@
 plugins {
-    id 'java-library'
-    id 'kotlin'
+    id 'kotlin-android'
+    id 'com.android.library'
+    id "de.mannodermaus.android-junit5"
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+def getUsername() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("username")
+}
+
+def getPassword() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty("password")
+}
+
+android {
+    compileSdk 31
+    namespace "in.dimigo.dimigoin.data"
+
+    defaultConfig {
+        minSdk 23
+        targetSdk 31
+        versionCode 17
+        versionName "2.0.0-alpha01"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField("String", "USERNAME", "\"" + getUsername() + "\"")
+            buildConfigField("String", "PASSWORD", "\"" + getPassword() + "\"")
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+        useIR = true
+    }
+    testOptions {
+        junitPlatform {
+            filters {
+                engines {
+                    include 'spek2'
+                }
+            }
+        }
+        unitTests.all {
+            testLogging.events = ["passed", "skipped", "failed"]
+        }
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
 }
 
 dependencies {
@@ -15,4 +78,11 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     implementation "com.squareup.retrofit2:converter-gson:2.9.0"
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation "androidx.security:security-crypto:1.0.0"
+
+    testImplementation "org.spekframework.spek2:spek-dsl-jvm:$spek_version"
+    testImplementation "com.winterbe:expekt:0.5.0"
+    testImplementation "org.jetbrains.kotlin:kotlin-reflect:1.6.10"
+    testRuntimeOnly "org.spekframework.spek2:spek-runner-junit5:$spek_version"
 }

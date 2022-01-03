@@ -7,9 +7,9 @@ class GetRecommendedBuildingsUseCase(
     /* TODO add user repository to get grade. */
     private val placeRepository: PlaceRepository,
 ) {
-    suspend operator fun invoke(): List<Building> {
+    suspend operator fun invoke(): Result<List<Building>> {
         /* TODO get user grade */
         val grade = 1
-        return placeRepository.getRecommendedBuildingsByGrade(grade)
+        return placeRepository.getBuildings()
     }
 }
