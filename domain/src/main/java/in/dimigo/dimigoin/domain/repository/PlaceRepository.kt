@@ -17,14 +17,14 @@ interface PlaceRepository {
      *
      * @return true if the request was successful
      */
-    suspend fun setCurrentPlace(placeId: String, remark: String): Boolean
+    suspend fun setCurrentPlace(placeId: String, remark: String?): Boolean
 
     /**
      * Get current place.
      *
      * @return current place
      */
-    suspend fun getCurrentPlace(): Place
+    suspend fun getCurrentPlace(): Place?
 
     /**
      * Mark the place as favorite.

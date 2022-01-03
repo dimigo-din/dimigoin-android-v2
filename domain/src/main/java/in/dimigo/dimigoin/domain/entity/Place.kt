@@ -6,5 +6,4 @@ data class Place(
     val building: String,
     val floor: String?,
     val type: String,
-    val isFavorite: Boolean,
 )
