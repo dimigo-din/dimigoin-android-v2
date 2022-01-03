@@ -1,15 +1,14 @@
 package `in`.dimigo.dimigoin.ui
 
-import `in`.dimigo.dimigoin.R
-import `in`.dimigo.dimigoin.domain.util.josa
 import `in`.dimigo.dimigoin.ui.composables.BottomNavigation
 import `in`.dimigo.dimigoin.ui.composables.BottomNavigationItem
 import `in`.dimigo.dimigoin.ui.composables.CustomSnackbarHost
 import `in`.dimigo.dimigoin.ui.composables.CustomSnackbarHostState
+import `in`.dimigo.dimigoin.ui.screen.LoginScreen
 import `in`.dimigo.dimigoin.ui.screen.Screen
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
-import `in`.dimigo.dimigoin.ui.theme.Point
+import `in`.dimigo.dimigoin.viewmodel.LoginViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,7 +17,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -28,20 +26,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
+
+    private val loginViewModel by viewModel<LoginViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -55,7 +52,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             DimigoinTheme {
-                App(screens)
+                App(screens, loginViewModel)
             }
         }
     }
@@ -65,6 +62,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun App(
     navBarScreens: List<Screen>,
+    loginViewModel: LoginViewModel,
 ) {
     val navController = rememberNavController()
     val snackbarHostState = remember { CustomSnackbarHostState() }
@@ -83,9 +81,19 @@ fun App(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Main.route,
+            startDestination = "login",
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable("login") {
+                LoginScreen(
+                    loginViewModel = loginViewModel,
+                    onLoginSuccess = {
+                        navController.navigate(Screen.Main.route) {
+                            popUpTo("login") { inclusive = true }
+                        }
+                    }
+                )
+            }
             composable(Screen.Main.route) { Text(text = "메인") }
             composable(Screen.Meal.route) { Text(text = "급식") }
             composable(Screen.Calendar.route) { Text(text = "일정") }
@@ -109,8 +117,10 @@ fun BottomNavBarImpl(navController: NavController, screens: List<Screen>, curren
                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                 onClick = {
                     navController.navigate(screen.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+                        navController.graph.findNode(Screen.Main.route)?.id?.let {
+                            popUpTo(it) {
+                                saveState = true
+                            }
                         }
                         launchSingleTop = true
                         restoreState = true
