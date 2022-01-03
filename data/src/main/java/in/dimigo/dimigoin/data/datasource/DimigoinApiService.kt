@@ -9,12 +9,16 @@ import `in`.dimigo.dimigoin.data.model.user.LoginResponseModel
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface DimigoinApiService {
 
     @POST("/auth")
     fun login(@Body loginRequestModel: LoginRequestModel): Call<LoginResponseModel>
+
+    @POST("/auth/refresh")
+    fun refreshToken(@Header("Authorization") refreshToken: String): Call<LoginResponseModel>
 
     @GET("/place")
     fun getPlaces(): Call<GetPlacesResponseModel>

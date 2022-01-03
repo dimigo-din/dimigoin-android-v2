@@ -4,6 +4,7 @@ import `in`.dimigo.dimigoin.data.datasource.DimigoinApiService
 import `in`.dimigo.dimigoin.data.datasource.LocalSharedPreferenceManager
 import `in`.dimigo.dimigoin.data.repository.UserRepositoryImpl
 import `in`.dimigo.dimigoin.data.util.AuthenticationInterceptor
+import `in`.dimigo.dimigoin.data.util.TokenAuthenticator
 import `in`.dimigo.dimigoin.domain.repository.UserRepository
 import `in`.dimigo.dimigoin.domain.usecase.user.UserLoginUseCase
 import `in`.dimigo.dimigoin.viewmodel.LoginViewModel
@@ -15,9 +16,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 val dataModules = module {
+    single { LocalSharedPreferenceManager(androidContext()) }
     single {
         OkHttpClient.Builder()
             .addInterceptor(AuthenticationInterceptor())
+            .authenticator(TokenAuthenticator(get()))
             .build()
     }
     single {
@@ -27,8 +30,11 @@ val dataModules = module {
             .client(get())
             .build()
     }
-    single { get<Retrofit>().create(DimigoinApiService::class.java) }
-    single { LocalSharedPreferenceManager(androidContext()) }
+    single {
+        get<Retrofit>().create(DimigoinApiService::class.java).also {
+            TokenAuthenticator.dimigoinService = it
+        }
+    }
 
     single<UserRepository> { UserRepositoryImpl(get()) }
     single { UserLoginUseCase(get()) }
