@@ -47,6 +47,7 @@ fun ContentBox(
     modifier: Modifier = Modifier,
     title: String? = null,
     summary: AnnotatedString? = null,
+    elevation: Dp = 0.dp,
     onNavigate: (() -> Unit)? = null,
     contentPadding: Dp = 25.dp,
     content: @Composable () -> Unit,
@@ -105,7 +106,9 @@ private fun Summary(
 }
 
 // region Previews
-@Preview(showBackground = true, backgroundColor = 0xe5e5e5, name = "Content Box with navigation, summary")
+@Preview(showBackground = true,
+    backgroundColor = 0xe5e5e5,
+    name = "Content Box with navigation, summary")
 @Composable
 fun ContentBoxPreview1() {
     var text by remember { mutableStateOf("아무 것도 없어요... :(") }
