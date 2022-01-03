@@ -76,5 +76,14 @@ dependencies {
     // Coil
     implementation "io.coil-kt:coil-compose:1.4.0"
 
+    // Data injection
+    implementation "io.insert-koin:koin-core:3.1.4"
+    implementation "io.insert-koin:koin-android:3.1.4"
+
+    // Networking
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
 }
