@@ -9,8 +9,6 @@ import `in`.dimigo.dimigoin.ui.screen.Screen
 import `in`.dimigo.dimigoin.ui.screen.SplashScreen
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
-import `in`.dimigo.dimigoin.viewmodel.LoginViewModel
-import `in`.dimigo.dimigoin.viewmodel.SplashViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -35,12 +33,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
-
-    private val splashViewModel by viewModel<SplashViewModel>()
-    private val loginViewModel by viewModel<LoginViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +49,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             DimigoinTheme {
-                App(screens, splashViewModel, loginViewModel)
+                App(screens)
             }
         }
     }
@@ -65,8 +59,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun App(
     navBarScreens: List<Screen>,
-    splashViewModel: SplashViewModel,
-    loginViewModel: LoginViewModel,
 ) {
     val navController = rememberNavController()
     val snackbarHostState = remember { CustomSnackbarHostState() }
@@ -90,7 +82,6 @@ fun App(
         ) {
             composable("splash") {
                 SplashScreen(
-                    splashViewModel = splashViewModel,
                     onAutoLoginSuccess = {
                         navController.navigate(Screen.Main.route) {
                             popUpTo("splash") { inclusive = true }
@@ -105,7 +96,6 @@ fun App(
             }
             composable("login") {
                 LoginScreen(
-                    loginViewModel = loginViewModel,
                     onLoginSuccess = {
                         navController.navigate(Screen.Main.route) {
                             popUpTo("login") { inclusive = true }

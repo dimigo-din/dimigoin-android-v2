@@ -4,10 +4,11 @@ import `in`.dimigo.dimigoin.viewmodel.SplashViewModel
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun SplashScreen(
-    splashViewModel: SplashViewModel,
+    splashViewModel: SplashViewModel = getViewModel(),
     onAutoLoginSuccess: () -> Unit,
     onAutoLoginFail: () -> Unit,
 ) {
