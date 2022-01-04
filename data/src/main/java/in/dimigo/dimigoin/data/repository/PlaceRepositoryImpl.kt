@@ -50,7 +50,7 @@ class PlaceRepositoryImpl(
     override suspend fun addFavoriteAttendanceLog(attendanceLog: AttendanceLog): Result<Boolean> {
         return try {
             attendanceLogMutex.withLock {
-                sharedPreferenceManager.favoriteAttendanceLogs + attendanceLog
+                sharedPreferenceManager.favoriteAttendanceLogs += attendanceLog
             }
             attendanceLogMutex.withLock {
                 Result.success(attendanceLog in sharedPreferenceManager.favoriteAttendanceLogs)
@@ -64,10 +64,9 @@ class PlaceRepositoryImpl(
     override suspend fun removeFavoriteAttendanceLog(id: String): Result<Boolean> {
         return try {
             attendanceLogMutex.withLock {
-                sharedPreferenceManager.favoriteAttendanceLogs.apply {
-                    val elementToRemove = this.find { it._id == id } ?: return Result.success(false)
-                    this - elementToRemove
-                }
+                val logs = sharedPreferenceManager.favoriteAttendanceLogs
+                val logToRemove = logs.find { it._id == id } ?: return Result.success(false)
+                sharedPreferenceManager.favoriteAttendanceLogs = logs - logToRemove
             }
             attendanceLogMutex.withLock {
                 Result.success(sharedPreferenceManager.favoriteAttendanceLogs.find { it._id == id } == null)
