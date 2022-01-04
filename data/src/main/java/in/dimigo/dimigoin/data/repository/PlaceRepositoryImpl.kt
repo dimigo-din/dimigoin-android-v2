@@ -5,6 +5,7 @@ import `in`.dimigo.dimigoin.data.mapper.toEntity
 import `in`.dimigo.dimigoin.data.model.place.PlaceResponseModel
 import `in`.dimigo.dimigoin.data.model.place.PostAttendanceRequestModel
 import `in`.dimigo.dimigoin.data.util.resultFromCall
+import `in`.dimigo.dimigoin.domain.entity.AttendanceLog
 import `in`.dimigo.dimigoin.domain.entity.Building
 import `in`.dimigo.dimigoin.domain.entity.Place
 import `in`.dimigo.dimigoin.domain.repository.PlaceRepository
@@ -40,15 +41,15 @@ class PlaceRepositoryImpl(
         }
     }
 
-    override suspend fun addFavoritePlace(placeId: String): Result<Boolean> {
+    override suspend fun addFavoriteAttendanceLog(attendanceLog: AttendanceLog): Result<Boolean> {
         TODO("not implemented")
     }
 
-    override suspend fun removeFavoritePlace(placeId: String): Result<Boolean> {
+    override suspend fun removeFavoriteAttendanceLog(id: String): Result<Boolean> {
         TODO("not implemented")
     }
 
-    override suspend fun getFavoritePlacesId(): Result<List<String>> {
+    override suspend fun getFavoriteAttendanceLogs(): Result<List<AttendanceLog>> {
         TODO("not implemented")
     }
 

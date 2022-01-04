@@ -1,5 +1,6 @@
 package `in`.dimigo.dimigoin.domain.repository
 
+import `in`.dimigo.dimigoin.domain.entity.AttendanceLog
 import `in`.dimigo.dimigoin.domain.entity.Building
 import `in`.dimigo.dimigoin.domain.entity.Place
 
@@ -31,21 +32,21 @@ interface PlaceRepository {
      *
      * @return true if the request was successful
      */
-    suspend fun addFavoritePlace(placeId: String): Result<Boolean>
+    suspend fun addFavoriteAttendanceLog(attendanceLog: AttendanceLog): Result<Boolean>
 
     /**
      * Remove favorite from the place.
      *
      * @return true if the request was successful
      */
-    suspend fun removeFavoritePlace(placeId: String): Result<Boolean>
+    suspend fun removeFavoriteAttendanceLog(id: String): Result<Boolean>
 
     /**
      * Get all favorite places.
      *
      * @return favorite places
      */
-    suspend fun getFavoritePlacesId(): Result<List<String>>
+    suspend fun getFavoriteAttendanceLogs(): Result<List<AttendanceLog>>
 
     /**
      * Get buildings.
