@@ -5,6 +5,7 @@ import `in`.dimigo.dimigoin.ui.composables.BottomNavigationItem
 import `in`.dimigo.dimigoin.ui.composables.CustomSnackbarHost
 import `in`.dimigo.dimigoin.ui.composables.CustomSnackbarHostState
 import `in`.dimigo.dimigoin.ui.screen.LoginScreen
+import `in`.dimigo.dimigoin.ui.screen.MainScreen
 import `in`.dimigo.dimigoin.ui.screen.Screen
 import `in`.dimigo.dimigoin.ui.screen.SplashScreen
 import `in`.dimigo.dimigoin.ui.theme.DTypography
@@ -26,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -78,7 +80,8 @@ fun App(
         NavHost(
             navController = navController,
             startDestination = "splash",
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier
+                .padding(innerPadding)
         ) {
             composable("splash") {
                 SplashScreen(
@@ -103,7 +106,14 @@ fun App(
                     }
                 )
             }
-            composable(Screen.Main.route) { Text(text = "메인") }
+            composable(Screen.Main.route) {
+                MainScreen(
+                    modifier = Modifier.padding(horizontal = 20.dp).padding(top = 36.dp),
+                    onPlaceSelectorNavigate = { },
+                    onPlaceSelect = { },
+                    hasNewNotification = false
+                )
+            }
             composable(Screen.Meal.route) { Text(text = "급식") }
             composable(Screen.Calendar.route) { Text(text = "일정") }
             composable(Screen.Application.route) { Text(text = "신청") }
