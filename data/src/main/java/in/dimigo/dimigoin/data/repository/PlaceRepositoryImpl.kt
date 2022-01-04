@@ -1,6 +1,7 @@
 package `in`.dimigo.dimigoin.data.repository
 
 import `in`.dimigo.dimigoin.data.datasource.DimigoinApiService
+import `in`.dimigo.dimigoin.data.datasource.LocalSharedPreferenceManager
 import `in`.dimigo.dimigoin.data.mapper.toEntity
 import `in`.dimigo.dimigoin.data.model.place.PlaceResponseModel
 import `in`.dimigo.dimigoin.data.model.place.PostAttendanceRequestModel
@@ -9,12 +10,17 @@ import `in`.dimigo.dimigoin.domain.entity.AttendanceLog
 import `in`.dimigo.dimigoin.domain.entity.Building
 import `in`.dimigo.dimigoin.domain.entity.Place
 import `in`.dimigo.dimigoin.domain.repository.PlaceRepository
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class PlaceRepositoryImpl(
     private val service: DimigoinApiService,
+    private val sharedPreferenceManager: LocalSharedPreferenceManager,
 ) : PlaceRepository {
     private var places: List<Place>? = null
     private var currentPlace: Place? = null
+
+    val attendanceLogMutex = Mutex()
 
     override suspend fun getAllPlaces(): Result<List<Place>> = resultFromCall(
         service.getPlaces(),
@@ -42,15 +48,44 @@ class PlaceRepositoryImpl(
     }
 
     override suspend fun addFavoriteAttendanceLog(attendanceLog: AttendanceLog): Result<Boolean> {
-        TODO("not implemented")
+        return try {
+            attendanceLogMutex.withLock {
+                sharedPreferenceManager.favoriteAttendanceLogs += attendanceLog
+            }
+            attendanceLogMutex.withLock {
+                Result.success(attendanceLog in sharedPreferenceManager.favoriteAttendanceLogs)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
     }
 
     override suspend fun removeFavoriteAttendanceLog(id: String): Result<Boolean> {
-        TODO("not implemented")
+        return try {
+            attendanceLogMutex.withLock {
+                val logs = sharedPreferenceManager.favoriteAttendanceLogs
+                val logToRemove = logs.find { it._id == id } ?: return Result.success(false)
+                sharedPreferenceManager.favoriteAttendanceLogs = logs - logToRemove
+            }
+            attendanceLogMutex.withLock {
+                Result.success(sharedPreferenceManager.favoriteAttendanceLogs.find { it._id == id } == null)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
     }
 
     override suspend fun getFavoriteAttendanceLogs(): Result<List<AttendanceLog>> {
-        TODO("not implemented")
+        return try {
+            attendanceLogMutex.withLock {
+                Result.success(sharedPreferenceManager.favoriteAttendanceLogs)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
     }
 
     override suspend fun getBuildings(): Result<List<Building>> {
@@ -62,5 +97,4 @@ class PlaceRepositoryImpl(
             Building("기타", "그 외"),
         ))
     }
-
 }
