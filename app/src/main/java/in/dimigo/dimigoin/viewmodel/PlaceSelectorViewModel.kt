@@ -126,6 +126,10 @@ class PlaceSelectorViewModel(
         }
     }
 
+    fun getFilteredPlaces(category: String): List<Place> {
+        return allPlaces.filter { "${it.building} ${it.floor}" == category }
+    }
+
     fun placeIdToPlace(placeId: String): Place {
         return placesMap.getOrDefault(placeId, fallbackPlace)
     }

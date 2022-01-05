@@ -21,8 +21,8 @@ fun PlaceResponseModel.toEntity(): Place {
     }
 
     val type = when {
-        name.contains("학년") || name == "과학실" -> "교실"
         name.contains("교무실") -> "교무실"
+        name.contains("학년") || name == "과학실" -> "교실"
         name.contains("복도") -> "복도"
         name.contains("동아리") -> "동아리실"
         name.contains("급식실") -> "급식실"

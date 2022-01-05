@@ -12,6 +12,7 @@ import `in`.dimigo.dimigoin.ui.screen.MainScreen
 import `in`.dimigo.dimigoin.ui.screen.Screen
 import `in`.dimigo.dimigoin.ui.screen.SplashScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.BuildingScreen
+import `in`.dimigo.dimigoin.ui.screen.placeselector.PlacesScreen
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
@@ -23,8 +24,15 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -32,11 +40,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -48,6 +58,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.insets.navigationBarsHeight
+import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
@@ -55,6 +68,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         val screens = listOf(
             Screen.Main,
@@ -65,8 +80,10 @@ class MainActivity : ComponentActivity() {
         )
 
         setContent {
-            DimigoinTheme {
-                App(screens)
+            ProvideWindowInsets {
+                DimigoinTheme {
+                    App(screens)
+                }
             }
         }
     }
@@ -129,8 +146,19 @@ fun App(
             val currentDestination = navBackStackEntry?.destination
 
             val navBarVisible = navBarScreens.any { currentDestination?.route == it.route }
-            AnimatedVisibility(visible = navBarVisible, enter = fadeIn(), exit = fadeOut()) {
-                BottomNavBarImpl(navController, navBarScreens, currentDestination)
+            AnimatedVisibility(
+                visible = navBarVisible, enter = fadeIn(), exit = fadeOut()
+            ) {
+                Column {
+                    BottomNavBarImpl(navController, navBarScreens, currentDestination)
+                    Spacer(
+                        modifier = Modifier
+                            .background(Color.White)
+                            .fillMaxWidth()
+                            .navigationBarsHeight(),
+                    )
+
+                }
             }
         }
     ) { innerPadding ->
@@ -138,7 +166,7 @@ fun App(
             navController = navController,
             startDestination = "splash",
             modifier = Modifier
-                .padding(innerPadding)
+                .padding(innerPadding),
         ) {
             composable("splash") {
                 SplashScreen(
@@ -156,6 +184,7 @@ fun App(
             }
             composable("login") {
                 LoginScreen(
+                    modifier = Modifier.systemBarsPadding(),
                     onLoginSuccess = {
                         navController.navigate(Screen.Main.route) {
                             popUpTo("login") { inclusive = true }
@@ -167,7 +196,8 @@ fun App(
                 MainScreen(
                     modifier = Modifier
                         .padding(horizontal = 20.dp)
-                        .padding(top = 36.dp),
+                        .padding(top = 36.dp)
+                        .systemBarsPadding(),
                     onPlaceSelectorNavigate = { navController.navigate("place_selector") },
                     onPlaceSelect = { },
                     hasNewNotification = false
@@ -196,12 +226,13 @@ fun NavGraphBuilder.placeSelectorNavGraph(
         ) {
             val viewModel: PlaceSelectorViewModel = getViewModel()
             BuildingScreen(
+                modifier = Modifier.systemBarsPadding(),
                 title = viewModel.selectedBuilding.value,
                 onBackNavigation = { navController.popBackStack() },
                 onSearch = { navController.navigate("search") },
                 onBuildingClick = { viewModel.selectedBuilding.value = it.name },
                 onPlaceChange = onPlaceChange,
-                onCategoryClick = { navController.navigate("category/${viewModel.selectedBuilding.value} ${it.name}")},
+                onCategoryClick = { navController.navigate("category/${viewModel.selectedBuilding.value} ${it.name}") },
                 onFavoriteAdd = onFavoriteAdd,
                 onFavoriteRemove = onFavoriteRemove,
             )
@@ -213,7 +244,17 @@ fun NavGraphBuilder.placeSelectorNavGraph(
             ),
         ) {
             val category = it.arguments?.getString("category") ?: ""
-            Text(text = "Category $category")
+            PlacesScreen(
+                modifier = Modifier
+                    .background(MaterialTheme.colors.surface)
+                    .fillMaxSize()
+                    .systemBarsPadding(),
+                title = category,
+                onBackNavigation = { navController.popBackStack() },
+                onPlaceChange = onPlaceChange,
+                onFavoriteAdd = onFavoriteAdd,
+                onFavoriteRemove = onFavoriteRemove,
+            )
         }
         composable("search") {
             Text(text = "Search")

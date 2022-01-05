@@ -13,14 +13,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun LoginScreen(
+    modifier: Modifier = Modifier,
     loginViewModel: LoginViewModel = getViewModel(),
     onLoginSuccess: () -> Unit,
-) = Column {
+) = Column(modifier) {
 
     when (val v = loginViewModel.loginResult.collectAsState().value) {
         is Future.Success<*> -> onLoginSuccess()

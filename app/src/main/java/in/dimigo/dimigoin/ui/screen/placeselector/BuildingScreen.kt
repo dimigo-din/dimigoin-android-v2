@@ -45,8 +45,8 @@ fun BuildingScreen(
     val favorites = placeSelectorViewModel.favoriteAttendanceLog.collectAsState().value
 
     Column(
-        modifier = Modifier
-            .padding(top = 36.dp),
+        modifier = modifier
+            .padding(top = 26.dp),
     ) {
         PlaceSelectorTopBar(
             modifier = Modifier.padding(horizontal = 20.dp),
