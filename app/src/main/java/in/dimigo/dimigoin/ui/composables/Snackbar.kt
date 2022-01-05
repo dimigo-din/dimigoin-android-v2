@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -33,6 +34,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.insets.statusBarsHeight
 import java.util.UUID
 import kotlinx.coroutines.delay
 
@@ -44,7 +46,6 @@ interface CustomSnackbarData {
     val duration: Long
     var isVisible: MutableState<Boolean>
 }
-
 
 class CustomSnackbarHostState {
     val snackbarItems = mutableStateListOf<CustomSnackbarData>()
@@ -90,7 +91,10 @@ fun CustomSnackbarHost(
                     enter = slideInVertically() + fadeIn(),
                     exit = slideOutVertically() + fadeOut(),
                 ) {
-                    CustomSnackbar(it)
+                    Column {
+                        Spacer(Modifier.statusBarsHeight())
+                        CustomSnackbar(it)
+                    }
                 }
             }
         }
