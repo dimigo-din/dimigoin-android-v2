@@ -48,6 +48,12 @@ fun ReasonModal(
                     Text("확인", style = DTypography.t5)
                 }
             }
+            if (isFavoriteRegister) {
+                Text(
+                    text = "별을 한 번 더 누르면, 즐겨찾기가 삭제됩니다.",
+                    style = DTypography.t5,
+                )
+            }
         }
     }
 }
