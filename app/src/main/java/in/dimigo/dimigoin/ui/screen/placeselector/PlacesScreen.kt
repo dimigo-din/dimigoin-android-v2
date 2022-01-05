@@ -15,11 +15,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.getViewModel
 
@@ -29,8 +29,8 @@ fun PlacesScreen(
     placeSelectorViewModel: PlaceSelectorViewModel = getViewModel(),
     title: String,
     onBackNavigation: () -> Unit,
-    onPlaceChange: (Place, String?) -> Unit,
-    onFavoriteAdd: (Place, String?) -> Unit,
+    onTryPlaceChange: (Place) -> Unit,
+    onTryFavoriteAdd: (Place) -> Unit,
     onFavoriteRemove: (Place) -> Unit,
 ) = Box(
     modifier = modifier
@@ -49,7 +49,7 @@ fun PlacesScreen(
                 onBackNavigation = onBackNavigation,
                 showSearchIcon = false,
                 onSearch = { },
-                color = Color.Black,
+                color = MaterialTheme.colors.onSurface,
             )
             Spacer(Modifier.height(26.dp))
             Divider(color = C4)
@@ -68,11 +68,7 @@ fun PlacesScreen(
                         isFavorite = isFavorite,
                         onFavoriteChange = onFavoriteChange@{ favorite ->
                             if (favorite) {
-                                placeSelectorViewModel.addFavoriteAttendanceLog(
-                                    place,
-                                    "테스트 사유",
-                                    onFavoriteAdd,
-                                )
+                                onTryFavoriteAdd(place)
                             } else {
                                 placeSelectorViewModel.removeFavoriteAttendanceLog(
                                     favorites.data?.find { it.placeId == place._id }
@@ -82,13 +78,7 @@ fun PlacesScreen(
                             }
                         },
                         isSelected = isSelected,
-                        onSelect = {
-                            if (!isSelected) placeSelectorViewModel.setCurrentPlace(
-                                place,
-                                "테스트 사유",
-                                onPlaceChange
-                            )
-                        }
+                        onSelect = { onTryPlaceChange(place) },
                     )
                 }
                 item { Spacer(Modifier) }

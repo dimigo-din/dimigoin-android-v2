@@ -7,6 +7,7 @@ import `in`.dimigo.dimigoin.ui.composables.BottomNavigation
 import `in`.dimigo.dimigoin.ui.composables.BottomNavigationItem
 import `in`.dimigo.dimigoin.ui.composables.CustomSnackbarHost
 import `in`.dimigo.dimigoin.ui.composables.CustomSnackbarHostState
+import `in`.dimigo.dimigoin.ui.composables.ReasonModal
 import `in`.dimigo.dimigoin.ui.screen.LoginScreen
 import `in`.dimigo.dimigoin.ui.screen.MainScreen
 import `in`.dimigo.dimigoin.ui.screen.Screen
@@ -18,6 +19,7 @@ import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.viewmodel.PlaceSelectorViewModel
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
@@ -27,7 +29,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -36,6 +37,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -55,6 +57,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
@@ -219,21 +222,30 @@ fun NavGraphBuilder.placeSelectorNavGraph(
     onFavoriteAdd: (Place, String?) -> Unit,
     onFavoriteRemove: (Place) -> Unit,
 ) {
+    lateinit var placeSelectorViewModel: PlaceSelectorViewModel
+    val navigateToRemark = { place: Place ->
+        navController.navigate("remark/${place._id}")
+    }
+    val navigateToRemarkFavorite = { place: Place ->
+        navController.navigate("remark_favorite/${place._id}")
+    }
     navigation("building", "place_selector") {
         composable(
             "building",
             arguments = listOf(navArgument("building") { type = NavType.StringType })
         ) {
-            val viewModel: PlaceSelectorViewModel = getViewModel()
+            placeSelectorViewModel = getViewModel()
             BuildingScreen(
                 modifier = Modifier.systemBarsPadding(),
-                title = viewModel.selectedBuilding.value,
+                placeSelectorViewModel = placeSelectorViewModel,
+                title = placeSelectorViewModel.selectedBuilding.value,
                 onBackNavigation = { navController.popBackStack() },
                 onSearch = { navController.navigate("search") },
-                onBuildingClick = { viewModel.selectedBuilding.value = it.name },
+                onBuildingClick = { placeSelectorViewModel.selectedBuilding.value = it.name },
+                onTryPlaceChange = navigateToRemark,
                 onPlaceChange = onPlaceChange,
-                onCategoryClick = { navController.navigate("category/${viewModel.selectedBuilding.value} ${it.name}") },
-                onFavoriteAdd = onFavoriteAdd,
+                onCategoryClick = { navController.navigate("category/${placeSelectorViewModel.selectedBuilding.value} ${it.name}") },
+                onTryFavoriteAdd = navigateToRemarkFavorite,
                 onFavoriteRemove = onFavoriteRemove,
             )
         }
@@ -249,15 +261,52 @@ fun NavGraphBuilder.placeSelectorNavGraph(
                     .background(MaterialTheme.colors.surface)
                     .fillMaxSize()
                     .systemBarsPadding(),
+                placeSelectorViewModel = placeSelectorViewModel,
                 title = category,
                 onBackNavigation = { navController.popBackStack() },
-                onPlaceChange = onPlaceChange,
-                onFavoriteAdd = onFavoriteAdd,
+                onTryPlaceChange = navigateToRemark,
+                onTryFavoriteAdd = navigateToRemarkFavorite,
                 onFavoriteRemove = onFavoriteRemove,
             )
         }
         composable("search") {
             Text(text = "Search")
+        }
+        dialog(
+            "remark/{placeId}",
+            arguments = listOf(
+                navArgument("placeId") { type = NavType.StringType },
+            ),
+        ) {
+            val placeId = it.arguments?.getString("placeId") ?: ""
+            Log.d(TAG, "placeSelectorNavGraph: $placeId")
+            Log.d(TAG, "placeSelectorNavGraph: ${placeSelectorViewModel.placeIdToPlace(placeId)}")
+            ReasonModal(
+                place = placeSelectorViewModel.placeIdToPlace(placeId),
+                onConfirm = { place, remark ->
+                    placeSelectorViewModel.setCurrentPlace(place, remark, onPlaceChange)
+                    navController.popBackStack()
+                    Unit
+                },
+                isFavoriteRegister = false,
+            )
+        }
+        dialog(
+            "remark_favorite/{placeId}",
+            arguments = listOf(
+                navArgument("placeId") { type = NavType.StringType },
+            ),
+        ) {
+            val placeId = it.arguments?.getString("placeId") ?: ""
+            ReasonModal(
+                place = placeSelectorViewModel.placeIdToPlace(placeId),
+                onConfirm = { place, remark ->
+                    placeSelectorViewModel.addFavoriteAttendanceLog(place, remark, onFavoriteAdd)
+                    navController.popBackStack()
+                    Unit
+                },
+                isFavoriteRegister = true,
+            )
         }
     }
 }
@@ -288,3 +337,5 @@ fun BottomNavBarImpl(navController: NavController, screens: List<Screen>, curren
         }
     }
 }
+
+private const val TAG = "MainActivity"
