@@ -3,9 +3,11 @@ package `in`.dimigo.dimigoin.ui.screen
 import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.domain.entity.Place
 import `in`.dimigo.dimigoin.ui.composables.ContentBox
+import `in`.dimigo.dimigoin.ui.composables.OnLifecycleEvent
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.util.Future
 import `in`.dimigo.dimigoin.viewmodel.MainViewModel
+import `in`.dimigo.dimigoin.viewmodel.PlaceSelectorViewModel
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,23 +17,31 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel = getViewModel(),
+    placeSelectorViewModel: PlaceSelectorViewModel = getViewModel(),
     onPlaceSelectorNavigate: () -> Unit,
     onPlaceSelect: (Place) -> Unit,
     hasNewNotification: Boolean,
 ) = Column(modifier) {
-    val currentPlace = mainViewModel.currentPlace.collectAsState().value
+    val currentPlace by mainViewModel.currentPlace.collectAsState()
+    OnLifecycleEvent { _, event ->
+        if (event == Lifecycle.Event.ON_RESUME) {
+            mainViewModel.getCurrentPlace()
+        }
+    }
 
     Row(Modifier.fillMaxWidth()) {
         val notificationIcon = if (hasNewNotification) {
@@ -53,7 +63,7 @@ fun MainScreen(
             when (currentPlace) {
                 is Future.Success -> {
                     append("나의 위치는 현재 ")
-                    withStyle(SpanStyle(color = Point)) { append(currentPlace._data.name) }
+                    withStyle(SpanStyle(color = Point)) { append((currentPlace as Future.Success<Place>)._data.name) }
                     append("입니다")
                 }
                 is Future.Failure -> append("위치 정보를 불러오지 못했습니다")

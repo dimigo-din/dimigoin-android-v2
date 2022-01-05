@@ -37,8 +37,7 @@ class MainViewModel(
         getMyIdentityUseCase().onSuccess { myIdentity = it }
     }
 
-    private fun getCurrentPlace() = viewModelScope.launch {
-        _currentPlace.emit(Future.Loading())
+    fun getCurrentPlace() = viewModelScope.launch {
         getCurrentPlaceUseCase().onSuccess {
             val cp = it
                 ?: allPlaces.find { place ->
