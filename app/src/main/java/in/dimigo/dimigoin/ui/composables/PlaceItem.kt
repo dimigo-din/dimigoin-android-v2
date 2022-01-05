@@ -8,6 +8,7 @@ import `in`.dimigo.dimigoin.ui.theme.C2
 import `in`.dimigo.dimigoin.ui.theme.C3
 import `in`.dimigo.dimigoin.ui.theme.C4
 import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.LightPoint
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.theme.Shapes
 import `in`.dimigo.dimigoin.ui.theme.YellowLight
@@ -52,7 +53,7 @@ fun PlaceItem(
     Icon(
         modifier = Modifier.size(24.dp),
         painter = painterResource(id = icon), contentDescription = null,
-        tint = C3,
+        tint = if (isSelected) Point else C3,
     )
     Spacer(modifier = Modifier.width(20.dp))
     Column(
@@ -60,10 +61,10 @@ fun PlaceItem(
         verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         Text(
-            text = place.type, style = DTypography.t5, color = C2,
+            text = place.type, style = DTypography.t5, color = if (isSelected) LightPoint else C2,
         )
         Text(
-            text = place.name, style = DTypography.t4, color = C1,
+            text = place.name, style = DTypography.t4, color = if (isSelected) Point else C1,
         )
     }
     Spacer(modifier = Modifier.width(15.dp))

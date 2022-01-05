@@ -64,7 +64,7 @@ fun BuildingItem(
 @Composable
 fun BuildingItemPreview() {
     BuildingItem(
-        building = Building(type = "학교", name = "본관"),
+        building = Building(type = "학교", name = "본관", listOf()),
         onClick = { }
     )
 }

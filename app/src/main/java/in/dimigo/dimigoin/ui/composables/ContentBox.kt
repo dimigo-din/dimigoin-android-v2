@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -55,16 +56,18 @@ fun ContentBox(
     shape = Shapes.medium,
     elevation = 0.dp
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 30.dp, vertical = 25.dp),
-        verticalArrangement = Arrangement.spacedBy(contentPadding),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        title?.let { Header(title = title, onNavigate = onNavigate) }
-        content()
-        summary?.let { Summary(text = it) }
+    Surface{
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 30.dp, vertical = 25.dp),
+            verticalArrangement = Arrangement.spacedBy(contentPadding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            title?.let { Header(title = title, onNavigate = onNavigate) }
+            content()
+            summary?.let { Summary(text = it) }
+        }
     }
 }
 

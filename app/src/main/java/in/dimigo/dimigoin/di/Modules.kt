@@ -8,13 +8,18 @@ import `in`.dimigo.dimigoin.data.util.AuthenticationInterceptor
 import `in`.dimigo.dimigoin.data.util.TokenAuthenticator
 import `in`.dimigo.dimigoin.domain.repository.PlaceRepository
 import `in`.dimigo.dimigoin.domain.repository.UserRepository
+import `in`.dimigo.dimigoin.domain.usecase.place.AddFavoriteAttendanceLogUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.GetAllPlacesUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.GetCurrentPlaceUseCase
+import `in`.dimigo.dimigoin.domain.usecase.place.GetFavoriteAttendanceLogsUseCase
+import `in`.dimigo.dimigoin.domain.usecase.place.GetRecommendedBuildingsUseCase
+import `in`.dimigo.dimigoin.domain.usecase.place.RemoveFavoriteAttendanceLogUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.SetCurrentPlaceUseCase
 import `in`.dimigo.dimigoin.domain.usecase.user.GetMyIdentityUseCase
 import `in`.dimigo.dimigoin.domain.usecase.user.UserLoginUseCase
 import `in`.dimigo.dimigoin.viewmodel.LoginViewModel
 import `in`.dimigo.dimigoin.viewmodel.MainViewModel
+import `in`.dimigo.dimigoin.viewmodel.PlaceSelectorViewModel
 import `in`.dimigo.dimigoin.viewmodel.SplashViewModel
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
@@ -52,10 +57,15 @@ val dataModules = module {
     single { GetAllPlacesUseCase(get()) }
     single { GetCurrentPlaceUseCase(get()) }
     single { SetCurrentPlaceUseCase(get()) }
+    single { GetFavoriteAttendanceLogsUseCase(get()) }
+    single { AddFavoriteAttendanceLogUseCase(get()) }
+    single { RemoveFavoriteAttendanceLogUseCase(get()) }
+    single { GetRecommendedBuildingsUseCase(get()) }
 }
 
 val presentationModules = module {
     viewModel { LoginViewModel(get()) }
     viewModel { SplashViewModel(get()) }
     viewModel { MainViewModel(get(), get(), get()) }
+    viewModel { PlaceSelectorViewModel(get(), get(), get(), get(), get(), get(), get()) }
 }
