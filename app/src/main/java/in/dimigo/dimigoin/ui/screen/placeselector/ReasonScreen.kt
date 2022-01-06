@@ -180,7 +180,10 @@ private fun CustomTextField(
     var focused by remember { mutableStateOf(false) }
     BasicTextField(
         value = value, onValueChange = onValueChange,
-        textStyle = DTypography.t4.copy(textAlign = if (value.isEmpty()) TextAlign.Start else TextAlign.Center),
+        textStyle = DTypography.t4.copy(
+            textAlign = if (value.isEmpty()) TextAlign.Start else TextAlign.Center,
+            color = MaterialTheme.colors.onSurface,
+        ),
         cursorBrush = SolidColor(Point),
         modifier = modifier.onFocusChanged {
             focused = it.isFocused
