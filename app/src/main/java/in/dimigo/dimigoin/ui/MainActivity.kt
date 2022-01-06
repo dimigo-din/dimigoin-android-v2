@@ -13,7 +13,9 @@ import `in`.dimigo.dimigoin.ui.screen.MainScreen
 import `in`.dimigo.dimigoin.ui.screen.Screen
 import `in`.dimigo.dimigoin.ui.screen.SplashScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.BuildingScreen
+import `in`.dimigo.dimigoin.ui.screen.placeselector.PlaceSearchScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.PlacesScreen
+import `in`.dimigo.dimigoin.ui.theme.C2
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
@@ -270,7 +272,17 @@ fun NavGraphBuilder.placeSelectorNavGraph(
             )
         }
         composable("search") {
-            Text(text = "Search")
+            PlaceSearchScreen(
+                modifier = Modifier
+                    .background(MaterialTheme.colors.surface)
+                    .fillMaxSize()
+                    .systemBarsPadding(),
+                onBackNavigation = { navController.popBackStack() },
+                onTryPlaceChange = navigateToRemark,
+                onTryFavoriteAdd = navigateToRemarkFavorite,
+                onFavoriteRemove = onFavoriteRemove,
+                color = Color.Black
+            )
         }
         dialog(
             "remark/{placeId}",
@@ -312,7 +324,11 @@ fun NavGraphBuilder.placeSelectorNavGraph(
 }
 
 @Composable
-fun BottomNavBarImpl(navController: NavController, screens: List<Screen>, currentDestination: NavDestination?) {
+fun BottomNavBarImpl(
+    navController: NavController,
+    screens: List<Screen>,
+    currentDestination: NavDestination?,
+) {
     BottomNavigation {
         screens.forEach { screen ->
             BottomNavigationItem(

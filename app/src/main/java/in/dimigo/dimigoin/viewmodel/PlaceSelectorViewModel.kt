@@ -31,7 +31,7 @@ class PlaceSelectorViewModel(
     private val getRecommendedBuildingsUseCase: GetRecommendedBuildingsUseCase,
 ) : ViewModel() {
 
-    private var allPlaces: List<Place> = emptyList()
+    var allPlaces: List<Place> = emptyList()
         set(value) {
             Log.d(TAG, "allPlaces: 0")
             field = value
