@@ -54,7 +54,7 @@ class CustomSnackbarHostState {
         painter: Painter,
         message: AnnotatedString,
         description: String? = null,
-        duration: Long = 5000L,
+        duration: Long = 3_000L,
     ) {
         val currentSnackbar =
             CustomSnackbarDataImpl(painter = painter, message = message, description = description, duration = duration)
