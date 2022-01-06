@@ -7,7 +7,6 @@ import `in`.dimigo.dimigoin.ui.composables.BottomNavigation
 import `in`.dimigo.dimigoin.ui.composables.BottomNavigationItem
 import `in`.dimigo.dimigoin.ui.composables.CustomSnackbarHost
 import `in`.dimigo.dimigoin.ui.composables.CustomSnackbarHostState
-import `in`.dimigo.dimigoin.ui.composables.ReasonModal
 import `in`.dimigo.dimigoin.ui.screen.LoginScreen
 import `in`.dimigo.dimigoin.ui.screen.MainScreen
 import `in`.dimigo.dimigoin.ui.screen.Screen
@@ -16,6 +15,7 @@ import `in`.dimigo.dimigoin.ui.screen.placeselector.BuildingScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.PlaceSearchScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.PlacesScreen
 import `in`.dimigo.dimigoin.ui.theme.C2
+import `in`.dimigo.dimigoin.ui.screen.placeselector.ReasonScreen
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
@@ -39,7 +39,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -59,12 +58,12 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsHeight
+import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
@@ -284,7 +283,7 @@ fun NavGraphBuilder.placeSelectorNavGraph(
                 color = Color.Black
             )
         }
-        dialog(
+        composable(
             "remark/{placeId}",
             arguments = listOf(
                 navArgument("placeId") { type = NavType.StringType },
@@ -293,7 +292,12 @@ fun NavGraphBuilder.placeSelectorNavGraph(
             val placeId = it.arguments?.getString("placeId") ?: ""
             Log.d(TAG, "placeSelectorNavGraph: $placeId")
             Log.d(TAG, "placeSelectorNavGraph: ${placeSelectorViewModel.placeIdToPlace(placeId)}")
-            ReasonModal(
+            ReasonScreen(
+                modifier = Modifier
+                    .background(MaterialTheme.colors.surface)
+                    .fillMaxWidth()
+                    .systemBarsPadding()
+                    .navigationBarsWithImePadding(),
                 place = placeSelectorViewModel.placeIdToPlace(placeId),
                 onConfirm = { place, remark ->
                     placeSelectorViewModel.setCurrentPlace(place, remark, onPlaceChange)
@@ -301,16 +305,22 @@ fun NavGraphBuilder.placeSelectorNavGraph(
                     Unit
                 },
                 isFavoriteRegister = false,
+                onBackNavigation = { navController.popBackStack() },
             )
         }
-        dialog(
+        composable(
             "remark_favorite/{placeId}",
             arguments = listOf(
                 navArgument("placeId") { type = NavType.StringType },
             ),
         ) {
             val placeId = it.arguments?.getString("placeId") ?: ""
-            ReasonModal(
+            ReasonScreen(
+                modifier = Modifier
+                    .background(MaterialTheme.colors.surface)
+                    .fillMaxWidth()
+                    .systemBarsPadding()
+                    .navigationBarsWithImePadding(),
                 place = placeSelectorViewModel.placeIdToPlace(placeId),
                 onConfirm = { place, remark ->
                     placeSelectorViewModel.addFavoriteAttendanceLog(place, remark, onFavoriteAdd)
@@ -318,6 +328,7 @@ fun NavGraphBuilder.placeSelectorNavGraph(
                     Unit
                 },
                 isFavoriteRegister = true,
+                onBackNavigation = { navController.popBackStack() },
             )
         }
     }
