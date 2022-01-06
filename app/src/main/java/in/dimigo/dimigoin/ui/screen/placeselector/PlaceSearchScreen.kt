@@ -146,16 +146,3 @@ private fun CustomTextField(
         innerTextField()
     }
 }
-
-@Preview
-@Composable
-fun CustomTextFieldPreview() {
-    CustomTextField(
-        modifier = Modifier,
-        value = "사유",
-        onValueChange = {},
-        placeholder = {
-            Text("10글자 이하로 이동 사유를 입력해주세요", style = DTypography.t4, color = C3)
-        }
-    )
-}
