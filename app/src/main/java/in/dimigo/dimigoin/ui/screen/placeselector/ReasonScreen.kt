@@ -33,7 +33,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -179,6 +181,7 @@ private fun CustomTextField(
     BasicTextField(
         value = value, onValueChange = onValueChange,
         textStyle = DTypography.t4.copy(textAlign = if (value.isEmpty()) TextAlign.Start else TextAlign.Center),
+        cursorBrush = SolidColor(Point),
         modifier = modifier.onFocusChanged {
             focused = it.isFocused
         },
