@@ -36,8 +36,9 @@ fun BuildingScreen(
     onSearch: () -> Unit,
     onBuildingClick: (Building) -> Unit,
     onCategoryClick: (PlaceCategory) -> Unit,
+    onTryPlaceChange: (Place) -> Unit,
     onPlaceChange: (Place, String?) -> Unit,
-    onFavoriteAdd: (Place, String?) -> Unit,
+    onTryFavoriteAdd: (Place) -> Unit,
     onFavoriteRemove: (Place) -> Unit,
 ) {
     val currentPlace = placeSelectorViewModel.currentPlace.collectAsState().value
@@ -86,8 +87,7 @@ fun BuildingScreen(
                                         icon = R.drawable.ic_main,
                                         isFavorite = true,
                                         onFavoriteChange = {
-                                            placeSelectorViewModel.removeFavoriteAttendanceLog(attLog,
-                                                onFavoriteRemove)
+                                            placeSelectorViewModel.removeFavoriteAttendanceLog(attLog, onFavoriteRemove)
                                         },
                                         isSelected = isSelected,
                                         onSelect = {
@@ -113,13 +113,7 @@ fun BuildingScreen(
                                             icon = R.drawable.ic_school,
                                             isFavorite = isFavorite,
                                             onFavoriteChange = onFavoriteChange@{ favorite ->
-                                                if (favorite) {
-                                                    placeSelectorViewModel.addFavoriteAttendanceLog(
-                                                        displayable,
-                                                        "테스트 사유",
-                                                        onFavoriteAdd,
-                                                    )
-                                                } else {
+                                                if (favorite) { onTryFavoriteAdd(displayable) } else {
                                                     placeSelectorViewModel.removeFavoriteAttendanceLog(
                                                         favorites.data?.find { it.placeId == displayable._id }
                                                             ?: return@onFavoriteChange,
@@ -128,13 +122,7 @@ fun BuildingScreen(
                                                 }
                                             },
                                             isSelected = isSelected,
-                                            onSelect = {
-                                                if (!isSelected) placeSelectorViewModel.setCurrentPlace(
-                                                    displayable,
-                                                    "테스트 사유",
-                                                    onPlaceChange
-                                                )
-                                            }
+                                            onSelect = { onTryPlaceChange(displayable) }
                                         )
                                     }
                                     is PlaceCategory -> {

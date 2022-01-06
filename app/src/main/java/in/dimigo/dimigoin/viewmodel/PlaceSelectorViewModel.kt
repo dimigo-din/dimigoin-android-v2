@@ -13,6 +13,7 @@ import `in`.dimigo.dimigoin.domain.usecase.place.GetRecommendedBuildingsUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.RemoveFavoriteAttendanceLogUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.SetCurrentPlaceUseCase
 import `in`.dimigo.dimigoin.ui.util.Future
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,8 +33,11 @@ class PlaceSelectorViewModel(
 
     private var allPlaces: List<Place> = emptyList()
         set(value) {
+            Log.d(TAG, "allPlaces: 0")
             field = value
+            Log.d(TAG, "allPlaces: 1")
             placesMap = value.associateBy(Place::_id)
+            Log.d(TAG, "allPlaces: $placesMap")
         }
     private var placesMap: Map<String, Place> = hashMapOf()
 
