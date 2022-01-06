@@ -276,6 +276,7 @@ fun NavGraphBuilder.placeSelectorNavGraph(
                     .background(MaterialTheme.colors.surface)
                     .fillMaxSize()
                     .systemBarsPadding(),
+                placeSelectorViewModel = placeSelectorViewModel,
                 onBackNavigation = { navController.popBackStack() },
                 onTryPlaceChange = navigateToRemark,
                 onTryFavoriteAdd = navigateToRemarkFavorite,
