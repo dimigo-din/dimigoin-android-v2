@@ -80,8 +80,8 @@ fun PlaceItem(
         modifier = Modifier
             .size(55.dp, 33.dp)
             .clip(Shapes.small)
-            .clickable { onSelect() }
-            .background(if (isSelected) Point else C4),
+            .background(if (isSelected) Point else C4)
+            .then(if (isSelected) Modifier else Modifier.clickable { onSelect() }),
     ) {
         Text(
             text = if (isSelected) "선택됨" else "선택",
