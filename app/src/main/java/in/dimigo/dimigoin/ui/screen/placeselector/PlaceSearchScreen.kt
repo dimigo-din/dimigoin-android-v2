@@ -59,7 +59,10 @@ fun PlaceSearchScreen(
         Modifier.padding(top = 26.dp)
     ) {
         val (search, searchValue) = remember { mutableStateOf("") }
-        val places = placeSelectorViewModel.allPlaces
+        val places = when (search) {
+            "" -> placeSelectorViewModel.allPlaces
+            else -> placeSelectorViewModel.getSearchFilteredPlaces(search)
+        }
         val currentPlace = placeSelectorViewModel.currentPlace.collectAsState().value
         val favorites = placeSelectorViewModel.favoriteAttendanceLog.collectAsState().value
         Column {
