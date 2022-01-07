@@ -56,7 +56,10 @@ fun ContentBox(
     shape = Shapes.medium,
     elevation = 0.dp
 ) {
-    Surface{
+    Surface(
+        modifier = Modifier.then(onNavigate?.let { Modifier.noRippleClickable { onNavigate() } }
+            ?: Modifier)
+    ){
         Column(
             modifier = Modifier
                 .fillMaxWidth()
