@@ -2,6 +2,7 @@ package `in`.dimigo.dimigoin.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val C0 = Color(0xFF343E4C)
 val C1 = Color(0xFF505966)
 val C2 = Color(0xFFB1B8C1)
 val C3 = Color(0xFFD2D6DB)
