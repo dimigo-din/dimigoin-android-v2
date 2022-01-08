@@ -59,7 +59,7 @@ fun PlaceSearchScreen(
     ) {
         val (search, searchValue) = remember { mutableStateOf("") }
         val places = when (search) {
-            "" -> placeSelectorViewModel.allPlaces
+            "" -> placeSelectorViewModel.getAllPlace()
             else -> placeSelectorViewModel.getFilteredPlaceByName(search)
         }
         val currentPlace = placeSelectorViewModel.currentPlace.collectAsState().value
