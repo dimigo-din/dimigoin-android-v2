@@ -57,7 +57,7 @@ fun PlaceSearchScreen(
     Surface(
         Modifier.padding(top = 26.dp)
     ) {
-        val (search, searchValue) = remember { mutableStateOf("") }
+        val (search, setSearch) = remember { mutableStateOf("") }
         val places = placeSelectorViewModel.getFilteredPlaceByName(search)
         val currentPlace = placeSelectorViewModel.currentPlace.collectAsState().value
         val favorites = placeSelectorViewModel.favoriteAttendanceLog.collectAsState().value
@@ -77,7 +77,7 @@ fun PlaceSearchScreen(
                     CustomTextField(
                         modifier = Modifier,
                         value = search,
-                        onValueChange = searchValue,
+                        onValueChange = setSearch,
                         placeholder = {
                             Text("실 이름, 고유번호 검색", style = DTypography.t4, color = C3)
                         }
