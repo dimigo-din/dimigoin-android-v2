@@ -10,8 +10,9 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,7 +48,7 @@ fun PageSelector(
     onChangeSelected: (Int) -> Unit,
 ) {
     var rowXPos by remember { mutableStateOf(0f) }
-    var textWidth by remember { mutableStateOf(0) }
+    var textWidth by remember { mutableStateOf(0f) }
     val selectedWidth = with(LocalDensity.current) {
         (rowXPos * 2 + textWidth).toDp() - 8.dp
     }
@@ -62,7 +63,7 @@ fun PageSelector(
             .height(50.dp)
             .background(C4)
     ) {
-        Spacer(
+        Box(
             modifier = Modifier
                 .padding(4.dp)
                 .width(selectedWidth)
@@ -77,26 +78,29 @@ fun PageSelector(
                 .padding(horizontal = horizontalTextPadding)
                 .onGloballyPositioned {
                     rowXPos = it.positionInParent().x
+                    textWidth = (it.size.width.toFloat() / elements.size)
                 },
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
             elements.forEachIndexed { index, element ->
                 val color = animateColorAsState(targetValue = if (selected == index) C0 else C2)
-                Text(
-                    modifier = Modifier
+                Box(
+                    Modifier
+                        .fillMaxHeight()
                         .weight(1f)
                         .noRippleClickable {
                             onChangeSelected(index)
                         }
-                        .onGloballyPositioned {
-                            textWidth = it.size.width
-                        },
-                    text = element,
-                    style = DTypography.t3,
-                    color = color.value,
-                    textAlign = TextAlign.Center
-                )
+                ) {
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = element,
+                        style = DTypography.t3,
+                        color = color.value,
+                        textAlign = TextAlign.Center,
+                    )
+                }
             }
         }
     }
@@ -105,18 +109,32 @@ fun PageSelector(
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFF)
 @Composable
 fun PageSelectorPreview() {
-    var selected by remember { mutableStateOf(0) }
-    PageSelector(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(20.dp),
-//        elements = listOf("월", "화", "수", "목", "금", "토", "일"),
-//        elements = listOf("아침", "점심", "저녁"),
-        elements = listOf("학급시간표", "학사일정"),
-        selected = selected,
-        horizontalTextPadding = 10.dp,
-        onChangeSelected = { selected = it }
-    )
+    Column(Modifier.fillMaxWidth()) {
+        var selected1 by remember { mutableStateOf(0) }
+        PageSelector(
+            modifier = Modifier.fillMaxWidth(),
+            elements = listOf("월", "화", "수", "목", "금", "토", "일"),
+            selected = selected1,
+            horizontalTextPadding = 10.dp,
+            onChangeSelected = { selected1 = it }
+        )
+        var selected2 by remember { mutableStateOf(0) }
+        PageSelector(
+            modifier = Modifier.fillMaxWidth(),
+            elements = listOf("아침", "점심", "저녁"),
+            selected = selected2,
+            horizontalTextPadding = 10.dp,
+            onChangeSelected = { selected2 = it }
+        )
+        var selected3 by remember { mutableStateOf(0) }
+        PageSelector(
+            modifier = Modifier.fillMaxWidth(),
+            elements = listOf("학급시간표", "학사일정"),
+            selected = selected3,
+            horizontalTextPadding = 10.dp,
+            onChangeSelected = { selected3 = it }
+        )
+    }
 }
 
 private const val TAG = "PageSelector"
