@@ -139,8 +139,12 @@ class PlaceSelectorViewModel(
     }
 
     fun getFilteredPlaceByName(search: String): List<Place> {
-        return allPlace.filter {
-            it.name.contains(search).or(it._id.contains(search))
+        return if(search.isNotBlank()) {
+            allPlace.filter {
+                it.name.contains(search).or(it._id.contains(search))
+            }
+        } else {
+            allPlace
         }
     }
 
