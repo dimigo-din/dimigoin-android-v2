@@ -39,7 +39,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.getViewModel
 
@@ -61,7 +60,7 @@ fun PlaceSearchScreen(
         val (search, searchValue) = remember { mutableStateOf("") }
         val places = when (search) {
             "" -> placeSelectorViewModel.allPlaces
-            else -> placeSelectorViewModel.getSearchFilteredPlaces(search)
+            else -> placeSelectorViewModel.getFilteredPlaceByName(search)
         }
         val currentPlace = placeSelectorViewModel.currentPlace.collectAsState().value
         val favorites = placeSelectorViewModel.favoriteAttendanceLog.collectAsState().value

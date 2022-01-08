@@ -130,11 +130,11 @@ class PlaceSelectorViewModel(
         }
     }
 
-    fun getCategoryFilteredPlaces(category: String): List<Place> {
+    fun getFilteredPlaceByCategory(category: String): List<Place> {
         return allPlaces.filter { "${it.building} ${it.floor}" == category }
     }
 
-    fun getSearchFilteredPlaces(search: String): List<Place> {
+    fun getFilteredPlaceByName(search: String): List<Place> {
         return allPlaces.filter {
             it.name.contains(search).or(it._id.contains(search))
         }
