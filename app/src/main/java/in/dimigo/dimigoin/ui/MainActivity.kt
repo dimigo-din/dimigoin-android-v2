@@ -22,6 +22,7 @@ import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.viewmodel.PlaceSelectorViewModel
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
@@ -74,6 +75,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         val screens = listOf(
             Screen.Main,

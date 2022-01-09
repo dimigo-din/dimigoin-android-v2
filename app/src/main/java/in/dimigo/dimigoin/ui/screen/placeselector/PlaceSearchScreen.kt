@@ -4,6 +4,7 @@ import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.domain.entity.Place
 import `in`.dimigo.dimigoin.ui.composables.PlaceItem
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
+import `in`.dimigo.dimigoin.ui.theme.C2
 import `in`.dimigo.dimigoin.ui.theme.C3
 import `in`.dimigo.dimigoin.ui.theme.C4
 import `in`.dimigo.dimigoin.ui.theme.DTypography
@@ -33,13 +34,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -79,42 +83,68 @@ fun PlaceSearchScreen(
                         value = search,
                         onValueChange = setSearch,
                         placeholder = {
-                            Text("실 이름, 고유번호 검색", style = DTypography.t4, color = C3)
+                            Text("실 이름, 고유번호 검색",
+                                style = DTypography.t3.copy(fontWeight = FontWeight.W500),
+                                color = C3
+                            )
                         }
                     )
                 }
             }
             Spacer(Modifier.height(26.dp))
             Divider(color = C4)
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(40.dp),
-                modifier = Modifier.padding(horizontal = 20.dp)
-            ) {
-                item { Spacer(Modifier) }
-                items(places) { place ->
-                    val favoriteAttLog = favorites.data?.find { it.placeId == place._id }
-                    val isFavorite = favoriteAttLog != null
-                    val isSelected = place._id == currentPlace.data?._id
-                    PlaceItem(
-                        place = place,
-                        icon = R.drawable.ic_school,
-                        isFavorite = isFavorite,
-                        onFavoriteChange = onFavoriteChange@{ favorite ->
-                            if (favorite) {
-                                onTryFavoriteAdd(place)
-                            } else {
-                                placeSelectorViewModel.removeFavoriteAttendanceLog(
-                                    favorites.data?.find { it.placeId == place._id }
-                                        ?: return@onFavoriteChange,
-                                    onFavoriteRemove
-                                )
-                            }
-                        },
-                        isSelected = isSelected,
-                        onSelect = { onTryPlaceChange(place) },
+            if (search.isBlank()) {
+                Column(
+                    modifier = Modifier
+                        .align(alignment = CenterHorizontally)
+                        .padding(top = 60.dp),
+                    verticalArrangement = Arrangement.spacedBy(15.dp),
+                ) {
+                    Text(
+                        modifier = Modifier.align(alignment = CenterHorizontally),
+                        text = "검색어를 입력해주세요",
+                        style = DTypography.t3,
+                        color = C2,
+                        textAlign = TextAlign.Center
+                    )
+                    Text("실 이름을 직접 입력하거나,\n" +
+                            "각 실에 붙어있는 고유번호로 찾을수도 있어요",
+                        style = DTypography.pageSubtitle.copy(lineHeight = 22.sp),
+                        color = C2,
+                        textAlign = TextAlign.Center
                     )
                 }
-                item { Spacer(Modifier) }
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(40.dp),
+                    modifier = Modifier.padding(horizontal = 20.dp)
+                ) {
+                    item { Spacer(Modifier) }
+                    items(places) { place ->
+                        val favoriteAttLog = favorites.data?.find { it.placeId == place._id }
+                        val isFavorite = favoriteAttLog != null
+                        val isSelected = place._id == currentPlace.data?._id
+                        PlaceItem(
+                            place = place,
+                            icon = R.drawable.ic_school,
+                            isFavorite = isFavorite,
+                            onFavoriteChange = onFavoriteChange@{ favorite ->
+                                if (favorite) {
+                                    onTryFavoriteAdd(place)
+                                } else {
+                                    placeSelectorViewModel.removeFavoriteAttendanceLog(
+                                        favorites.data?.find { it.placeId == place._id }
+                                            ?: return@onFavoriteChange,
+                                        onFavoriteRemove
+                                    )
+                                }
+                            },
+                            isSelected = isSelected,
+                            onSelect = { onTryPlaceChange(place) },
+                        )
+                    }
+                    item { Spacer(Modifier) }
+                }
             }
         }
     }
@@ -130,7 +160,8 @@ private fun CustomTextField(
     var focused by remember { mutableStateOf(false) }
     BasicTextField(
         value = value, onValueChange = onValueChange,
-        textStyle = DTypography.t4.copy(
+        textStyle = DTypography.t3.copy(
+            fontWeight = FontWeight.W500,
             textAlign = TextAlign.Start,
             color = MaterialTheme.colors.onSurface,
         ),
