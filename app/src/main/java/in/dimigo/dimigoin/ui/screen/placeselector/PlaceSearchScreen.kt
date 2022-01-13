@@ -39,11 +39,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.accompanist.insets.LocalWindowInsets
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -58,14 +60,17 @@ fun PlaceSearchScreen(
 ) = Box(
     modifier = modifier
 ) {
+    val insets = LocalWindowInsets.current
+    val imeBottom = with(LocalDensity.current) { insets.ime.bottom.toDp() }
     Surface(
-        Modifier.padding(top = 26.dp)
+        Modifier.padding(top = 26.dp, bottom = imeBottom)
     ) {
         val (search, setSearch) = remember { mutableStateOf("") }
         val places = placeSelectorViewModel.getFilteredPlaceByName(search)
         val currentPlace = placeSelectorViewModel.currentPlace.collectAsState().value
         val favorites = placeSelectorViewModel.favoriteAttendanceLog.collectAsState().value
         Column {
+            Spacer(Modifier.height(4.dp))
             Row(
                 Modifier.padding(horizontal = 20.dp),
                 verticalAlignment = Alignment.CenterVertically,
