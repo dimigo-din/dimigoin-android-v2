@@ -38,7 +38,7 @@ fun PlacesScreen(
     Surface(
         Modifier.padding(top = 26.dp)
     ) {
-        val places = placeSelectorViewModel.getFilteredPlaces(title)
+        val places = placeSelectorViewModel.getFilteredPlaceByCategory(title)
         val currentPlace = placeSelectorViewModel.currentPlace.collectAsState().value
         val favorites = placeSelectorViewModel.favoriteAttendanceLog.collectAsState().value
 

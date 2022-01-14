@@ -31,7 +31,7 @@ class PlaceSelectorViewModel(
     private val getRecommendedBuildingsUseCase: GetRecommendedBuildingsUseCase,
 ) : ViewModel() {
 
-    private var allPlaces: List<Place> = emptyList()
+    private var allPlace: List<Place> = emptyList()
         set(value) {
             Log.d(TAG, "allPlaces: 0")
             field = value
@@ -62,13 +62,13 @@ class PlaceSelectorViewModel(
     }
 
     private fun getAllPlaces() = viewModelScope.launch {
-        getAllPlacesUseCase().onSuccess { allPlaces = it }
+        getAllPlacesUseCase().onSuccess { allPlace = it }
     }
 
     private fun getCurrentPlace() = viewModelScope.launch {
         getCurrentPlaceUseCase().onSuccess {
             val cp = it
-                ?: allPlaces.find { place ->
+                ?: allPlace.find { place ->
                     place.name == "${myIdentity?.grade}학년 ${myIdentity?.`class`}반"
                 }
                 ?: Place("", "${myIdentity?.grade}학년 ${myIdentity?.`class`}반", "", null, "교실")
@@ -76,6 +76,10 @@ class PlaceSelectorViewModel(
         }.onFailure {
             _currentPlace.emit(Future.Failure(it))
         }
+    }
+
+    fun getAllPlace(): List<Place> {
+        return allPlace
     }
 
     fun setCurrentPlace(
@@ -130,8 +134,14 @@ class PlaceSelectorViewModel(
         }
     }
 
-    fun getFilteredPlaces(category: String): List<Place> {
-        return allPlaces.filter { "${it.building} ${it.floor}" == category }
+    fun getFilteredPlaceByCategory(category: String): List<Place> {
+        return allPlace.filter { "${it.building} ${it.floor}" == category }
+    }
+
+    fun getFilteredPlaceByName(search: String): List<Place> {
+        return allPlace.filter {
+            it.name.contains(search).or(it._id.contains(search))
+        }
     }
 
     fun placeIdToPlace(placeId: String): Place {

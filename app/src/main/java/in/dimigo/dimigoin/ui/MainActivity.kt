@@ -12,7 +12,9 @@ import `in`.dimigo.dimigoin.ui.screen.MainScreen
 import `in`.dimigo.dimigoin.ui.screen.Screen
 import `in`.dimigo.dimigoin.ui.screen.SplashScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.BuildingScreen
+import `in`.dimigo.dimigoin.ui.screen.placeselector.PlaceSearchScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.PlacesScreen
+import `in`.dimigo.dimigoin.ui.theme.C2
 import `in`.dimigo.dimigoin.ui.screen.placeselector.ReasonScreen
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
@@ -20,6 +22,7 @@ import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.viewmodel.PlaceSelectorViewModel
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
@@ -72,6 +75,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         val screens = listOf(
             Screen.Main,
@@ -269,7 +273,18 @@ fun NavGraphBuilder.placeSelectorNavGraph(
             )
         }
         composable("search") {
-            Text(text = "Search")
+            PlaceSearchScreen(
+                modifier = Modifier
+                    .background(MaterialTheme.colors.surface)
+                    .fillMaxSize()
+                    .systemBarsPadding(),
+                placeSelectorViewModel = placeSelectorViewModel,
+                onBackNavigation = { navController.popBackStack() },
+                onTryPlaceChange = navigateToRemark,
+                onTryFavoriteAdd = navigateToRemarkFavorite,
+                onFavoriteRemove = onFavoriteRemove,
+                color = Color.Black
+            )
         }
         composable(
             "remark/{placeId}",
@@ -323,7 +338,11 @@ fun NavGraphBuilder.placeSelectorNavGraph(
 }
 
 @Composable
-fun BottomNavBarImpl(navController: NavController, screens: List<Screen>, currentDestination: NavDestination?) {
+fun BottomNavBarImpl(
+    navController: NavController,
+    screens: List<Screen>,
+    currentDestination: NavDestination?,
+) {
     BottomNavigation {
         screens.forEach { screen ->
             BottomNavigationItem(
