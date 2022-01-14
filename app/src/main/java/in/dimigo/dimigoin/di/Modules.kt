@@ -43,11 +43,7 @@ val dataModules = module {
             .client(get())
             .build()
     }
-    single {
-        get<Retrofit>().create(DimigoinApiService::class.java).also {
-            TokenAuthenticator.dimigoinService = it
-        }
-    }
+    single { get<Retrofit>().create(DimigoinApiService::class.java) }
 
     single<UserRepository> { UserRepositoryImpl(get(), get()) }
     single<PlaceRepository> { PlaceRepositoryImpl(get(), get()) }
