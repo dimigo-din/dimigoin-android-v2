@@ -7,11 +7,20 @@ import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
+import retrofit2.Retrofit
 import retrofit2.await
+import retrofit2.converter.gson.GsonConverterFactory
 
 class TokenAuthenticator(
     private val localSharedPreferenceManager: LocalSharedPreferenceManager,
 ) : Authenticator {
+
+    private val retrofit = Retrofit.Builder()
+        .addConverterFactory(GsonConverterFactory.create())
+        .baseUrl(BASE_URL)
+        .build()
+
+    private val dimigoinApiService = retrofit.create(DimigoinApiService::class.java)
 
     private var recentRefreshedMillis: Long? = null
 
@@ -35,7 +44,7 @@ class TokenAuthenticator(
     private suspend fun refreshAndGetAccessToken(): String? {
         try {
             val refreshToken = localSharedPreferenceManager.refreshToken ?: return null
-            val authModel = dimigoinService.refreshToken("Bearer $refreshToken").await()
+            val authModel = dimigoinApiService.refreshToken("Bearer $refreshToken").await()
             localSharedPreferenceManager.accessToken = authModel.accessToken
             localSharedPreferenceManager.refreshToken = authModel.refreshToken
             return authModel.accessToken
@@ -46,8 +55,9 @@ class TokenAuthenticator(
     }
 
     companion object {
-        lateinit var dimigoinService: DimigoinApiService
-        const val AUTHORIZATION_HEADER = "Authorization"
+        private const val BASE_URL = "https://api.dimigo.in/"
+        private const val AUTHORIZATION_HEADER = "Authorization"
         private const val ALLOW_RETRY_REFRESH_SECONDS = 60
+        private const val TAG = "TokenAuthenticator"
     }
 }
