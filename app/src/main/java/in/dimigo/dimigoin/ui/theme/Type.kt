@@ -9,6 +9,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 val AppleSDGothicNeoFontFamily = FontFamily(
+    Font(R.font.m, weight = FontWeight.Normal),
     Font(R.font.b, weight = FontWeight.Bold),
     Font(R.font.eb, weight = FontWeight.ExtraBold),
 )
@@ -70,6 +71,6 @@ object DTypography {
         fontWeight = FontWeight.W500,
         fontSize = 14.sp,
         lineHeight = 25.sp,
-        color = C2,
+        color = C1,
     )
 }
