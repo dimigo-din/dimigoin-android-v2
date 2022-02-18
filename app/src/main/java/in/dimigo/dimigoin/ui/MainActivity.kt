@@ -212,10 +212,6 @@ fun App(
             }
             composable(Screen.Meal.route) {
                 MealScreen(
-                    modifier = Modifier
-                        .padding(horizontal = 20.dp)
-                        .padding(top = 36.dp)
-                        .systemBarsPadding(),
                     onMealTimeClick = { },
                 )
             }

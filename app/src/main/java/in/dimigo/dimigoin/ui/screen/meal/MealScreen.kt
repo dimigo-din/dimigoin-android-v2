@@ -23,13 +23,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.insets.statusBarsPadding
 import java.time.LocalDate
 import java.time.LocalTime
 import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun MealScreen(
-    modifier: Modifier = Modifier,
     mealViewModel: MealViewModel = getViewModel(),
     onMealTimeClick: (MealTimeType) -> Unit,
 ) {
@@ -40,8 +40,17 @@ fun MealScreen(
     val (page, setPage) = remember { mutableStateOf(dayOfWeek - 1) }
     val scrollState = rememberScrollState()
 
-    Surface(Modifier.fillMaxHeight()) {
-        Column(modifier.fillMaxHeight()) {
+    Surface(
+        Modifier
+            .fillMaxHeight()
+            .statusBarsPadding()
+    ) {
+        Column(
+            Modifier
+                .fillMaxHeight()
+                .padding(horizontal = 20.dp)
+                .padding(top = 36.dp)
+        ) {
             Text(
                 modifier = Modifier.padding(start = 15.dp),
                 text = LocalDate.now().asKoreanWeekString(), style = DTypography.t5, color = C2
@@ -59,7 +68,11 @@ fun MealScreen(
             )
             Spacer(Modifier.height(10.dp))
 
-            Column(Modifier.verticalScroll(scrollState).fillMaxHeight()) {
+            Column(
+                Modifier
+                    .fillMaxHeight()
+                    .verticalScroll(scrollState)
+            ) {
                 MealItem(
                     modifier = Modifier.fillMaxWidth(),
                     type = MealTimeType.BREAKFAST,
