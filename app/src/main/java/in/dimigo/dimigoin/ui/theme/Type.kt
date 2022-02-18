@@ -15,6 +15,12 @@ val AppleSDGothicNeoFontFamily = FontFamily(
 )
 
 object DTypography {
+    val t0 = TextStyle(
+        fontFamily = AppleSDGothicNeoFontFamily,
+        fontWeight = FontWeight.W700,
+        fontSize = 26.sp,
+        lineHeight = 31.2.sp,
+    )
     val t1 = TextStyle(
         fontFamily = AppleSDGothicNeoFontFamily,
         fontWeight = FontWeight.W700,
