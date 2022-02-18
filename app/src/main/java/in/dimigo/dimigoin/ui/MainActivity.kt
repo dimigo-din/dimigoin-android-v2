@@ -15,7 +15,6 @@ import `in`.dimigo.dimigoin.ui.screen.meal.MealScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.BuildingScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.PlaceSearchScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.PlacesScreen
-import `in`.dimigo.dimigoin.ui.theme.C2
 import `in`.dimigo.dimigoin.ui.screen.placeselector.ReasonScreen
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
