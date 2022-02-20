@@ -1,6 +1,7 @@
 package `in`.dimigo.dimigoin.viewmodel
 
 import `in`.dimigo.dimigoin.domain.entity.Place
+import `in`.dimigo.dimigoin.domain.entity.PlaceType
 import `in`.dimigo.dimigoin.domain.entity.User
 import `in`.dimigo.dimigoin.domain.usecase.place.GetAllPlacesUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.GetCurrentPlaceUseCase
@@ -43,7 +44,7 @@ class MainViewModel(
                 ?: allPlaces.find { place ->
                     place.name == "${myIdentity?.grade}학년 ${myIdentity?.`class`}반"
                 }
-                ?: Place("", "${myIdentity?.grade}학년 ${myIdentity?.`class`}반", "", null, "교실")
+                ?: Place("", "${myIdentity?.grade}학년 ${myIdentity?.`class`}반", "", "", "", null, PlaceType.CLASSROOM)
             _currentPlace.emit(Future.Success(cp))
         }.onFailure {
             _currentPlace.emit(Future.Failure(it))

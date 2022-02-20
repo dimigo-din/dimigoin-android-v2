@@ -10,6 +10,7 @@ import `in`.dimigo.dimigoin.domain.entity.AttendanceLog
 import `in`.dimigo.dimigoin.domain.entity.Building
 import `in`.dimigo.dimigoin.domain.entity.Place
 import `in`.dimigo.dimigoin.domain.entity.PlaceCategory
+import `in`.dimigo.dimigoin.domain.entity.PlaceType
 import `in`.dimigo.dimigoin.domain.repository.PlaceRepository
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -98,8 +99,7 @@ class PlaceRepositoryImpl(
                         PlaceCategory("B1층", "급식실"),
                         PlaceCategory("1층", "교무실, 교실"),
                         PlaceCategory("2층", "교실, 특별실"),
-                        PlaceCategory("3층", "동아리실, 특별실"),
-                        PlaceCategory("4층", "옥상, 골프장"),
+                        PlaceCategory("3층", "동아리실, 방과후실"),
                     )
                 ),
                 Building(
@@ -107,51 +107,107 @@ class PlaceRepositoryImpl(
                     listOf(
                         PlaceCategory("1층", "교무실, 특별실"),
                         PlaceCategory("2층", "교실, 특별실"),
-                        PlaceCategory("3층", "자습실, 도서관"),
+                        PlaceCategory("3층", "열람실, 특별실"),
                         PlaceCategory("4층", "대강당"),
                     )
                 ),
-                Building("생활관", "학봉관", listOf(
-                    Place(
-                        "603c58898703c000245b13d7",
-                        "학봉관",
-                        "학봉관",
-                        null,
-                        "학봉관",
+                Building(
+                    "생활관", "학봉관",
+                    listOf(
+                        Place(
+                            "620fcff7a0469d4750585a34",
+                            "학봉관 호실",
+                            "남호실",
+                            "생활관",
+                            "학봉관",
+                            null,
+                            PlaceType.DORMITORY,
+                        ),
+                        Place(
+                            "620fcf9ca0469d4750585a32",
+                            "미술실",
+                            "미술실",
+                            "1층",
+                            "학봉관",
+                            "1층",
+                            PlaceType.ETC,
+                        ),
+                        Place(
+                            "620fcfc2a0469d4750585a33",
+                            "ATM기",
+                            "ATM",
+                            "1층",
+                            "학봉관",
+                            "1층",
+                            PlaceType.ETC,
+                        )
+                    ),
+                    listOf(
+                        Place(
+                            "620fcf4ea0469d4750585a31",
+                            "학봉관 세탁",
+                            "세탁",
+                            "세탁하러 오셨나요?",
+                            "학봉관",
+                            null,
+                            PlaceType.LAUNDRY,
+                        )
                     )
-                )),
-                Building("생활관", "우정학사", listOf(
-                    Place(
-                        "603c58898703c000245b13d8",
+                ),
+                Building(
+                    "생활관", "우정학사",
+                    listOf(Place(
+                        "620fd105a0469d4750585a37",
+                        "우정학사 호실",
+                        "여호실",
+                        "생활관",
                         "우정학사",
+                        null,
+                        PlaceType.DORMITORY,
+                    )),
+                    listOf(Place(
+                        "620fc9c3c1ce4101d43d5f98",
+                        "우정학사 세탁",
+                        "세탁",
+                        "세탁하러 오셨나요?",
                         "우정학사",
                         null,
-                        "우정학사",
-                    )
-                )),
-                Building("기타", "그 외", listOf(
-                    Place(
-                        "60436dfb5745e110d9713536",
-                        "스마트팜",
-                        "지상",
-                        null,
-                        "지상",
+                        PlaceType.DORMITORY,
+                    ))
+                ),
+                Building(
+                    "기타", "기타 장소",
+                    listOf(
+                        Place(
+                            "620fcb32c1ce4101d43d5fa4",
+                            "스마트팜",
+                            "농장",
+                            "지상",
+                            "기타 장소",
+                            "지상",
+                            PlaceType.FARM,
+                        ),
+                        Place(
+                            "620fcb5ac1ce4101d43d5fa5",
+                            "운동장",
+                            "운동장",
+                            "지상",
+                            "기타 장소",
+                            "지상",
+                            PlaceType.PLAYGROUND,
+                        ),
+                        Place(
+                            "620fcb6ac1ce4101d43d5fa6",
+                            "체육관",
+                            "체육관",
+                            "지하",
+                            "기타 장소",
+                            "지하",
+                            PlaceType.GYM,
+                        ),
                     ),
-                    Place(
-                        "60436dfb5745e110d9713537",
-                        "운동장",
-                        "지상",
-                        null,
-                        "지상",
-                    ),
-                    Place(
-                        "60436dfb5745e110d9713538",
-                        "체육관",
-                        "지하",
-                        null,
-                        "지하",
-                    ),
-                )),
+                    listOf(PlaceCategory("기타 장소 및 사유", "저는 다른 곳에 있어요"))
+                ),
             )
         )
     }
