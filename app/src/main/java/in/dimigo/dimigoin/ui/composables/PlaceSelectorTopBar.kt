@@ -15,7 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+
 
 @Composable
 fun PlaceSelectorTopBar(
@@ -37,7 +39,11 @@ fun PlaceSelectorTopBar(
                     .noRippleClickable { onBackNavigation() },
                 painter = painterResource(id = R.drawable.ic_arrow_left), contentDescription = null
             )
-            Text(text = title, style = DTypography.t1)
+            Text(
+                text = title,
+                style = DTypography.t1,
+                modifier = Modifier.noRippleClickable { onBackNavigation() }
+            )
             Spacer(Modifier.weight(1f))
             if (showSearchIcon) {
                 Icon(
