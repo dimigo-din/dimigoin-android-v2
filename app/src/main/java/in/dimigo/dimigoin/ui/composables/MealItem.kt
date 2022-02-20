@@ -32,8 +32,8 @@ import java.time.LocalTime
 fun MealItem(
     modifier: Modifier = Modifier,
     type: MealTimeType,
-    time: LocalTime,
-    meal: String,
+    time: LocalTime?,
+    meal: String?,
     onMealTimeClick: (MealTimeType) -> Unit,
     highlight: Boolean,
 ) = ConstraintLayout(
@@ -74,7 +74,7 @@ fun MealItem(
             }
         )
         Text(
-            text = time.asKorean12HoursString() + "  >",
+            text = (time?.asKorean12HoursString() ?: "시간 정보 없음") + "  >",
             style = DTypography.t6,
             color = if (highlight) Color.White else Point,
             modifier = Modifier.constrainAs(timeText) {
@@ -84,7 +84,7 @@ fun MealItem(
             }
         )
         Text(
-            text = meal,
+            text = meal ?: "급식 정보가 없습니다.",
             style = DTypography.mealMenu,
             color = if (highlight) Color.White else if (isSystemInDarkTheme()) C3 else C1,
             modifier = Modifier.constrainAs(mealText) {

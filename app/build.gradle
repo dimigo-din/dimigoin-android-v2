@@ -75,6 +75,10 @@ dependencies {
     // Constraint layout
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-rc02"
 
+    /// Accompanists
+    // Pager
+    implementation "com.google.accompanist:accompanist-pager:0.24.2-alpha"
+
     // Coil
     implementation "io.coil-kt:coil-compose:1.4.0"
 

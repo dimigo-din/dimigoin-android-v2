@@ -11,10 +11,10 @@ import `in`.dimigo.dimigoin.ui.screen.LoginScreen
 import `in`.dimigo.dimigoin.ui.screen.MainScreen
 import `in`.dimigo.dimigoin.ui.screen.Screen
 import `in`.dimigo.dimigoin.ui.screen.SplashScreen
+import `in`.dimigo.dimigoin.ui.screen.meal.MealScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.BuildingScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.PlaceSearchScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.PlacesScreen
-import `in`.dimigo.dimigoin.ui.theme.C2
 import `in`.dimigo.dimigoin.ui.screen.placeselector.ReasonScreen
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
@@ -209,7 +209,11 @@ fun App(
                     hasNewNotification = false
                 )
             }
-            composable(Screen.Meal.route) { Text(text = "급식") }
+            composable(Screen.Meal.route) {
+                MealScreen(
+                    onMealTimeClick = { },
+                )
+            }
             composable(Screen.Calendar.route) { Text(text = "일정") }
             composable(Screen.Application.route) { Text(text = "신청") }
             composable(Screen.MyInfo.route) { Text(text = "내 정보") }
