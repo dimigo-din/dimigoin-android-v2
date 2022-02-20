@@ -44,7 +44,7 @@ fun PlacesScreen(
         Column {
             PlaceSelectorTopBar(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                title = title,
+                title = if (title == "기타 장소 기타 장소 및 사유") "기타 장소 및 사유" else title,
                 onBackNavigation = onBackNavigation,
                 showSearchIcon = false,
                 onSearch = { },
@@ -57,13 +57,12 @@ fun PlacesScreen(
                 modifier = Modifier.padding(horizontal = 20.dp)
             ) {
                 item { Spacer(Modifier) }
-                items(places) { place ->
+                items(places.sortedBy { it.name }) { place ->
                     val favoriteAttLog = favorites.data?.find { it.placeId == place._id }
                     val isFavorite = favoriteAttLog != null
                     val isSelected = place._id == currentPlace.data?._id
                     PlaceItem(
                         place = place,
-                        icon = R.drawable.ic_school,
                         isFavorite = isFavorite,
                         onFavoriteChange = onFavoriteChange@{ favorite ->
                             if (favorite) {

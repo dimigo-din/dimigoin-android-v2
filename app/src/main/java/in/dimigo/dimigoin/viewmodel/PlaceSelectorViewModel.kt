@@ -129,8 +129,6 @@ class PlaceSelectorViewModel(
     private fun getRecommendedBuildings() = viewModelScope.launch {
         getRecommendedBuildingsUseCase().onSuccess {
             _recommendedBuildings.emit(Future.Success(it))
-        }.onFailure {
-            _recommendedBuildings.emit(Future.Success(defaultBuildings))
         }
     }
 
