@@ -32,6 +32,6 @@ class SplashViewModel(
     }
 
     companion object {
-        private const val TAG = "LoginViewModel"
+        private const val TAG = "SplashViewModel"
     }
 }

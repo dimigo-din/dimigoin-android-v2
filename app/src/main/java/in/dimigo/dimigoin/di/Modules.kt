@@ -2,12 +2,16 @@ package `in`.dimigo.dimigoin.di
 
 import `in`.dimigo.dimigoin.data.datasource.DimigoinApiService
 import `in`.dimigo.dimigoin.data.datasource.LocalSharedPreferenceManager
+import `in`.dimigo.dimigoin.data.repository.MealRepositoryImpl
 import `in`.dimigo.dimigoin.data.repository.PlaceRepositoryImpl
 import `in`.dimigo.dimigoin.data.repository.UserRepositoryImpl
 import `in`.dimigo.dimigoin.data.util.AuthenticationInterceptor
 import `in`.dimigo.dimigoin.data.util.TokenAuthenticator
+import `in`.dimigo.dimigoin.domain.repository.MealRepository
 import `in`.dimigo.dimigoin.domain.repository.PlaceRepository
 import `in`.dimigo.dimigoin.domain.repository.UserRepository
+import `in`.dimigo.dimigoin.domain.usecase.meal.GetMyMealTimeUseCase
+import `in`.dimigo.dimigoin.domain.usecase.meal.GetWeeklyMealUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.AddFavoriteAttendanceLogUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.GetAllPlacesUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.GetCurrentPlaceUseCase
@@ -19,6 +23,7 @@ import `in`.dimigo.dimigoin.domain.usecase.user.GetMyIdentityUseCase
 import `in`.dimigo.dimigoin.domain.usecase.user.UserLoginUseCase
 import `in`.dimigo.dimigoin.viewmodel.LoginViewModel
 import `in`.dimigo.dimigoin.viewmodel.MainViewModel
+import `in`.dimigo.dimigoin.viewmodel.MealViewModel
 import `in`.dimigo.dimigoin.viewmodel.PlaceSelectorViewModel
 import `in`.dimigo.dimigoin.viewmodel.SplashViewModel
 import okhttp3.OkHttpClient
@@ -47,6 +52,7 @@ val dataModules = module {
 
     single<UserRepository> { UserRepositoryImpl(get(), get()) }
     single<PlaceRepository> { PlaceRepositoryImpl(get(), get()) }
+    single<MealRepository> { MealRepositoryImpl(get()) }
 
     single { UserLoginUseCase(get()) }
     single { GetMyIdentityUseCase(get()) }
@@ -57,6 +63,8 @@ val dataModules = module {
     single { AddFavoriteAttendanceLogUseCase(get()) }
     single { RemoveFavoriteAttendanceLogUseCase(get()) }
     single { GetRecommendedBuildingsUseCase(get()) }
+    single { GetWeeklyMealUseCase(get()) }
+    single { GetMyMealTimeUseCase(get(), get()) }
 }
 
 val presentationModules = module {
@@ -64,4 +72,5 @@ val presentationModules = module {
     viewModel { SplashViewModel(get()) }
     viewModel { MainViewModel(get(), get(), get()) }
     viewModel { PlaceSelectorViewModel(get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { MealViewModel(get(), get()) }
 }
