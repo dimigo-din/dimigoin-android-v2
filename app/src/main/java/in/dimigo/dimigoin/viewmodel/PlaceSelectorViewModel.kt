@@ -4,7 +4,7 @@ import `in`.dimigo.dimigoin.domain.entity.place.AttendanceLog
 import `in`.dimigo.dimigoin.domain.entity.place.Building
 import `in`.dimigo.dimigoin.domain.entity.place.Place
 import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
-import `in`.dimigo.dimigoin.domain.entity.User
+import `in`.dimigo.dimigoin.domain.entity.user.User
 import `in`.dimigo.dimigoin.domain.usecase.place.AddFavoriteAttendanceLogUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.GetAllPlacesUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.GetCurrentPlaceUseCase

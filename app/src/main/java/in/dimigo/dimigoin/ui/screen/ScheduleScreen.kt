@@ -1,7 +1,7 @@
 package `in`.dimigo.dimigoin.ui.screen
 
 import `in`.dimigo.dimigoin.R
-import `in`.dimigo.dimigoin.domain.entity.User
+import `in`.dimigo.dimigoin.domain.entity.user.User
 import `in`.dimigo.dimigoin.domain.entity.schedule.DailyTimetable
 import `in`.dimigo.dimigoin.domain.entity.schedule.MonthlySchedule
 import `in`.dimigo.dimigoin.domain.entity.schedule.Schedule
