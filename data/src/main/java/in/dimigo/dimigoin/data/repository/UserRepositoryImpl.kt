@@ -23,7 +23,7 @@ class UserRepositoryImpl(
         true
     }
 
-    override suspend fun me(): Result<User> = resultFromCall(
+    override suspend fun getMyIdentity(): Result<User> = resultFromCall(
         service.getMyIdentity(),
         cached = me
     ) { response ->

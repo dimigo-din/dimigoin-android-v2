@@ -4,5 +4,5 @@ import `in`.dimigo.dimigoin.domain.entity.user.User
 
 interface UserRepository {
     suspend fun login(username: String, password: String): Result<Boolean>
-    suspend fun me(): Result<User>
+    suspend fun getMyIdentity(): Result<User>
 }

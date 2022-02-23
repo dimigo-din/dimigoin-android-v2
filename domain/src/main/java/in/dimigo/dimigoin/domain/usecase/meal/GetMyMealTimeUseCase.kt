@@ -9,7 +9,7 @@ class GetMyMealTimeUseCase(
     private val userRepository: UserRepository,
 ) {
     suspend operator fun invoke(): Result<MealTime> =
-        userRepository.me().mapCatching {
+        userRepository.getMyIdentity().mapCatching {
             mealRepository.getMyMealTime(it.grade, it.`class`).getOrThrow()
         }
 }
