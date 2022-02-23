@@ -24,7 +24,7 @@ class PlaceRepositoryImpl(
 
     val attendanceLogMutex = Mutex()
 
-    override suspend fun getAllPlaces(): Result<List<Place>> = resultFromCall(
+    override suspend fun getPlaces(): Result<List<Place>> = resultFromCall(
         service.getPlaces(),
         cached = places,
     ) { response ->
@@ -63,7 +63,7 @@ class PlaceRepositoryImpl(
         }
     }
 
-    override suspend fun removeFavoriteAttendanceLog(id: String): Result<Boolean> {
+    override suspend fun removeFavoriteAttendanceLogById(id: String): Result<Boolean> {
         return try {
             attendanceLogMutex.withLock {
                 val logs = sharedPreferenceManager.favoriteAttendanceLogs
