@@ -1,4 +1,4 @@
-package `in`.dimigo.dimigoin.domain.entity
+package `in`.dimigo.dimigoin.domain.entity.schedule
 
 import java.time.LocalDate
 import java.time.YearMonth
