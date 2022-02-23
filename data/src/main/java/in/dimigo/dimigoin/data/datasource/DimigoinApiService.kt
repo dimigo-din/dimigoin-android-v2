@@ -8,7 +8,7 @@ import `in`.dimigo.dimigoin.data.model.place.PostAttendanceResponseModel
 import `in`.dimigo.dimigoin.data.model.user.GetUserMeResponseModel
 import `in`.dimigo.dimigoin.data.model.user.LoginRequestModel
 import `in`.dimigo.dimigoin.data.model.user.LoginResponseModel
-import `in`.dimigo.dimigoin.domain.entity.Meal
+import `in`.dimigo.dimigoin.domain.entity.meal.Meal
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
