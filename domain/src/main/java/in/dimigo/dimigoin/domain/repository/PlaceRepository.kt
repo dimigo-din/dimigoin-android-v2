@@ -1,8 +1,8 @@
 package `in`.dimigo.dimigoin.domain.repository
 
-import `in`.dimigo.dimigoin.domain.entity.AttendanceLog
-import `in`.dimigo.dimigoin.domain.entity.Building
-import `in`.dimigo.dimigoin.domain.entity.Place
+import `in`.dimigo.dimigoin.domain.entity.place.AttendanceLog
+import `in`.dimigo.dimigoin.domain.entity.place.Building
+import `in`.dimigo.dimigoin.domain.entity.place.Place
 
 interface PlaceRepository {
     suspend fun getPlaces(): Result<List<Place>>

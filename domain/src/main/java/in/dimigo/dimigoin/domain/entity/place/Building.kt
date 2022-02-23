@@ -1,4 +1,4 @@
-package `in`.dimigo.dimigoin.domain.entity
+package `in`.dimigo.dimigoin.domain.entity.place
 
 data class Building(
     val type: String,

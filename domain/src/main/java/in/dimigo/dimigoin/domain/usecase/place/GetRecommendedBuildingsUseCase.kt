@@ -1,6 +1,6 @@
 package `in`.dimigo.dimigoin.domain.usecase.place
 
-import `in`.dimigo.dimigoin.domain.entity.Building
+import `in`.dimigo.dimigoin.domain.entity.place.Building
 import `in`.dimigo.dimigoin.domain.repository.PlaceRepository
 
 class GetRecommendedBuildingsUseCase(
