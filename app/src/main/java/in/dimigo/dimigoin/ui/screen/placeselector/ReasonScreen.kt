@@ -1,6 +1,7 @@
 package `in`.dimigo.dimigoin.ui.screen.placeselector
 
 import `in`.dimigo.dimigoin.domain.entity.Place
+import `in`.dimigo.dimigoin.domain.entity.PlaceType
 import `in`.dimigo.dimigoin.domain.util.josa
 import `in`.dimigo.dimigoin.ui.composables.PlaceSelectorTopBar
 import `in`.dimigo.dimigoin.ui.theme.C3
@@ -33,7 +34,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.SpanStyle
@@ -210,7 +210,7 @@ private fun CustomTextField(
 @Composable
 fun ReasonScreenPreview1() {
     ReasonScreen(
-        place = Place("", "집", "", "", ""),
+        place = Place("", "집", "", "", "", "", PlaceType.ETC),
         onConfirm = { _, _ -> },
         isFavoriteRegister = false,
         onBackNavigation = { }
@@ -221,7 +221,7 @@ fun ReasonScreenPreview1() {
 @Composable
 fun ReasonScreenPreview2() {
     ReasonScreen(
-        place = Place("", "집", "", "", ""),
+        place = Place("", "집", "", "", "", "", PlaceType.ETC),
         onConfirm = { _, _ -> },
         isFavoriteRegister = true,
         onBackNavigation = { }

@@ -4,32 +4,42 @@ import `in`.dimigo.dimigoin.data.model.place.PlaceResponseModel
 import `in`.dimigo.dimigoin.domain.entity.Place
 
 fun PlaceResponseModel.toEntity(): Place {
-    val building = when {
-        location.contains("본관") -> "본관"
-        location.contains("신관") -> "신관"
-        location.contains("학봉관") -> "학봉관"
-        location.contains("우정학사") -> "우정학사"
-        else -> "그 외"
+    val building = when (this.building) {
+        "MAIN" -> "본관"
+        "NEWBUILDING" -> "신관"
+        "HAKBONG" -> "학봉관"
+        "UJEONG" -> "우정학사"
+        else -> "기타 장소"
     }
 
-    val floor = when {
-        location.contains("1층") -> "1층"
-        location.contains("2층") -> "2층"
-        location.contains("3층") -> "3층"
-        location.contains("4층") -> "4층"
-        else -> null
+    val description = when (this.name) {
+        "미술실", "ATM기" -> "1층"
+        "학봉관 호실", "우정학사 호실" -> "생활관"
+        "학봉관 세탁", "우정학사 세탁" -> "세탁하러 오셨나요?"
+        "스마트팜", "운동장" -> "지상"
+        "체육관" -> "지하"
+        "결석" -> "학교를 빠졌어요"
+        "외출" -> "밖에 나갔어요"
+        "위치 불명" -> "여기가 어딜까요..."
+        else -> type.value
     }
 
-    val type = when {
-        name.contains("교무실") -> "교무실"
-        name.contains("학년") || name == "과학실" -> "교실"
-        name.contains("복도") -> "복도"
-        name.contains("동아리") -> "동아리실"
-        name.contains("급식실") -> "급식실"
-        name.contains("옥상") -> "옥상"
-        name.contains("골프장") -> "골프장"
-        else -> "특별실"
+    val floor = when (this.floor) {
+        1, 2, 3, 4 -> "${this.floor}층"
+        -1 -> "B1층"
+        else -> when (this.name) {
+            "결석", "외출", "위치 불명" -> "기타 장소 및 사유"
+            else -> null
+        }
     }
 
-    return Place(_id, name, building, floor, type)
+    return Place(
+        _id = _id,
+        name = name,
+        alias = nick,
+        building = building,
+        description = description,
+        floor = floor,
+        type = type,
+    )
 }

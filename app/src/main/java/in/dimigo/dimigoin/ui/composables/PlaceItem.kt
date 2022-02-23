@@ -2,6 +2,7 @@ package `in`.dimigo.dimigoin.ui.composables
 
 import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.domain.entity.Place
+import `in`.dimigo.dimigoin.domain.entity.PlaceType
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
 import `in`.dimigo.dimigoin.ui.theme.C1
 import `in`.dimigo.dimigoin.ui.theme.C2
@@ -12,7 +13,6 @@ import `in`.dimigo.dimigoin.ui.theme.LightPoint
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.theme.Shapes
 import `in`.dimigo.dimigoin.ui.theme.YellowLight
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
 fun PlaceItem(
     modifier: Modifier = Modifier,
     place: Place,
-    @DrawableRes icon: Int,
     isFavorite: Boolean,
     onFavoriteChange: (Boolean) -> Unit,
     isSelected: Boolean,
@@ -50,6 +49,20 @@ fun PlaceItem(
         .fillMaxWidth(),
     verticalAlignment = Alignment.CenterVertically,
 ) {
+    val icon = when (place.type) {
+        PlaceType.CLASSROOM -> R.drawable.ic_classroom
+        PlaceType.RESTROOM -> R.drawable.ic_restroom
+        PlaceType.CIRCLE, PlaceType.AFTERSCHOOL -> R.drawable.ic_circle_afterschool
+        PlaceType.TEACHER -> R.drawable.ic_teacher_room
+        PlaceType.CORRIDOR -> R.drawable.ic_corridor
+        PlaceType.FARM -> R.drawable.ic_farm
+        PlaceType.PLAYGROUND -> R.drawable.ic_playground
+        PlaceType.GYM -> R.drawable.ic_gym
+        PlaceType.LAUNDRY -> R.drawable.ic_laundry
+        PlaceType.SCHOOL -> R.drawable.ic_school
+        PlaceType.DORMITORY -> R.drawable.ic_dormitory
+        PlaceType.ETC, PlaceType.ABSENT -> R.drawable.ic_idk_room
+    }
     Icon(
         modifier = Modifier.size(24.dp),
         painter = painterResource(id = icon), contentDescription = null,
@@ -61,7 +74,7 @@ fun PlaceItem(
         verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         Text(
-            text = place.type, style = DTypography.t5, color = if (isSelected) LightPoint else C2,
+            text = place.description, style = DTypography.t5, color = if (isSelected) LightPoint else C2,
         )
         Text(
             text = place.name, style = DTypography.t4, color = if (isSelected) Point else C1,
@@ -98,7 +111,6 @@ fun PlaceItem(
 fun PlaceItemPreview1() {
     PlaceItem(
         place = TestPlace,
-        icon = R.drawable.ic_main,
         isFavorite = false, onFavoriteChange = { },
         isSelected = false, onSelect = { },
     )
@@ -109,7 +121,6 @@ fun PlaceItemPreview1() {
 fun PlaceItemPreview2() {
     PlaceItem(
         place = TestPlace,
-        icon = R.drawable.ic_main,
         isFavorite = false, onFavoriteChange = { },
         isSelected = true, onSelect = { },
     )
@@ -120,7 +131,6 @@ fun PlaceItemPreview2() {
 fun PlaceItemPreview3() {
     PlaceItem(
         place = TestPlace,
-        icon = R.drawable.ic_main,
         isFavorite = true, onFavoriteChange = { },
         isSelected = false, onSelect = { },
     )
@@ -131,11 +141,10 @@ fun PlaceItemPreview3() {
 fun PlaceItemPreview4() {
     PlaceItem(
         place = TestPlace,
-        icon = R.drawable.ic_main,
         isFavorite = true, onFavoriteChange = { },
         isSelected = true, onSelect = { },
     )
 }
 
-private val TestPlace = Place("", "1층 복도", "본관", "1층", "복도에 계신가요?")
+private val TestPlace = Place("", "1층 복도", "복도", "복도에 계신가요?", "본관", "1층", PlaceType.CORRIDOR)
 // endregion

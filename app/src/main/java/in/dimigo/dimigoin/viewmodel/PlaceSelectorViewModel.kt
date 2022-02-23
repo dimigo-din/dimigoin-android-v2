@@ -3,7 +3,7 @@ package `in`.dimigo.dimigoin.viewmodel
 import `in`.dimigo.dimigoin.domain.entity.AttendanceLog
 import `in`.dimigo.dimigoin.domain.entity.Building
 import `in`.dimigo.dimigoin.domain.entity.Place
-import `in`.dimigo.dimigoin.domain.entity.PlaceCategory
+import `in`.dimigo.dimigoin.domain.entity.PlaceType
 import `in`.dimigo.dimigoin.domain.entity.User
 import `in`.dimigo.dimigoin.domain.usecase.place.AddFavoriteAttendanceLogUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.GetAllPlacesUseCase
@@ -71,7 +71,7 @@ class PlaceSelectorViewModel(
                 ?: allPlace.find { place ->
                     place.name == "${myIdentity?.grade}학년 ${myIdentity?.`class`}반"
                 }
-                ?: Place("", "${myIdentity?.grade}학년 ${myIdentity?.`class`}반", "", null, "교실")
+                ?: Place("", "${myIdentity?.grade}학년 ${myIdentity?.`class`}반", "", "", "", null, PlaceType.CLASSROOM)
             _currentPlace.emit(Future.Success(cp))
         }.onFailure {
             _currentPlace.emit(Future.Failure(it))
@@ -129,8 +129,6 @@ class PlaceSelectorViewModel(
     private fun getRecommendedBuildings() = viewModelScope.launch {
         getRecommendedBuildingsUseCase().onSuccess {
             _recommendedBuildings.emit(Future.Success(it))
-        }.onFailure {
-            _recommendedBuildings.emit(Future.Success(defaultBuildings))
         }
     }
 
@@ -150,68 +148,6 @@ class PlaceSelectorViewModel(
 
     companion object {
         private const val TAG = "LoginViewModel"
-        private val defaultBuildings = listOf(
-            Building(
-                "학교", "본관",
-                listOf(
-                    PlaceCategory("B1층", "급식실"),
-                    PlaceCategory("1층", "교무실, 교실"),
-                    PlaceCategory("2층", "교실, 특별실"),
-                    PlaceCategory("3층", "동아리실, 특별실"),
-                    PlaceCategory("4층", "옥상, 골프장"),
-                )
-            ),
-            Building(
-                "학교", "신관",
-                listOf(
-                    PlaceCategory("1층", "교무실, 특별실"),
-                    PlaceCategory("2층", "교실, 특별실"),
-                    PlaceCategory("3층", "자습실, 도서관"),
-                    PlaceCategory("4층", "대강당"),
-                )
-            ),
-            Building("생활관", "학봉관", listOf(
-                Place(
-                    "603c58898703c000245b13d7",
-                    "학봉관",
-                    "학봉관",
-                    null,
-                    "학봉관",
-                )
-            )),
-            Building("생활관", "우정학사", listOf(
-                Place(
-                    "603c58898703c000245b13d8",
-                    "우정학사",
-                    "우정학사",
-                    null,
-                    "우정학사",
-                )
-            )),
-            Building("기타", "그 외", listOf(
-                Place(
-                    "60436dfb5745e110d9713536",
-                    "스마트팜",
-                    "지상",
-                    null,
-                    "지상",
-                ),
-                Place(
-                    "60436dfb5745e110d9713537",
-                    "운동장",
-                    "지상",
-                    null,
-                    "지상",
-                ),
-                Place(
-                    "60436dfb5745e110d9713538",
-                    "체육관",
-                    "지하",
-                    null,
-                    "지하",
-                ),
-            )),
-        )
-        private val fallbackPlace = Place("", "", "", "", "")
+        private val fallbackPlace = Place("", "", "", "", "", null, PlaceType.ETC)
     }
 }

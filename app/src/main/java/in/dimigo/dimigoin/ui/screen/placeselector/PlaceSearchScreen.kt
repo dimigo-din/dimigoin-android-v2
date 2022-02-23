@@ -113,7 +113,7 @@ fun PlaceSearchScreen(
                         textAlign = TextAlign.Center
                     )
                     Text("실 이름을 직접 입력하거나,\n" +
-                            "각 실에 붙어있는 고유번호로 찾을수도 있어요",
+                        "각 실에 붙어있는 고유번호로 찾을수도 있어요",
                         style = DTypography.pageSubtitle.copy(lineHeight = 22.sp),
                         color = C2,
                         textAlign = TextAlign.Center
@@ -131,7 +131,6 @@ fun PlaceSearchScreen(
                         val isSelected = place._id == currentPlace.data?._id
                         PlaceItem(
                             place = place,
-                            icon = R.drawable.ic_school,
                             isFavorite = isFavorite,
                             onFavoriteChange = onFavoriteChange@{ favorite ->
                                 if (favorite) {

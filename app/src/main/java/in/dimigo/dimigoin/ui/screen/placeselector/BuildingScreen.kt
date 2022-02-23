@@ -1,9 +1,11 @@
 package `in`.dimigo.dimigoin.ui.screen.placeselector
 
 import `in`.dimigo.dimigoin.R
+import `in`.dimigo.dimigoin.domain.entity.AttendanceLog
 import `in`.dimigo.dimigoin.domain.entity.Building
 import `in`.dimigo.dimigoin.domain.entity.Place
 import `in`.dimigo.dimigoin.domain.entity.PlaceCategory
+import `in`.dimigo.dimigoin.domain.entity.PlaceSelectorDisplayable
 import `in`.dimigo.dimigoin.ui.composables.BuildingList
 import `in`.dimigo.dimigoin.ui.composables.ContentBox
 import `in`.dimigo.dimigoin.ui.composables.PlaceCategoryItem
@@ -44,6 +46,7 @@ fun BuildingScreen(
     val currentPlace = placeSelectorViewModel.currentPlace.collectAsState().value
     val buildings = placeSelectorViewModel.recommendedBuildings.collectAsState().value
     val favorites = placeSelectorViewModel.favoriteAttendanceLog.collectAsState().value
+    val building = buildings.data?.find { it.name == title }
 
     Column(
         modifier = modifier
@@ -83,8 +86,7 @@ fun BuildingScreen(
                                     val isSelected = currentPlace.data?._id == attLog.placeId
                                     val place = placeSelectorViewModel.placeIdToPlace(attLog.placeId)
                                     PlaceItem(
-                                        place = place.copy(type = attLog.remark ?: "사유가 등록되지 않음"),
-                                        icon = R.drawable.ic_main,
+                                        place = place.copy(description = attLog.remark ?: "사유가 등록되지 않음"),
                                         isFavorite = true,
                                         onFavoriteChange = {
                                             placeSelectorViewModel.removeFavoriteAttendanceLog(attLog, onFavoriteRemove)
@@ -101,45 +103,87 @@ fun BuildingScreen(
                                 }
                             }
                         } else {
-                            val building = buildings.data?.find { it.name == title }
                             building?.children?.forEach { displayable ->
-                                when (displayable) {
-                                    is Place -> {
-                                        val favoriteAttLog = favorites.data?.find { it.placeId == displayable._id }
-                                        val isFavorite = favoriteAttLog != null
-                                        val isSelected = displayable._id == currentPlace.data?._id
-                                        PlaceItem(
-                                            place = displayable,
-                                            icon = R.drawable.ic_school,
-                                            isFavorite = isFavorite,
-                                            onFavoriteChange = onFavoriteChange@{ favorite ->
-                                                if (favorite) { onTryFavoriteAdd(displayable) } else {
-                                                    placeSelectorViewModel.removeFavoriteAttendanceLog(
-                                                        favorites.data?.find { it.placeId == displayable._id }
-                                                            ?: return@onFavoriteChange,
-                                                        onFavoriteRemove
-                                                    )
-                                                }
-                                            },
-                                            isSelected = isSelected,
-                                            onSelect = { onTryPlaceChange(displayable) }
-                                        )
-                                    }
-                                    is PlaceCategory -> {
-                                        PlaceCategoryItem(
-                                            category = displayable,
-                                            icon = R.drawable.ic_school,
-                                            onClick = { onCategoryClick(displayable) }
-                                        )
-                                    }
-                                }
+                                PlaceSelectorDisplayableItem(
+                                    placeSelectorViewModel = placeSelectorViewModel,
+                                    displayable = displayable,
+                                    favorites = favorites,
+                                    currentPlace = currentPlace,
+                                    onCategoryClick = onCategoryClick,
+                                    onTryPlaceChange = onTryPlaceChange,
+                                    onTryFavoriteAdd = onTryFavoriteAdd,
+                                    onFavoriteRemove = onFavoriteRemove
+                                )
                             }
                         }
                     }
                 }
 
-                Spacer(Modifier.height(20.dp))
+                Spacer(Modifier.height(11.dp))
+
+                if (building?.extraChildren?.isNotEmpty() == true) {
+                    ContentBox(
+                        modifier = Modifier.padding(horizontal = 20.dp),
+                    ) {
+                        building.extraChildren?.forEach { displayable ->
+                            PlaceSelectorDisplayableItem(
+                                placeSelectorViewModel = placeSelectorViewModel,
+                                displayable = displayable,
+                                favorites = favorites,
+                                currentPlace = currentPlace,
+                                onCategoryClick = onCategoryClick,
+                                onTryPlaceChange = onTryPlaceChange,
+                                onTryFavoriteAdd = onTryFavoriteAdd,
+                                onFavoriteRemove = onFavoriteRemove
+                            )
+                        }
+                    }
+                }
             }
+        }
+    }
+}
+
+@Composable
+fun PlaceSelectorDisplayableItem(
+    placeSelectorViewModel: PlaceSelectorViewModel,
+    displayable: PlaceSelectorDisplayable,
+    favorites: Future<List<AttendanceLog>>,
+    currentPlace: Future<Place>,
+    onCategoryClick: (PlaceCategory) -> Unit,
+    onTryPlaceChange: (Place) -> Unit,
+    onTryFavoriteAdd: (Place) -> Unit,
+    onFavoriteRemove: (Place) -> Unit,
+) {
+    when (displayable) {
+        is Place -> {
+            val favoriteAttLog = favorites.data?.find { it.placeId == displayable._id }
+            val isFavorite = favoriteAttLog != null
+            val isSelected = displayable._id == currentPlace.data?._id
+            PlaceItem(
+                place = displayable,
+                isFavorite = isFavorite,
+                onFavoriteChange = onFavoriteChange@{ favorite ->
+                    if (favorite) {
+                        onTryFavoriteAdd(displayable)
+                    } else {
+                        placeSelectorViewModel.removeFavoriteAttendanceLog(
+                            favorites.data?.find { it.placeId == displayable._id }
+                                ?: return@onFavoriteChange,
+                            onFavoriteRemove
+                        )
+                    }
+                },
+                isSelected = isSelected,
+                onSelect = { onTryPlaceChange(displayable) }
+            )
+        }
+        is PlaceCategory -> {
+            PlaceCategoryItem(
+                category = displayable,
+                icon = R.drawable.ic_school,
+                onClick = { onCategoryClick(displayable) }
+            )
         }
     }
 }
