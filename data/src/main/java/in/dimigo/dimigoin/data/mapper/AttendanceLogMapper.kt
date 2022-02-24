@@ -1,6 +1,6 @@
 package `in`.dimigo.dimigoin.data.mapper
 
-import `in`.dimigo.dimigoin.domain.entity.AttendanceLog
+import `in`.dimigo.dimigoin.domain.entity.place.AttendanceLog
 import com.google.gson.GsonBuilder
 
 fun String.toAttendanceLog(): AttendanceLog {

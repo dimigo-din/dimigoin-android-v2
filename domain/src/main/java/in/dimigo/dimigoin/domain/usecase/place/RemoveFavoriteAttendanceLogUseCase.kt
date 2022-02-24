@@ -6,5 +6,5 @@ class RemoveFavoriteAttendanceLogUseCase(
     private val placeRepository: PlaceRepository,
 ) {
     suspend operator fun invoke(id: String) =
-        placeRepository.removeFavoriteAttendanceLog(id)
+        placeRepository.removeFavoriteAttendanceLogById(id)
 }

@@ -1,7 +1,7 @@
 package `in`.dimigo.dimigoin.ui.screen.placeselector
 
-import `in`.dimigo.dimigoin.domain.entity.Place
-import `in`.dimigo.dimigoin.domain.entity.PlaceType
+import `in`.dimigo.dimigoin.domain.entity.place.Place
+import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
 import `in`.dimigo.dimigoin.domain.util.josa
 import `in`.dimigo.dimigoin.ui.composables.PlaceSelectorTopBar
 import `in`.dimigo.dimigoin.ui.theme.C3

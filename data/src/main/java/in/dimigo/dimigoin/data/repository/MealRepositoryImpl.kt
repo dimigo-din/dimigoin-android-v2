@@ -1,9 +1,9 @@
 package `in`.dimigo.dimigoin.data.repository
 
 import `in`.dimigo.dimigoin.data.datasource.DimigoinApiService
-import `in`.dimigo.dimigoin.domain.entity.Meal
-import `in`.dimigo.dimigoin.domain.entity.MealTime
-import `in`.dimigo.dimigoin.domain.entity.MealTimes
+import `in`.dimigo.dimigoin.domain.entity.meal.Meal
+import `in`.dimigo.dimigoin.domain.entity.meal.MealTime
+import `in`.dimigo.dimigoin.domain.entity.meal.MealTimes
 import `in`.dimigo.dimigoin.domain.repository.MealRepository
 import java.time.LocalTime
 

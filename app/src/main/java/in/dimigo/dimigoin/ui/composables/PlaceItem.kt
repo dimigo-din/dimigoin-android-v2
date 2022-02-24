@@ -1,8 +1,8 @@
 package `in`.dimigo.dimigoin.ui.composables
 
 import `in`.dimigo.dimigoin.R
-import `in`.dimigo.dimigoin.domain.entity.Place
-import `in`.dimigo.dimigoin.domain.entity.PlaceType
+import `in`.dimigo.dimigoin.domain.entity.place.Place
+import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
 import `in`.dimigo.dimigoin.ui.theme.C1
 import `in`.dimigo.dimigoin.ui.theme.C2

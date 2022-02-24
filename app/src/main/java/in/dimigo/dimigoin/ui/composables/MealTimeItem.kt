@@ -1,6 +1,5 @@
 package `in`.dimigo.dimigoin.ui.composables
 
-import `in`.dimigo.dimigoin.domain.entity.MealTime
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.util.asKorean12HoursString

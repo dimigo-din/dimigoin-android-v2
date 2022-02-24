@@ -1,4 +1,4 @@
-package `in`.dimigo.dimigoin.domain.entity
+package `in`.dimigo.dimigoin.domain.entity.meal
 
 import java.time.LocalTime
 
