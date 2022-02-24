@@ -25,6 +25,6 @@ class SchoolScheduleDataSource(
     }
 
     companion object {
-        const val ICAL_URL = "webcal://api.band.us/ical?token="
+        const val ICAL_URL = "https://api.band.us/ical?token="
     }
 }
