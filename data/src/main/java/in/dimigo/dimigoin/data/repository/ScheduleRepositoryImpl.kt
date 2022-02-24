@@ -13,6 +13,8 @@ import `in`.dimigo.dimigoin.domain.repository.ScheduleRepository
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class ScheduleRepositoryImpl(
     private val dimigoinService: DimigoinApiService,
@@ -39,17 +41,19 @@ class ScheduleRepositoryImpl(
     private fun getFirstDayOfWeek(date: LocalDate) = date.with(DayOfWeek.MONDAY)
 
     override suspend fun getSchoolSchedule(): Result<AnnualSchedule> = try {
-        Result.success(
-            SchoolScheduleDataSource.Calendar.values().associateBy {
-                it.type
-            }.mapValues {
-                scheduleDataSource.getICalStream(it.value)
-            }.map {
-                it.value.toSchedulesWithType(it.key)
-            }.flatten().groupBy {
-                YearMonth.from(it.date)
-            }
-        )
+        withContext(Dispatchers.IO) {
+            Result.success(
+                SchoolScheduleDataSource.Calendar.values().associateBy {
+                    it.type
+                }.mapValues {
+                    scheduleDataSource.getICalStream(it.value)
+                }.map {
+                    it.value.toSchedulesWithType(it.key)
+                }.flatten().groupBy {
+                    YearMonth.from(it.date)
+                }
+            )
+        }
     } catch (e: Exception) {
         Result.failure(e)
     }
