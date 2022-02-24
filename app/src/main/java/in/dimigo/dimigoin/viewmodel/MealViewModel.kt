@@ -1,7 +1,7 @@
 package `in`.dimigo.dimigoin.viewmodel
 
-import `in`.dimigo.dimigoin.domain.entity.Meal
-import `in`.dimigo.dimigoin.domain.entity.MealTime
+import `in`.dimigo.dimigoin.domain.entity.meal.Meal
+import `in`.dimigo.dimigoin.domain.entity.meal.MealTime
 import `in`.dimigo.dimigoin.domain.usecase.meal.GetMyMealTimeUseCase
 import `in`.dimigo.dimigoin.domain.usecase.meal.GetWeeklyMealUseCase
 import `in`.dimigo.dimigoin.ui.util.Future

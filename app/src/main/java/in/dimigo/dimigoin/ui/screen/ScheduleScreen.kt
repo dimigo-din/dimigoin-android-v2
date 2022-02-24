@@ -1,12 +1,12 @@
 package `in`.dimigo.dimigoin.ui.screen
 
 import `in`.dimigo.dimigoin.R
-import `in`.dimigo.dimigoin.domain.entity.DailyTimetable
-import `in`.dimigo.dimigoin.domain.entity.MonthlySchedule
-import `in`.dimigo.dimigoin.domain.entity.Schedule
-import `in`.dimigo.dimigoin.domain.entity.ScheduleType
-import `in`.dimigo.dimigoin.domain.entity.User
-import `in`.dimigo.dimigoin.domain.entity.WeeklyTimetable
+import `in`.dimigo.dimigoin.domain.entity.user.User
+import `in`.dimigo.dimigoin.domain.entity.schedule.DailyTimetable
+import `in`.dimigo.dimigoin.domain.entity.schedule.MonthlySchedule
+import `in`.dimigo.dimigoin.domain.entity.schedule.Schedule
+import `in`.dimigo.dimigoin.domain.entity.schedule.ScheduleType
+import `in`.dimigo.dimigoin.domain.entity.schedule.WeeklyTimetable
 import `in`.dimigo.dimigoin.ui.composables.PageSelector
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
 import `in`.dimigo.dimigoin.ui.theme.C1

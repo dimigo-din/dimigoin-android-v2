@@ -6,11 +6,11 @@ import `in`.dimigo.dimigoin.data.mapper.toEntity
 import `in`.dimigo.dimigoin.data.model.place.PlaceResponseModel
 import `in`.dimigo.dimigoin.data.model.place.PostAttendanceRequestModel
 import `in`.dimigo.dimigoin.data.util.resultFromCall
-import `in`.dimigo.dimigoin.domain.entity.AttendanceLog
-import `in`.dimigo.dimigoin.domain.entity.Building
-import `in`.dimigo.dimigoin.domain.entity.Place
-import `in`.dimigo.dimigoin.domain.entity.PlaceCategory
-import `in`.dimigo.dimigoin.domain.entity.PlaceType
+import `in`.dimigo.dimigoin.domain.entity.place.AttendanceLog
+import `in`.dimigo.dimigoin.domain.entity.place.Building
+import `in`.dimigo.dimigoin.domain.entity.place.Place
+import `in`.dimigo.dimigoin.domain.entity.place.PlaceCategory
+import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
 import `in`.dimigo.dimigoin.domain.repository.PlaceRepository
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -24,7 +24,7 @@ class PlaceRepositoryImpl(
 
     val attendanceLogMutex = Mutex()
 
-    override suspend fun getAllPlaces(): Result<List<Place>> = resultFromCall(
+    override suspend fun getPlaces(): Result<List<Place>> = resultFromCall(
         service.getPlaces(),
         cached = places,
     ) { response ->
@@ -63,7 +63,7 @@ class PlaceRepositoryImpl(
         }
     }
 
-    override suspend fun removeFavoriteAttendanceLog(id: String): Result<Boolean> {
+    override suspend fun removeFavoriteAttendanceLogById(id: String): Result<Boolean> {
         return try {
             attendanceLogMutex.withLock {
                 val logs = sharedPreferenceManager.favoriteAttendanceLogs

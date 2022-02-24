@@ -5,7 +5,7 @@ import `in`.dimigo.dimigoin.data.datasource.LocalSharedPreferenceManager
 import `in`.dimigo.dimigoin.data.mapper.toEntity
 import `in`.dimigo.dimigoin.data.model.user.LoginRequestModel
 import `in`.dimigo.dimigoin.data.util.resultFromCall
-import `in`.dimigo.dimigoin.domain.entity.User
+import `in`.dimigo.dimigoin.domain.entity.user.User
 import `in`.dimigo.dimigoin.domain.repository.UserRepository
 
 class UserRepositoryImpl(
@@ -23,7 +23,7 @@ class UserRepositoryImpl(
         true
     }
 
-    override suspend fun me(): Result<User> = resultFromCall(
+    override suspend fun getMyIdentity(): Result<User> = resultFromCall(
         service.getMyIdentity(),
         cached = me
     ) { response ->

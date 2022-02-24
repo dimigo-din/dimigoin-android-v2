@@ -1,7 +1,7 @@
 package `in`.dimigo.dimigoin.data.mapper
 
 import `in`.dimigo.dimigoin.data.model.place.PlaceResponseModel
-import `in`.dimigo.dimigoin.domain.entity.Place
+import `in`.dimigo.dimigoin.domain.entity.place.Place
 
 fun PlaceResponseModel.toEntity(): Place {
     val building = when (this.building) {

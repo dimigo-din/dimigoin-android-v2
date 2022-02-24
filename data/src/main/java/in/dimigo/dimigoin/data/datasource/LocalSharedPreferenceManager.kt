@@ -2,7 +2,7 @@ package `in`.dimigo.dimigoin.data.datasource
 
 import `in`.dimigo.dimigoin.data.mapper.toAttendanceLog
 import `in`.dimigo.dimigoin.data.mapper.toJsonString
-import `in`.dimigo.dimigoin.domain.entity.AttendanceLog
+import `in`.dimigo.dimigoin.domain.entity.place.AttendanceLog
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import androidx.core.content.edit

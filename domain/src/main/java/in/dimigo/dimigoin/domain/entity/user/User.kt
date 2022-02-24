@@ -1,4 +1,4 @@
-package `in`.dimigo.dimigoin.domain.entity
+package `in`.dimigo.dimigoin.domain.entity.user
 
 data class User(
     val name: String,

@@ -1,4 +1,11 @@
-package `in`.dimigo.dimigoin.domain.entity
+package `in`.dimigo.dimigoin.domain.entity.place
+
+interface PlaceSelectorDisplayable
+
+data class PlaceCategory(
+    val name: String,
+    val description: String,
+) : PlaceSelectorDisplayable
 
 data class Place(
     val _id: String,

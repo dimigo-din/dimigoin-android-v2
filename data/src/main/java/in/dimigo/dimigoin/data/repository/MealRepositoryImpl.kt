@@ -6,9 +6,9 @@ import `in`.dimigo.dimigoin.data.model.meal.MealResponseModel
 import `in`.dimigo.dimigoin.data.model.meal.MealSequenceResponseModel
 import `in`.dimigo.dimigoin.data.model.meal.MealTimeResponseModel
 import `in`.dimigo.dimigoin.data.util.resultFromCall
-import `in`.dimigo.dimigoin.domain.entity.Meal
-import `in`.dimigo.dimigoin.domain.entity.MealTime
-import `in`.dimigo.dimigoin.domain.entity.MealTimes
+import `in`.dimigo.dimigoin.domain.entity.meal.Meal
+import `in`.dimigo.dimigoin.domain.entity.meal.MealTime
+import `in`.dimigo.dimigoin.domain.entity.meal.MealTimes
 import `in`.dimigo.dimigoin.domain.repository.MealRepository
 import java.time.LocalDate
 import java.time.LocalTime

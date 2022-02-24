@@ -1,11 +1,11 @@
 package `in`.dimigo.dimigoin.ui.screen.placeselector
 
 import `in`.dimigo.dimigoin.R
-import `in`.dimigo.dimigoin.domain.entity.AttendanceLog
-import `in`.dimigo.dimigoin.domain.entity.Building
-import `in`.dimigo.dimigoin.domain.entity.Place
-import `in`.dimigo.dimigoin.domain.entity.PlaceCategory
-import `in`.dimigo.dimigoin.domain.entity.PlaceSelectorDisplayable
+import `in`.dimigo.dimigoin.domain.entity.place.AttendanceLog
+import `in`.dimigo.dimigoin.domain.entity.place.Building
+import `in`.dimigo.dimigoin.domain.entity.place.Place
+import `in`.dimigo.dimigoin.domain.entity.place.PlaceCategory
+import `in`.dimigo.dimigoin.domain.entity.place.PlaceSelectorDisplayable
 import `in`.dimigo.dimigoin.ui.composables.BuildingList
 import `in`.dimigo.dimigoin.ui.composables.ContentBox
 import `in`.dimigo.dimigoin.ui.composables.PlaceCategoryItem
