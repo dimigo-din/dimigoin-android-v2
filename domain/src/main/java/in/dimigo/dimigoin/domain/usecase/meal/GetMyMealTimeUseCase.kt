@@ -10,6 +10,6 @@ class GetMyMealTimeUseCase(
 ) {
     suspend operator fun invoke(): Result<MealTime> =
         userRepository.me().mapCatching {
-            mealRepository.getMyMealTime(it.grade, it.`class`).getOrThrow()
+            mealRepository.getMealTimeByClass(it.grade, it.`class`).getOrThrow()
         }
 }
