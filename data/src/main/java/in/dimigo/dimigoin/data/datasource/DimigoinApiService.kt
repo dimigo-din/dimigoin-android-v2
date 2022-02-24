@@ -1,5 +1,7 @@
 package `in`.dimigo.dimigoin.data.datasource
 
+import `in`.dimigo.dimigoin.data.model.meal.MealSequenceResponseModel
+import `in`.dimigo.dimigoin.data.model.meal.MealTimeResponseModel
 import `in`.dimigo.dimigoin.data.model.meal.WeeklyMealResponseModel
 import `in`.dimigo.dimigoin.data.model.place.GetAttendanceResponseModel
 import `in`.dimigo.dimigoin.data.model.place.GetPlacesResponseModel
@@ -40,4 +42,10 @@ interface DimigoinApiService {
 
     @GET("/meal/weekly")
     fun getWeeklyMeal(): Call<WeeklyMealResponseModel>
+
+    @GET("/dalgeurak/sequence")
+    fun getMealSequence(): Call<MealSequenceResponseModel>
+
+    @GET("/dalgeurak/time")
+    fun getMealTimes(): Call<MealTimeResponseModel>
 }
