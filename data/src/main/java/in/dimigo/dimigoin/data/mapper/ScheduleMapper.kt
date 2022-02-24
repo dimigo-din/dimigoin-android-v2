@@ -20,7 +20,7 @@ fun InputStream.toSchedulesWithType(type: ScheduleType) =
         cal.events.map { event ->
             repeatScheduleInDateRange(
                 type,
-                event.description.value,
+                event.summary.value,
                 event.dateStart.value.toLocalDate()..event.dateEnd.value.toLocalDate()
             )
         }.flatten()
