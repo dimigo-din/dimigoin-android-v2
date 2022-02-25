@@ -2,13 +2,16 @@ package `in`.dimigo.dimigoin.di
 
 import `in`.dimigo.dimigoin.data.datasource.DimigoinApiService
 import `in`.dimigo.dimigoin.data.datasource.LocalSharedPreferenceManager
+import `in`.dimigo.dimigoin.data.datasource.SchoolScheduleDataSource
 import `in`.dimigo.dimigoin.data.repository.MealRepositoryImpl
 import `in`.dimigo.dimigoin.data.repository.PlaceRepositoryImpl
+import `in`.dimigo.dimigoin.data.repository.ScheduleRepositoryImpl
 import `in`.dimigo.dimigoin.data.repository.UserRepositoryImpl
 import `in`.dimigo.dimigoin.data.util.AuthenticationInterceptor
 import `in`.dimigo.dimigoin.data.util.TokenAuthenticator
 import `in`.dimigo.dimigoin.domain.repository.MealRepository
 import `in`.dimigo.dimigoin.domain.repository.PlaceRepository
+import `in`.dimigo.dimigoin.domain.repository.ScheduleRepository
 import `in`.dimigo.dimigoin.domain.repository.UserRepository
 import `in`.dimigo.dimigoin.domain.usecase.meal.GetGradeMealTimeUseCase
 import `in`.dimigo.dimigoin.domain.usecase.meal.GetMyMealTimeUseCase
@@ -20,6 +23,8 @@ import `in`.dimigo.dimigoin.domain.usecase.place.GetFavoriteAttendanceLogsUseCas
 import `in`.dimigo.dimigoin.domain.usecase.place.GetRecommendedBuildingsUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.RemoveFavoriteAttendanceLogUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.SetCurrentPlaceUseCase
+import `in`.dimigo.dimigoin.domain.usecase.schedule.GetScheduleUseCase
+import `in`.dimigo.dimigoin.domain.usecase.schedule.GetTimetableUseCase
 import `in`.dimigo.dimigoin.domain.usecase.user.GetMyIdentityUseCase
 import `in`.dimigo.dimigoin.domain.usecase.user.UserLoginUseCase
 import `in`.dimigo.dimigoin.viewmodel.LoginViewModel
@@ -27,6 +32,7 @@ import `in`.dimigo.dimigoin.viewmodel.MainViewModel
 import `in`.dimigo.dimigoin.viewmodel.MealTimeViewModel
 import `in`.dimigo.dimigoin.viewmodel.MealViewModel
 import `in`.dimigo.dimigoin.viewmodel.PlaceSelectorViewModel
+import `in`.dimigo.dimigoin.viewmodel.ScheduleViewModel
 import `in`.dimigo.dimigoin.viewmodel.SplashViewModel
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
@@ -51,10 +57,15 @@ val dataModules = module {
             .build()
     }
     single { get<Retrofit>().create(DimigoinApiService::class.java) }
+    single {
+        val okHttpClient = OkHttpClient.Builder().build() // existing client holds security information
+        SchoolScheduleDataSource(okHttpClient)
+    }
 
     single<UserRepository> { UserRepositoryImpl(get(), get()) }
     single<PlaceRepository> { PlaceRepositoryImpl(get(), get()) }
     single<MealRepository> { MealRepositoryImpl(get()) }
+    single<ScheduleRepository> { ScheduleRepositoryImpl(get(), get()) }
 
     single { UserLoginUseCase(get()) }
     single { GetMyIdentityUseCase(get()) }
@@ -68,6 +79,8 @@ val dataModules = module {
     single { GetWeeklyMealUseCase(get()) }
     single { GetMyMealTimeUseCase(get(), get()) }
     single { GetGradeMealTimeUseCase(get(), get()) }
+    single { GetScheduleUseCase(get()) }
+    single { GetTimetableUseCase(get(), get()) }
 }
 
 val presentationModules = module {
@@ -77,4 +90,5 @@ val presentationModules = module {
     viewModel { PlaceSelectorViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModel { MealViewModel(get(), get()) }
     viewModel { MealTimeViewModel(get(), get()) }
+    viewModel { ScheduleViewModel(get(), get(), get()) }
 }

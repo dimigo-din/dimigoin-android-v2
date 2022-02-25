@@ -1,12 +1,11 @@
 package `in`.dimigo.dimigoin.ui.screen
 
 import `in`.dimigo.dimigoin.R
-import `in`.dimigo.dimigoin.domain.entity.user.User
 import `in`.dimigo.dimigoin.domain.entity.schedule.DailyTimetable
 import `in`.dimigo.dimigoin.domain.entity.schedule.MonthlySchedule
 import `in`.dimigo.dimigoin.domain.entity.schedule.Schedule
-import `in`.dimigo.dimigoin.domain.entity.schedule.ScheduleType
 import `in`.dimigo.dimigoin.domain.entity.schedule.WeeklyTimetable
+import `in`.dimigo.dimigoin.domain.entity.user.User
 import `in`.dimigo.dimigoin.ui.composables.PageSelector
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
 import `in`.dimigo.dimigoin.ui.theme.C1
@@ -15,6 +14,7 @@ import `in`.dimigo.dimigoin.ui.theme.C3
 import `in`.dimigo.dimigoin.ui.theme.C4
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.Point
+import `in`.dimigo.dimigoin.viewmodel.ScheduleViewModel
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.LocalOverScrollConfiguration
@@ -44,6 +44,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,32 +63,17 @@ import java.time.YearMonth
 import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
 import java.util.Locale
+import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun ScheduleScreen() {
+fun ScheduleScreen(
+    viewModel: ScheduleViewModel = getViewModel(),
+) {
 
-    // region Temporary dummy data
-    val timetable: WeeklyTimetable = listOf(
-        DailyTimetable(listOf("플밍", "컴시", "플밍", "컴시", "플밍", "컴시", "플밍"), LocalDate.of(2022, 2, 21)),
-        DailyTimetable(listOf("컴시", "플밍", "컴시", "플밍", "컴시", "플밍", "컴시"), LocalDate.of(2022, 2, 22)),
-        DailyTimetable(listOf("플밍", "컴시", "플밍", "컴시", "플밍", "동아리"), LocalDate.of(2022, 2, 23)),
-        DailyTimetable(listOf("컴시", "플밍", "컴시", "플밍", "컴시", "플밍", "컴시"), LocalDate.of(2022, 2, 24)),
-        DailyTimetable(listOf("플밍", "컴시", "플밍", "컴시", "플밍", "컴시", "플밍"), LocalDate.of(2022, 2, 25)),
-    )
-    val monthlySchedule = listOf(
-        Schedule(ScheduleType.EVENT, LocalDate.of(2022, 3, 2), "개학식"),
-        Schedule(ScheduleType.HOME, LocalDate.of(2022, 3, 4), "전체귀가"),
-        Schedule(ScheduleType.JAIL, LocalDate.of(2022, 3, 5), "전체잔류"),
-        Schedule(ScheduleType.JAIL, LocalDate.of(2022, 3, 6), "전체잔류"),
-        Schedule(ScheduleType.EXAM, LocalDate.of(2022, 3, 28), "1학기 3차 지필평가"),
-        Schedule(ScheduleType.EVENT, LocalDate.of(2022, 3, 28), "방학식"),
-        Schedule(ScheduleType.VACATION, LocalDate.of(2022, 3, 29), "방학"),
-        Schedule(ScheduleType.VACATION, LocalDate.of(2022, 3, 30), "방학"),
-        Schedule(ScheduleType.VACATION, LocalDate.of(2022, 3, 31), "방학"),
-    )
-
-    val user = User("테스트", 4, 7, 0, 4700)
-    // endregion
+    val timetable =
+        viewModel.timetable.collectAsState().value.data ?: List(5) { DailyTimetable(emptyList(), LocalDate.now()) }
+    val annualSchedule = viewModel.schedule.collectAsState().value.data ?: mapOf()
+    val user = viewModel.me.collectAsState().value.data ?: return
 
     var page by remember { mutableStateOf(0) }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
@@ -122,13 +108,18 @@ fun ScheduleScreen() {
                 1 -> SchoolSchedule(
                     selectedDate = selectedDate,
                     onDateSelect = { selectedDate = it },
-                    today = LocalDate.of(2022, 3, 28),
-                    schedules = monthlySchedule,
+                    today = LocalDate.now(),
+                    schedules = getNearSchedules(annualSchedule, YearMonth.from(selectedDate)),
                 )
             }
         }
     }
 }
+
+fun getNearSchedules(schedule: Map<YearMonth, List<Schedule>>, yearMonth: YearMonth): List<Schedule> =
+    schedule.getOrDefault(yearMonth.minusMonths(1), emptyList()) +
+        schedule.getOrDefault(yearMonth, emptyList()) +
+        schedule.getOrDefault(yearMonth.plusMonths(1), emptyList())
 
 @Composable
 fun TimetableHeader(user: User) {
