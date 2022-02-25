@@ -1,11 +1,19 @@
 package `in`.dimigo.dimigoin.data.repository
 
 import `in`.dimigo.dimigoin.data.datasource.DimigoinApiService
+import `in`.dimigo.dimigoin.data.mapper.toEntity
+import `in`.dimigo.dimigoin.data.model.meal.MealResponseModel
+import `in`.dimigo.dimigoin.data.model.meal.MealSequenceResponseModel
+import `in`.dimigo.dimigoin.data.model.meal.MealTimeResponseModel
+import `in`.dimigo.dimigoin.data.util.resultFromCall
 import `in`.dimigo.dimigoin.domain.entity.meal.Meal
 import `in`.dimigo.dimigoin.domain.entity.meal.MealTime
 import `in`.dimigo.dimigoin.domain.entity.meal.MealTimes
 import `in`.dimigo.dimigoin.domain.repository.MealRepository
+import java.time.LocalDate
 import java.time.LocalTime
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class MealRepositoryImpl(
     private val service: DimigoinApiService,
@@ -14,39 +22,105 @@ class MealRepositoryImpl(
     private var todayMeal: Meal? = null
     private var weeklyMeal: List<Meal>? = null
 
-    override suspend fun getTodayMeal(): Result<Meal> =
-        Result.success(FAKE_MEAL)
-
-    override suspend fun getWeeklyMeal(): Result<List<Meal>> =
-        Result.success(List(7) { FAKE_MEAL })
-
-    override suspend fun getMyMealTime(grade: Int, `class`: Int): Result<MealTime> {
-        // TODO temporary implementation
-        return Result.success(FAKE_MEAL_TIME.copy(grade = grade, `class` = `class`))
+    override suspend fun getTodayMeal(): Result<Meal> = resultFromCall(
+        service.getTodayMeal(),
+        cached = todayMeal
+    ) { response ->
+        response.toEntity().also {
+            todayMeal = it
+        }
     }
 
-    override suspend fun getMealTimes(grade: Int): Result<MealTimes> {
-        // TODO temporary implementation
-        return Result.success(
-            List(6) {
-                FAKE_MEAL_TIME.copy(grade = grade, `class` = it + 1)
-            }.associateBy { "${it.grade}학년 ${it.`class`}반" }
-        )
+    override suspend fun getWeeklyMeal(): Result<List<Meal>> = resultFromCall(
+        service.getWeeklyMeal(),
+        cached = weeklyMeal
+    ) { response ->
+        val now = LocalDate.now()
+
+        List(7) { days ->
+            response.meals.map(MealResponseModel::toEntity).find {
+                it.date == now.plusDays(days.toLong())
+            } ?: FAILED_MEAL
+        }.also {
+            weeklyMeal = it
+        }
+    }
+
+    override suspend fun getMealTimeByClass(grade: Int, `class`: Int): Result<MealTime> =
+        try {
+            Result.success(
+                getMealTimes().find {
+                    grade == it.grade && `class` == it.`class`
+                } ?: throw IllegalArgumentException("Cannot find $grade-$`class`")
+            )
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+
+    override suspend fun getMealTimesByGrade(grade: Int): Result<MealTimes> =
+        try {
+            Result.success(
+                getMealTimes().filter {
+                    grade == it.grade
+                }
+            )
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+
+    private suspend fun getMealTimes(): MealTimes {
+        val sequences = fetchMealSequence().mealSequences
+        val times = fetchMealTimes().mealTimes
+
+        return List(3) { grade /* indicates actual grade - 1 */ ->
+            List(6) { `class` /* indicates actual class - 1 */ ->
+                val lunchRank = sequences.lunch[grade].indexOf(`class` + 1)
+                val dinnerRank = sequences.dinner[grade].indexOf(`class` + 1)
+                MealTime(
+                    lunchRank = lunchRank + 1,
+                    dinnerRank = dinnerRank + 1,
+                    grade = grade + 1,
+                    `class` = `class` + 1,
+                    breakfastTime = getBreakfastTimeByGrade(grade + 1),
+                    lunchTime = times.lunch[grade][lunchRank].toLocalTime(),
+                    dinnerTime = times.dinner[grade][dinnerRank].toLocalTime(),
+                )
+            }
+        }.flatten()
+    }
+
+    @Suppress("BlockingMethodInNonBlockingContext")
+    private suspend fun fetchMealSequence(): MealSequenceResponseModel = withContext(Dispatchers.IO) {
+        service.getMealSequence()
+            .execute()
+            .body()
+            ?: throw IllegalStateException("Failed to fetch meal sequence")
+    }
+
+    @Suppress("BlockingMethodInNonBlockingContext")
+    private suspend fun fetchMealTimes(): MealTimeResponseModel = withContext(Dispatchers.IO) {
+        service.getMealTimes()
+            .execute()
+            .body()
+            ?: throw IllegalStateException("Failed to fetch meal sequence")
+    }
+
+    private fun Int.toLocalTime() =
+        LocalTime.of(this / 100, this % 100)
+
+    private fun getBreakfastTimeByGrade(grade: Int) = when (grade) {
+        1 -> LocalTime.of(1, 0)
+        2 -> LocalTime.of(2, 0)
+        3 -> LocalTime.of(3, 0)
+        else -> throw IllegalArgumentException("어떻게 디미고에 ${grade}학년이 있나요...")
     }
 
     companion object {
-        private val FAKE_MEAL_TIME = MealTime(
-            order = 1,
-            grade = 2,
-            `class` = 1,
-            breakfastTime = LocalTime.of(7, 20),
-            lunchTime = LocalTime.of(7, 20),
-            dinnerTime = LocalTime.of(7, 20),
-        )
-        private val FAKE_MEAL = Meal(
-            "현미밥 | 얼큰김칫국 | 토마토달걀볶음 | 호박버섯볶음 | 깍두기 | 베이컨 | 완제김 | 스트링치즈 | 모닝빵미니버거",
-            "백미밥 | 강릉식짬뽕순두부 | 치즈순살찜닭 | 콩나물 무침 | 구이김·양념간장 | 총각김치 | 따뜻한 유자차",
-            "흑미밥 | 들깨미역국 | 춘권튀김&칠리소스 | 고사리나물 | 포기김치 | 매운돼지갈비찜 | 꿀호떡",
+        private val FAILED_MEAL = Meal(
+            "급식 정보가 없습니다.",
+            "급식 정보가 없습니다.",
+            "급식 정보가 없습니다.",
+            LocalDate.of(1970, 1, 1)
         )
     }
 }
