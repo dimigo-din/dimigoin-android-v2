@@ -23,6 +23,7 @@ import `in`.dimigo.dimigoin.domain.usecase.user.GetMyIdentityUseCase
 import `in`.dimigo.dimigoin.domain.usecase.user.UserLoginUseCase
 import `in`.dimigo.dimigoin.viewmodel.LoginViewModel
 import `in`.dimigo.dimigoin.viewmodel.MainViewModel
+import `in`.dimigo.dimigoin.viewmodel.MealTimeViewModel
 import `in`.dimigo.dimigoin.viewmodel.MealViewModel
 import `in`.dimigo.dimigoin.viewmodel.PlaceSelectorViewModel
 import `in`.dimigo.dimigoin.viewmodel.SplashViewModel
@@ -73,4 +74,5 @@ val presentationModules = module {
     viewModel { MainViewModel(get(), get(), get()) }
     viewModel { PlaceSelectorViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModel { MealViewModel(get(), get()) }
+    viewModel { MealTimeViewModel(get()) }
 }
