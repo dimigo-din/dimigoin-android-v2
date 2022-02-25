@@ -10,6 +10,7 @@ import `in`.dimigo.dimigoin.data.util.TokenAuthenticator
 import `in`.dimigo.dimigoin.domain.repository.MealRepository
 import `in`.dimigo.dimigoin.domain.repository.PlaceRepository
 import `in`.dimigo.dimigoin.domain.repository.UserRepository
+import `in`.dimigo.dimigoin.domain.usecase.meal.GetGradeMealTimeUseCase
 import `in`.dimigo.dimigoin.domain.usecase.meal.GetMyMealTimeUseCase
 import `in`.dimigo.dimigoin.domain.usecase.meal.GetWeeklyMealUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.AddFavoriteAttendanceLogUseCase
@@ -66,6 +67,7 @@ val dataModules = module {
     single { GetRecommendedBuildingsUseCase(get()) }
     single { GetWeeklyMealUseCase(get()) }
     single { GetMyMealTimeUseCase(get(), get()) }
+    single { GetGradeMealTimeUseCase(get(), get()) }
 }
 
 val presentationModules = module {
@@ -74,5 +76,5 @@ val presentationModules = module {
     viewModel { MainViewModel(get(), get(), get()) }
     viewModel { PlaceSelectorViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModel { MealViewModel(get(), get()) }
-    viewModel { MealTimeViewModel(get()) }
+    viewModel { MealTimeViewModel(get(), get()) }
 }
