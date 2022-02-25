@@ -1,6 +1,7 @@
 package `in`.dimigo.dimigoin.ui.screen.meal
 
 import `in`.dimigo.dimigoin.R
+import `in`.dimigo.dimigoin.domain.entity.meal.MealTime
 import `in`.dimigo.dimigoin.ui.composables.MealTimeItem
 import `in`.dimigo.dimigoin.ui.composables.PageSelector
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
@@ -31,6 +32,7 @@ import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import java.time.LocalTime
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
@@ -107,17 +109,14 @@ fun MealTimeScreen(
                         .verticalScroll(scrollState),
                     verticalArrangement = Arrangement.spacedBy(11.dp)
                 ) {
-                    mealTimes.data?.values?.sortedBy { it.order }?.forEach {
+                    mealTimes.data?.sortedBy {
+                        getRankByPage(it, currentPage)
+                    }?.forEach {
                         MealTimeItem(
-                            order = it.order,
+                            order = getRankByPage(it, currentPage),
                             grade = it.grade,
                             `class` = it.`class`,
-                            time = when (pagerState.currentPage) {
-                                BREAKFAST -> it.breakfastTime
-                                LUNCH -> it.lunchTime
-                                DINNER -> it.dinnerTime
-                                else -> it.breakfastTime
-                            },
+                            time = getTimeByPage(it, currentPage),
                             highlight = it.`class` == user.`class`
                         )
                     }
@@ -126,3 +125,18 @@ fun MealTimeScreen(
         }
     }
 }
+
+fun getRankByPage(mealTime: MealTime, page: Int) =
+    when (page) {
+        LUNCH -> mealTime.lunchRank
+        DINNER -> mealTime.dinnerRank
+        else -> 1
+    }
+
+fun getTimeByPage(mealTime: MealTime, page: Int) =
+    when (page) {
+        BREAKFAST -> mealTime.breakfastTime
+        LUNCH -> mealTime.lunchTime
+        DINNER -> mealTime.dinnerTime
+        else -> LocalTime.of(0, 0)
+    }
