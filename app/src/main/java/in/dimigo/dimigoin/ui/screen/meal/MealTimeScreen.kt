@@ -95,8 +95,6 @@ fun MealTimeScreen(
                 Spacer(Modifier.height(10.dp))
             }
 
-            if (mealTimes.data == null) return@Column
-
             HorizontalPager(
                 count = 3,
                 state = pagerState,
@@ -109,7 +107,7 @@ fun MealTimeScreen(
                         .verticalScroll(scrollState),
                     verticalArrangement = Arrangement.spacedBy(11.dp)
                 ) {
-                    mealTimes.data.values.sortedBy { it.order }.forEach {
+                    mealTimes.data?.values?.sortedBy { it.order }?.forEach {
                         MealTimeItem(
                             order = it.order,
                             grade = it.grade,
