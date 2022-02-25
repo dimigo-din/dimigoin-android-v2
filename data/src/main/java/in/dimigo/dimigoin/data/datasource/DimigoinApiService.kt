@@ -8,6 +8,7 @@ import `in`.dimigo.dimigoin.data.model.place.GetAttendanceResponseModel
 import `in`.dimigo.dimigoin.data.model.place.GetPlacesResponseModel
 import `in`.dimigo.dimigoin.data.model.place.PostAttendanceRequestModel
 import `in`.dimigo.dimigoin.data.model.place.PostAttendanceResponseModel
+import `in`.dimigo.dimigoin.data.model.schedule.WeeklyTimetableResponseModel
 import `in`.dimigo.dimigoin.data.model.user.GetUserMeResponseModel
 import `in`.dimigo.dimigoin.data.model.user.LoginRequestModel
 import `in`.dimigo.dimigoin.data.model.user.LoginResponseModel
@@ -16,6 +17,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface DimigoinApiService {
 
@@ -48,4 +50,10 @@ interface DimigoinApiService {
 
     @GET("/dalgeurak/time")
     fun getMealTimes(): Call<MealTimeResponseModel>
+
+    @GET("/timetable/weekly/grade/{grade}/class/{class}")
+    fun getTimetable(
+        @Path("grade") grade: Int,
+        @Path("class") `class`: Int
+    ): Call<WeeklyTimetableResponseModel>
 }
