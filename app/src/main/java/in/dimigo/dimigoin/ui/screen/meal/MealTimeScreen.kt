@@ -92,7 +92,7 @@ fun MealTimeScreen(
                         }
                     },
                 )
-                Spacer(Modifier.height(10.dp))
+                Spacer(Modifier.height(19.dp))
             }
 
             HorizontalPager(
