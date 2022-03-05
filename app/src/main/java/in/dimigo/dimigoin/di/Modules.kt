@@ -13,6 +13,7 @@ import `in`.dimigo.dimigoin.domain.repository.MealRepository
 import `in`.dimigo.dimigoin.domain.repository.PlaceRepository
 import `in`.dimigo.dimigoin.domain.repository.ScheduleRepository
 import `in`.dimigo.dimigoin.domain.repository.UserRepository
+import `in`.dimigo.dimigoin.domain.usecase.meal.GetGradeMealTimeUseCase
 import `in`.dimigo.dimigoin.domain.usecase.meal.GetMyMealTimeUseCase
 import `in`.dimigo.dimigoin.domain.usecase.meal.GetWeeklyMealUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.AddFavoriteAttendanceLogUseCase
@@ -28,6 +29,7 @@ import `in`.dimigo.dimigoin.domain.usecase.user.GetMyIdentityUseCase
 import `in`.dimigo.dimigoin.domain.usecase.user.UserLoginUseCase
 import `in`.dimigo.dimigoin.viewmodel.LoginViewModel
 import `in`.dimigo.dimigoin.viewmodel.MainViewModel
+import `in`.dimigo.dimigoin.viewmodel.MealTimeViewModel
 import `in`.dimigo.dimigoin.viewmodel.MealViewModel
 import `in`.dimigo.dimigoin.viewmodel.PlaceSelectorViewModel
 import `in`.dimigo.dimigoin.viewmodel.ScheduleViewModel
@@ -76,6 +78,7 @@ val dataModules = module {
     single { GetRecommendedBuildingsUseCase(get()) }
     single { GetWeeklyMealUseCase(get()) }
     single { GetMyMealTimeUseCase(get(), get()) }
+    single { GetGradeMealTimeUseCase(get(), get()) }
     single { GetScheduleUseCase(get()) }
     single { GetTimetableUseCase(get(), get()) }
 }
@@ -86,5 +89,6 @@ val presentationModules = module {
     viewModel { MainViewModel(get(), get(), get()) }
     viewModel { PlaceSelectorViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModel { MealViewModel(get(), get()) }
+    viewModel { MealTimeViewModel(get(), get()) }
     viewModel { ScheduleViewModel(get(), get(), get()) }
 }

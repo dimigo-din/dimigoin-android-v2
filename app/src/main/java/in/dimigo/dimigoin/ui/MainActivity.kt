@@ -13,6 +13,7 @@ import `in`.dimigo.dimigoin.ui.screen.ScheduleScreen
 import `in`.dimigo.dimigoin.ui.screen.Screen
 import `in`.dimigo.dimigoin.ui.screen.SplashScreen
 import `in`.dimigo.dimigoin.ui.screen.meal.MealScreen
+import `in`.dimigo.dimigoin.ui.screen.meal.MealTimeScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.BuildingScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.PlaceSearchScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.PlacesScreen
@@ -212,7 +213,17 @@ fun App(
             }
             composable(Screen.Meal.route) {
                 MealScreen(
-                    onMealTimeClick = { },
+                    onMealTimeClick = { navController.navigate("meal_time/$it") },
+                )
+            }
+            composable(
+                "meal_time/{type}",
+                arguments = listOf(navArgument("type") { type = NavType.IntType })
+            ) {
+                val startPage = it.arguments?.getInt("type") ?: 0
+                MealTimeScreen(
+                    startPage = startPage,
+                    onBackPress = { navController.popBackStack() }
                 )
             }
             composable(Screen.Calendar.route) { ScheduleScreen() }
