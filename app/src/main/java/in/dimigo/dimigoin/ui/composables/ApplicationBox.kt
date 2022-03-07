@@ -1,10 +1,9 @@
 package `in`.dimigo.dimigoin.ui.composables
 
-import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
-import `in`.dimigo.dimigoin.ui.theme.C3
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.Shapes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -18,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -25,6 +25,7 @@ fun ApplicationBox(
     modifier: Modifier = Modifier,
     label: String,
     icon: Int,
+    iconTint: Color,
     onNavigate: (() -> Unit)? = null,
 ) = Card(
     modifier = modifier,
@@ -33,22 +34,29 @@ fun ApplicationBox(
 ) {
     Surface(
         modifier = Modifier
-            .then(onNavigate?.let { Modifier.noRippleClickable { onNavigate() } }
-            ?: Modifier)
-    ){
+            .clickable { onNavigate?.let { } }
+    ) {
         Column(
             modifier = Modifier
                 .background(Color(0xFFFAFAFC))
-                .padding(horizontal = 40.dp, vertical = 12.dp),
+                .padding(vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
-                modifier = Modifier.size(30.dp),
-                painter = painterResource(id = icon), contentDescription = null,
-                tint = C3,
+                modifier = Modifier
+                    .padding(horizontal = 40.dp)
+                    .size(30.dp),
+                painter = painterResource(id = icon),
+                contentDescription = null,
+                tint = iconTint
             )
-            Text(text = label, style = DTypography.t3)
+            Text(text = label,
+                style = DTypography.pageSubtitle.copy(
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
+                )
+            )
         }
     }
 }
