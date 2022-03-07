@@ -34,7 +34,7 @@ fun ApplicationBox(
 ) {
     Surface(
         modifier = Modifier
-            .clickable { onNavigate?.let { } }
+            .clickable { onNavigate?.invoke() }
     ) {
         Column(
             modifier = Modifier
