@@ -73,12 +73,6 @@ fun ApplicationScreen(
                         ApplicationBox(label = "특별실", icon = R.drawable.ic_bulb, iconTint = Color(0xFFFFB800))
                         ApplicationBox(label = "금요귀가", icon = R.drawable.ic_go_out, iconTint = Color(0xFFED4455))
                     }
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(gridPadding),
-                    ) {
-                        ApplicationBox(label = "선밥/후밥", icon = R.drawable.ic_tableware, iconTint = Color(0xFF3C81E8))
-                        ApplicationBox(label = "선밥/후밥", icon = R.drawable.ic_tableware, iconTint = Color(0xFF3C81E8))
-                    }
                 }
             }
         }
