@@ -42,7 +42,7 @@ fun ApplicationScreen(
             Column(
                 Modifier
                     .padding(horizontal = 20.dp)
-                .fillMaxWidth()
+                    .fillMaxWidth()
             ) {
                 Text(
                     modifier = Modifier.padding(start = 15.dp),
@@ -55,8 +55,7 @@ fun ApplicationScreen(
                 )
                 Spacer(Modifier.height(24.dp))
                 Column(
-                    Modifier
-                        .align(Alignment.CenterHorizontally),
+                    Modifier.align(Alignment.CenterHorizontally),
                     verticalArrangement = Arrangement.spacedBy(gridPadding)
                 ) {
                     Row(
