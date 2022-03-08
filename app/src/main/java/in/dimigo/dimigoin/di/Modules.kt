@@ -31,6 +31,7 @@ import `in`.dimigo.dimigoin.viewmodel.LoginViewModel
 import `in`.dimigo.dimigoin.viewmodel.MainViewModel
 import `in`.dimigo.dimigoin.viewmodel.MealTimeViewModel
 import `in`.dimigo.dimigoin.viewmodel.MealViewModel
+import `in`.dimigo.dimigoin.viewmodel.MyInfoViewModel
 import `in`.dimigo.dimigoin.viewmodel.PlaceSelectorViewModel
 import `in`.dimigo.dimigoin.viewmodel.ScheduleViewModel
 import `in`.dimigo.dimigoin.viewmodel.SplashViewModel
@@ -91,4 +92,5 @@ val presentationModules = module {
     viewModel { MealViewModel(get(), get()) }
     viewModel { MealTimeViewModel(get(), get()) }
     viewModel { ScheduleViewModel(get(), get(), get()) }
+    viewModel { MyInfoViewModel(get()) }
 }

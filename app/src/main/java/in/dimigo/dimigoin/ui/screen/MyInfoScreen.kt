@@ -1,13 +1,20 @@
 package `in`.dimigo.dimigoin.ui.screen
 
 import `in`.dimigo.dimigoin.R
+import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
 import `in`.dimigo.dimigoin.ui.theme.C2
-import `in`.dimigo.dimigoin.ui.theme.C3
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.theme.Shapes
+import `in`.dimigo.dimigoin.viewmodel.MyInfoViewModel
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,9 +32,15 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
@@ -37,10 +50,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.google.accompanist.pager.ExperimentalPagerApi
+import org.koin.androidx.compose.getViewModel
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MyInfoScreen(
+    myInfoViewModel: MyInfoViewModel = getViewModel(),
     gridPadding: Dp = 10.dp,
 ) {
     Surface(
@@ -48,6 +63,9 @@ fun MyInfoScreen(
             .fillMaxHeight()
             .statusBarsPadding()
     ) {
+        var visible by remember { mutableStateOf(false) }
+        val density = LocalDensity.current
+
         Column(
             Modifier
                 .fillMaxSize()
@@ -76,7 +94,8 @@ fun MyInfoScreen(
                     Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 35.dp)
-                        .align(Alignment.CenterHorizontally),
+                        .align(Alignment.CenterHorizontally)
+                        .clickable { visible = true },
                     shape = RoundedCornerShape(10.dp),
                 ) {
                     ConstraintLayout(
@@ -180,11 +199,160 @@ fun MyInfoScreen(
 //                }
             }
         }
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(initialAlpha = 0.3f),
+            exit = fadeOut()
+        ) {
+            myInfoViewModel.myIdentity?.let {
+                Box(
+                    Modifier
+                        .background(Color(0x99000000))
+                        .noRippleClickable { visible = false }
+                        .padding(horizontal = 35.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    StudentCard(
+                        modifier = Modifier
+                            .size(320.dp, 500.dp),
+                        name = it.name,
+                        birth = "",
+                        grade = it.grade,
+                        `class` = it.`class`,
+                        number = it.number
+                    )
+                }
+            }
+        }
     }
 }
 
-@Preview(showSystemUi = true)
+@Preview(widthDp = 320, heightDp = 500)
 @Composable
 fun MyInfoPrev() {
-    MyInfoScreen()
+//    MyInfoScreen()
+    StudentCard(
+        modifier = Modifier,
+        name = "이준호",
+        birth = "2004-04-21",
+        grade = 3,
+        `class` = 4,
+        number = 23
+    )
+}
+
+@Composable
+fun StudentCard(
+    modifier: Modifier = Modifier,
+    name: String,
+    birth: String,
+    grade: Int,
+    `class`: Int,
+    number: Int,
+    gwa: String = when (`class`) {
+        1 -> "e-비즈니스과"
+        2 -> "디지털컨텐츠과"
+        3, 4 -> "웹프로그래밍과"
+        5, 6 -> "해킹방어과"
+        else -> ""
+    },
+) {
+    Card(
+        Modifier
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+    ) {
+        Column(
+            Modifier
+        ) {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .background(Point)
+                    .padding(top = 20.dp, start = 25.dp, bottom = 106.dp)
+            ) {
+                Column(
+                    Modifier
+                ) {
+                    Row(
+                        Modifier,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier,
+                            painter = painterResource(id = R.drawable.ic_student_card),
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = "모바일 학생증",
+                            style = DTypography.pageSubtitle,
+                            fontWeight = Bold,
+                            color = Color.White,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(25.dp))
+                    Row(
+                        Modifier,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color.White)
+                                .size(105.dp, 140.dp),
+                            painter = painterResource(id = R.drawable.ic_student_card),
+                            contentDescription = null,
+                        )
+                        Spacer(modifier = Modifier.width(30.dp))
+                        Column {
+                            Text(
+                                text = name,
+                                style = DTypography.pageSubtitle.copy(fontSize = 22.sp),
+                                fontWeight = Bold,
+                                color = Color.White,
+                            )
+                            Spacer(modifier = Modifier.height(5.dp))
+                            Text(
+                                text = birth,
+                                style = DTypography.pageSubtitle.copy(fontSize = 16.sp),
+                                fontWeight = Bold,
+                                color = Color.White,
+                            )
+                            Spacer(modifier = Modifier.height(15.dp))
+                            Text(
+                                text = gwa,
+                                style = DTypography.pageSubtitle,
+                                fontWeight = Bold,
+                                color = Color.White,
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "${grade}학년 ${`class`}반 ${number}번",
+                                style = DTypography.pageSubtitle,
+                                fontWeight = Bold,
+                                color = Color.White,
+                            )
+                        }
+                    }
+                }
+
+            }
+            Box(
+                Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 106.dp, bottom = 35.dp)
+            ) {
+                Column() {
+                    Icon(
+                        modifier = Modifier,
+                        painter = painterResource(id = R.drawable.ic_kdmhs),
+                        contentDescription = null,
+                        tint = Color.Black
+                    )
+                }
+            }
+        }
+    }
 }
