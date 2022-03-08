@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -111,7 +112,7 @@ fun MyInfoScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(Color.White, shape = Shapes.medium)
-                                .padding(vertical = 5.dp)
+                                .padding(vertical = 7.dp)
                                 .constrainAs(touchText) {
                                     start.linkTo(parent.start)
                                     end.linkTo(parent.end)
@@ -138,7 +139,7 @@ fun MyInfoScreen(
                         Modifier
                             .fillMaxWidth()
                             .background(C3)
-                            .padding(horizontal = 19.dp, vertical = 14.dp)
+                            .padding(horizontal = 19.dp, vertical = 15.dp)
                     ) {
                         val (text, arrowButton) = createRefs()
                         Row(
@@ -180,4 +181,10 @@ fun MyInfoScreen(
             }
         }
     }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun MyInfoPrev() {
+    MyInfoScreen()
 }
