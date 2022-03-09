@@ -7,6 +7,7 @@ import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.theme.Shapes
 import `in`.dimigo.dimigoin.viewmodel.MyInfoViewModel
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -40,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
@@ -58,6 +60,7 @@ fun MyInfoScreen(
     myInfoViewModel: MyInfoViewModel = getViewModel(),
     gridPadding: Dp = 10.dp,
 ) {
+    val context = LocalContext.current
     Surface(
         Modifier
             .fillMaxHeight()
@@ -95,7 +98,12 @@ fun MyInfoScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 35.dp)
                         .align(Alignment.CenterHorizontally)
-                        .clickable { visible = true },
+                        .clickable {
+                            myInfoViewModel.runWhenAuthenticated(
+                                onSucceeded = { visible = true },
+                                context = context
+                            )
+                        },
                     shape = RoundedCornerShape(10.dp),
                 ) {
                     ConstraintLayout(
