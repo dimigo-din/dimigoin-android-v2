@@ -55,7 +55,7 @@ class MyInfoViewModel(
         val biometricPrompt = BiometricPrompt(context as FragmentActivity, executor, callback)
 
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("인증")
+            .setTitle("본인 인증")
             .setSubtitle("학생증을 사용하기 위해 인증이 필요합니다.")
             .setAllowedAuthenticators(BIOMETRIC_WEAK or DEVICE_CREDENTIAL)
             .build()
