@@ -27,8 +27,8 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 @Composable
 fun ApplicationScreen(
     gridPadding: Dp = 10.dp,
+    onApplicationClick: (String) -> Unit,
 ) {
-
     Surface(
         Modifier
             .fillMaxHeight()
@@ -61,16 +61,46 @@ fun ApplicationScreen(
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(gridPadding),
                     ) {
-                        ApplicationBox(label = "세탁", icon = R.drawable.ic_washing_machine, iconTint = Color(0xFF838383))
-                        ApplicationBox(label = "기상송", icon = R.drawable.ic_music_note, iconTint = Color(0xFFE83C77))
-                        ApplicationBox(label = "주말잔류", icon = R.drawable.ic_documents, iconTint = Color(0xFF18BF7E))
+                        ApplicationBox(
+                            label = "세탁",
+                            icon = R.drawable.ic_washing_machine,
+                            iconTint = Color(0xFF838383),
+                            onNavigate = { onApplicationClick("developing") }
+                        )
+                        ApplicationBox(
+                            label = "기상송",
+                            icon = R.drawable.ic_music_note,
+                            iconTint = Color(0xFFE83C77),
+                            onNavigate = { onApplicationClick("developing") }
+                        )
+                        ApplicationBox(
+                            label = "주말잔류",
+                            icon = R.drawable.ic_documents,
+                            iconTint = Color(0xFF18BF7E),
+                            onNavigate = { onApplicationClick("developing") }
+                        )
                     }
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(gridPadding),
                     ) {
-                        ApplicationBox(label = "선밥/후밥", icon = R.drawable.ic_tableware, iconTint = Color(0xFF3C81E8))
-                        ApplicationBox(label = "특별실", icon = R.drawable.ic_bulb, iconTint = Color(0xFFFFB800))
-                        ApplicationBox(label = "금요귀가", icon = R.drawable.ic_go_out, iconTint = Color(0xFFED4455))
+                        ApplicationBox(
+                            label = "선밥/후밥",
+                            icon = R.drawable.ic_tableware,
+                            iconTint = Color(0xFF3C81E8),
+                            onNavigate = { onApplicationClick("developing") }
+                        )
+                        ApplicationBox(
+                            label = "특별실",
+                            icon = R.drawable.ic_bulb,
+                            iconTint = Color(0xFFFFB800),
+                            onNavigate = { onApplicationClick("developing") }
+                        )
+                        ApplicationBox(
+                            label = "금요귀가",
+                            icon = R.drawable.ic_go_out,
+                            iconTint = Color(0xFFED4455),
+                            onNavigate = { onApplicationClick("developing") }
+                        )
                     }
                 }
             }
