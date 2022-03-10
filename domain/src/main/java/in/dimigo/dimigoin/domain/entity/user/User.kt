@@ -1,5 +1,7 @@
 package `in`.dimigo.dimigoin.domain.entity.user
 
+import java.time.LocalDate
+
 data class User(
     val _id: String,
     val idx: Int,
@@ -9,7 +11,7 @@ data class User(
     val number: Int,
     val serial: Int,
     val photos: List<String>,
-    val birthDate: String,
+    val birthDate: LocalDate,
     val libraryId: String,
     val permissions: List<String>,
 )
