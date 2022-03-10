@@ -24,6 +24,7 @@ import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.viewmodel.PlaceSelectorViewModel
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
@@ -45,6 +46,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -56,25 +58,35 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
+import androidx.navigation.compose.ComposeNavigator
+import androidx.navigation.compose.DialogNavigator
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
+
+    private val placeSelectorViewModel: PlaceSelectorViewModel by viewModel()
+    private val navController = NavHostController(this).apply {
+        navigatorProvider.addNavigator(ComposeNavigator())
+        navigatorProvider.addNavigator(DialogNavigator())
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,10 +105,15 @@ class MainActivity : AppCompatActivity() {
         setContent {
             ProvideWindowInsets {
                 DimigoinTheme {
-                    App(screens)
+                    App(screens, navController, placeSelectorViewModel)
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        navController.handleDeepLink(intent)
     }
 }
 
@@ -104,6 +121,8 @@ class MainActivity : AppCompatActivity() {
 @Composable
 fun App(
     navBarScreens: List<Screen>,
+    navController: NavHostController,
+    placeSelectorViewModel: PlaceSelectorViewModel,
 ) {
     val navController = rememberNavController()
     val snackbarHostState = remember { CustomSnackbarHostState() }
@@ -209,7 +228,7 @@ fun App(
                         .padding(horizontal = 20.dp)
                         .padding(top = 36.dp)
                         .systemBarsPadding(),
-                    onPlaceSelectorNavigate = { navController.navigate("place_selector") },
+                    onPlaceSelectorNavigate = { navController.navigate("building") },
                     onPlaceSelect = { },
                     hasNewNotification = false
                 )
@@ -232,7 +251,7 @@ fun App(
             composable(Screen.Calendar.route) { ScheduleScreen() }
             composable(Screen.Application.route) { ApplicationScreen() }
             composable(Screen.MyInfo.route) { MyInfoScreen() }
-            placeSelectorNavGraph(navController, onPlaceChange, onFavoriteAdd, onFavoriteRemove)
+            placeSelectorNavGraph(navController, onPlaceChange, onFavoriteAdd, onFavoriteRemove, placeSelectorViewModel)
         }
         CustomSnackbarHost(snackbarHostState)
     }
@@ -243,77 +262,78 @@ fun NavGraphBuilder.placeSelectorNavGraph(
     onPlaceChange: (Place, String?) -> Unit,
     onFavoriteAdd: (Place, String?) -> Unit,
     onFavoriteRemove: (Place) -> Unit,
+    placeSelectorViewModel: PlaceSelectorViewModel,
 ) {
-    lateinit var placeSelectorViewModel: PlaceSelectorViewModel
     val navigateToRemark = { place: Place ->
         navController.navigate("remark/${place._id}")
     }
     val navigateToRemarkFavorite = { place: Place ->
         navController.navigate("remark_favorite/${place._id}")
     }
-    navigation("building", "place_selector") {
-        composable(
-            "building",
-            arguments = listOf(navArgument("building") { type = NavType.StringType })
-        ) {
-            placeSelectorViewModel = getViewModel()
-            BuildingScreen(
-                modifier = Modifier.systemBarsPadding(),
-                placeSelectorViewModel = placeSelectorViewModel,
-                title = placeSelectorViewModel.selectedBuilding.value,
-                onBackNavigation = { navController.popBackStack() },
-                onSearch = { navController.navigate("search") },
-                onBuildingClick = { placeSelectorViewModel.selectedBuilding.value = it.name },
-                onTryPlaceChange = navigateToRemark,
-                onPlaceChange = onPlaceChange,
-                onCategoryClick = { navController.navigate("category/${placeSelectorViewModel.selectedBuilding.value} ${it.name}") },
-                onTryFavoriteAdd = navigateToRemarkFavorite,
-                onFavoriteRemove = onFavoriteRemove,
-            )
-        }
-        composable(
-            "category/{category}",
-            arguments = listOf(
-                navArgument("category") { type = NavType.StringType },
-            ),
-        ) {
-            val category = it.arguments?.getString("category") ?: ""
-            PlacesScreen(
-                modifier = Modifier
-                    .background(MaterialTheme.colors.surface)
-                    .fillMaxSize()
-                    .systemBarsPadding(),
-                placeSelectorViewModel = placeSelectorViewModel,
-                title = category,
-                onBackNavigation = { navController.popBackStack() },
-                onTryPlaceChange = navigateToRemark,
-                onTryFavoriteAdd = navigateToRemarkFavorite,
-                onFavoriteRemove = onFavoriteRemove,
-            )
-        }
-        composable("search") {
-            PlaceSearchScreen(
-                modifier = Modifier
-                    .background(MaterialTheme.colors.surface)
-                    .fillMaxSize()
-                    .systemBarsPadding(),
-                placeSelectorViewModel = placeSelectorViewModel,
-                onBackNavigation = { navController.popBackStack() },
-                onTryPlaceChange = navigateToRemark,
-                onTryFavoriteAdd = navigateToRemarkFavorite,
-                onFavoriteRemove = onFavoriteRemove,
-                color = Color.Black
-            )
-        }
-        composable(
-            "remark/{placeId}",
-            arguments = listOf(
-                navArgument("placeId") { type = NavType.StringType },
-            ),
-        ) {
-            val placeId = it.arguments?.getString("placeId") ?: ""
-            Log.d(TAG, "placeSelectorNavGraph: $placeId")
-            Log.d(TAG, "placeSelectorNavGraph: ${placeSelectorViewModel.placeIdToPlace(placeId)}")
+    composable("building") {
+        BuildingScreen(
+            modifier = Modifier.systemBarsPadding(),
+            placeSelectorViewModel = placeSelectorViewModel,
+            title = placeSelectorViewModel.selectedBuilding.value,
+            onBackNavigation = { navController.popBackStack() },
+            onSearch = { navController.navigate("search") },
+            onBuildingClick = { placeSelectorViewModel.selectedBuilding.value = it.name },
+            onTryPlaceChange = navigateToRemark,
+            onPlaceChange = onPlaceChange,
+            onCategoryClick = { navController.navigate("category/${placeSelectorViewModel.selectedBuilding.value} ${it.name}") },
+            onTryFavoriteAdd = navigateToRemarkFavorite,
+            onFavoriteRemove = onFavoriteRemove,
+        )
+    }
+    composable(
+        "category/{category}",
+        arguments = listOf(
+            navArgument("category") { type = NavType.StringType },
+        ),
+    ) {
+        val category = it.arguments?.getString("category") ?: ""
+        PlacesScreen(
+            modifier = Modifier
+                .background(MaterialTheme.colors.surface)
+                .fillMaxSize()
+                .systemBarsPadding(),
+            placeSelectorViewModel = placeSelectorViewModel,
+            title = category,
+            onBackNavigation = { navController.popBackStack() },
+            onTryPlaceChange = navigateToRemark,
+            onTryFavoriteAdd = navigateToRemarkFavorite,
+            onFavoriteRemove = onFavoriteRemove,
+        )
+    }
+    composable("search") {
+        PlaceSearchScreen(
+            modifier = Modifier
+                .background(MaterialTheme.colors.surface)
+                .fillMaxSize()
+                .systemBarsPadding(),
+            placeSelectorViewModel = placeSelectorViewModel,
+            onBackNavigation = { navController.popBackStack() },
+            onTryPlaceChange = navigateToRemark,
+            onTryFavoriteAdd = navigateToRemarkFavorite,
+            onFavoriteRemove = onFavoriteRemove,
+            color = Color.Black
+        )
+    }
+    composable(
+        "remark/{placeId}",
+        arguments = listOf(
+            navArgument("placeId") { type = NavType.StringType },
+        ),
+        deepLinks = listOf(
+            navDeepLink { uriPattern = "dimigoin://set-place/{placeId}" }
+        )
+    ) {
+        val placeId = it.arguments?.getString("placeId") ?: ""
+        Log.d(TAG, "placeSelectorNavGraph: $placeId")
+        Log.d(TAG, "placeSelectorNavGraph: ${placeSelectorViewModel.placeIdToPlace(placeId)}")
+
+        val isPlaceLoaded = placeSelectorViewModel.isPlaceLoaded.collectAsState().value
+        if (isPlaceLoaded) {
             ReasonScreen(
                 modifier = Modifier
                     .background(MaterialTheme.colors.surface)
@@ -330,29 +350,29 @@ fun NavGraphBuilder.placeSelectorNavGraph(
                 onBackNavigation = { navController.popBackStack() },
             )
         }
-        composable(
-            "remark_favorite/{placeId}",
-            arguments = listOf(
-                navArgument("placeId") { type = NavType.StringType },
-            ),
-        ) {
-            val placeId = it.arguments?.getString("placeId") ?: ""
-            ReasonScreen(
-                modifier = Modifier
-                    .background(MaterialTheme.colors.surface)
-                    .fillMaxWidth()
-                    .systemBarsPadding()
-                    .navigationBarsWithImePadding(),
-                place = placeSelectorViewModel.placeIdToPlace(placeId),
-                onConfirm = { place, remark ->
-                    placeSelectorViewModel.addFavoriteAttendanceLog(place, remark, onFavoriteAdd)
-                    navController.popBackStack()
-                    Unit
-                },
-                isFavoriteRegister = true,
-                onBackNavigation = { navController.popBackStack() },
-            )
-        }
+    }
+    composable(
+        "remark_favorite/{placeId}",
+        arguments = listOf(
+            navArgument("placeId") { type = NavType.StringType },
+        ),
+    ) {
+        val placeId = it.arguments?.getString("placeId") ?: ""
+        ReasonScreen(
+            modifier = Modifier
+                .background(MaterialTheme.colors.surface)
+                .fillMaxWidth()
+                .systemBarsPadding()
+                .navigationBarsWithImePadding(),
+            place = placeSelectorViewModel.placeIdToPlace(placeId),
+            onConfirm = { place, remark ->
+                placeSelectorViewModel.addFavoriteAttendanceLog(place, remark, onFavoriteAdd)
+                navController.popBackStack()
+                Unit
+            },
+            isFavoriteRegister = true,
+            onBackNavigation = { navController.popBackStack() },
+        )
     }
 }
 
