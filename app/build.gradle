@@ -98,6 +98,7 @@ dependencies {
 
     // ETC
     implementation 'com.google.zxing:core:3.4.1'
+    implementation "com.github.skydoves:landscapist-glide:1.4.9"
 
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
 }

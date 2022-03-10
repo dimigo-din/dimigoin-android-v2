@@ -7,7 +7,6 @@ import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.theme.Shapes
 import `in`.dimigo.dimigoin.viewmodel.MyInfoViewModel
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -42,8 +41,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
@@ -53,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.skydoves.landscapist.glide.GlideImage
 import org.koin.androidx.compose.getViewModel
 import java.time.format.DateTimeFormatter
 
@@ -60,7 +60,6 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun MyInfoScreen(
     myInfoViewModel: MyInfoViewModel = getViewModel(),
-    gridPadding: Dp = 10.dp,
 ) {
     val context = LocalContext.current
     Surface(
@@ -69,7 +68,6 @@ fun MyInfoScreen(
             .statusBarsPadding()
     ) {
         var visible by remember { mutableStateOf(false) }
-        val density = LocalDensity.current
 
         Column(
             Modifier
@@ -305,16 +303,17 @@ fun StudentCard(
                     }
                     Spacer(modifier = Modifier.height(25.dp))
                     Row(
-                        Modifier,
+                        Modifier
+                            .padding(start = 7.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
+                        GlideImage(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(10.dp))
                                 .background(Color.White)
                                 .size(105.dp, 140.dp),
-                            painter = painterResource(id = R.drawable.ic_student_card),
-                            contentDescription = null,
+                            imageModel = viewModel.myIdentity?.photos?.get(0),
+                            contentScale = ContentScale.Crop,
                         )
                         Spacer(modifier = Modifier.width(30.dp))
                         Column {
@@ -353,7 +352,7 @@ fun StudentCard(
             Box(
                 Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 106.dp, bottom = 35.dp)
+                    .padding(top = 62.dp, bottom = 35.dp)
             ) {
                 Column {
                     Icon(
