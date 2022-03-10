@@ -193,7 +193,7 @@ fun App(
             }
             composable("login") {
                 LoginScreen(
-                    modifier = Modifier.systemBarsPadding(),
+                    modifier = Modifier,
                     onLoginSuccess = {
                         navController.navigate(Screen.Main.route) {
                             popUpTo("login") { inclusive = true }

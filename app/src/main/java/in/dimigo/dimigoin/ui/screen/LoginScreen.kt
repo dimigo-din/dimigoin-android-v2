@@ -3,6 +3,7 @@ package `in`.dimigo.dimigoin.ui.screen
 import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
 import `in`.dimigo.dimigoin.ui.theme.BorderTextField
+import `in`.dimigo.dimigoin.ui.theme.C2
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.theme.Red
@@ -11,6 +12,7 @@ import `in`.dimigo.dimigoin.viewmodel.LoginViewModel
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,7 +20,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
@@ -33,10 +37,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.getViewModel
 
@@ -50,29 +54,36 @@ fun LoginScreen(
     var password by remember { mutableStateOf(TextFieldValue()) }
 
     Column(
-        Modifier.align(Alignment.Center)
+        Modifier
+            .fillMaxWidth()
+            .align(Alignment.Center)
+            .padding(horizontal = 28.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            modifier = modifier.padding(bottom = 50.dp),
+            modifier = modifier
+                .size(45.dp),
             painter = painterResource(id = R.drawable.ic_dimigoin),
             contentDescription = null
         )
-        Spacer(modifier = modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(50.dp))
         when (val v = loginViewModel.loginResult.collectAsState().value) {
             is Future.Nothing<*> -> {
                 BorderTextField(
                     value = username,
                     onValueChange = { username = it },
-                    label = "아이디를 입력하세요"
+                    label = "아이디를 입력하세요",
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
                 )
-                Spacer(modifier = modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(10.dp))
                 BorderTextField(
                     value = password,
                     onValueChange = { password = it },
                     label = "비밀번호를 입력하세요",
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     visualTransformation = PasswordVisualTransformation()
                 )
-                Spacer(modifier = modifier.height(50.dp))
+                Spacer(modifier = Modifier.height(50.dp))
             }
             is Future.Success<*> -> onLoginSuccess()
 //            is Future.Failure<*> -> Text(text = "Login failed. ${v.throwable.message}")
@@ -81,17 +92,17 @@ fun LoginScreen(
                     value = username,
                     onValueChange = { username = it },
                     label = "아이디를 입력하세요",
-                    color = Red
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
                 )
-                Spacer(modifier = modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(10.dp))
                 BorderTextField(
                     value = password,
                     onValueChange = { password = it },
                     label = "비밀번호를 입력하세요",
-                    visualTransformation = PasswordVisualTransformation(),
-                    color = Red
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    visualTransformation = PasswordVisualTransformation()
                 )
-                Spacer(modifier = modifier.height(18.dp))
+                Spacer(modifier = Modifier.height(18.dp))
                 Text(
                     modifier = modifier
                         .noRippleClickable {
@@ -105,34 +116,25 @@ fun LoginScreen(
                     style = DTypography.t6,
                     color = Red
                 )
-                Spacer(modifier = modifier.height(17.dp))
+                Spacer(modifier = Modifier.height(17.dp))
             }
-            is Future.Loading<*> -> CircularProgressIndicator()
-        }
-        Button(modifier = modifier
-            .fillMaxWidth()
-            .background(color = Point, shape = RoundedCornerShape(30))
-            .padding(vertical = 15.dp),
-            onClick = {
-                loginViewModel.login(username.text, password.text)
+            is Future.Loading<*> -> {
+                Spacer(modifier = Modifier.height(80.dp))
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(50.dp))
             }
-        ) {
-            Text(
-                text = "로그인",
-                style = DTypography.t3,
-                textAlign = TextAlign.Center,
-                color = Color.White
-            )
         }
-
-    }
-
-}
-
-@Preview(showSystemUi = true)
-@Composable
-fun LoginPrev() {
-    LoginScreen() {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Point, shape = RoundedCornerShape(30))
+                .padding(vertical = 16.dp)
+                .clickable { loginViewModel.login(username.text, password.text) },
+            textAlign = TextAlign.Center,
+            text = "로그인",
+            style = DTypography.t3,
+            color = Color.White,
+        )
 
     }
 }
