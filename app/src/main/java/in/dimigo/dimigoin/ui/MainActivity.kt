@@ -7,6 +7,7 @@ import `in`.dimigo.dimigoin.ui.composables.BottomNavigation
 import `in`.dimigo.dimigoin.ui.composables.BottomNavigationItem
 import `in`.dimigo.dimigoin.ui.composables.CustomSnackbarHost
 import `in`.dimigo.dimigoin.ui.composables.CustomSnackbarHostState
+import `in`.dimigo.dimigoin.ui.screen.DevelopingScreen
 import `in`.dimigo.dimigoin.ui.screen.LoginScreen
 import `in`.dimigo.dimigoin.ui.screen.MainScreen
 import `in`.dimigo.dimigoin.ui.screen.ScheduleScreen
@@ -229,6 +230,7 @@ fun App(
             composable(Screen.Calendar.route) { ScheduleScreen() }
             composable(Screen.Application.route) { Text(text = "신청") }
             composable(Screen.MyInfo.route) { Text(text = "내 정보") }
+            composable("developing") { DevelopingScreen() }
             placeSelectorNavGraph(navController, onPlaceChange, onFavoriteAdd, onFavoriteRemove)
         }
         CustomSnackbarHost(snackbarHostState)
