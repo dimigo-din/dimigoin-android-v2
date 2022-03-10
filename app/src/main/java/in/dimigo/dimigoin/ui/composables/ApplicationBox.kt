@@ -26,7 +26,7 @@ fun ApplicationBox(
     label: String,
     icon: Int,
     iconTint: Color,
-    onNavigate: (() -> Unit)? = null,
+    onNavigate: () -> Unit = {},
 ) = Card(
     modifier = modifier,
     shape = Shapes.medium,
@@ -34,7 +34,7 @@ fun ApplicationBox(
 ) {
     Surface(
         modifier = Modifier
-            .clickable { onNavigate?.invoke() }
+            .clickable { onNavigate() }
     ) {
         Column(
             modifier = Modifier

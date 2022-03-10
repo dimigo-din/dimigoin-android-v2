@@ -27,9 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun DevelopingScreen() {
+fun DevelopingScreen(
+    modifier: Modifier = Modifier
+) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(vertical = 35.dp, horizontal = 20.dp)
     ) {
@@ -46,6 +48,7 @@ fun DevelopingScreen() {
                 style = DTypography.t2.copy(fontSize = 20.sp),
                 textAlign = TextAlign.Center,
                 fontWeight = Bold,
+                color = Color.Black
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(

@@ -229,9 +229,19 @@ fun App(
                 )
             }
             composable(Screen.Calendar.route) { ScheduleScreen() }
-            composable(Screen.Application.route) { ApplicationScreen() }
+            composable(Screen.Application.route) {
+                ApplicationScreen(
+                    onApplicationClick = { route ->
+                        navController.navigate(route)
+                    }
+                )
+            }
             composable(Screen.MyInfo.route) { Text(text = "내 정보") }
-            composable("developing") { DevelopingScreen() }
+            composable("developing") {
+                DevelopingScreen(
+                    Modifier.systemBarsPadding()
+                )
+            }
             placeSelectorNavGraph(navController, onPlaceChange, onFavoriteAdd, onFavoriteRemove)
         }
         CustomSnackbarHost(snackbarHostState)
