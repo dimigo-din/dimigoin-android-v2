@@ -2,7 +2,7 @@ package `in`.dimigo.dimigoin.domain.util
 
 fun String.josa(josa: String, onlyJosa: Boolean = false): String {
 
-    val lastChar = this.last().code
+    val lastChar = if (isEmpty()) { 0 } else { this.last().code }
     val batchim = lastChar.minus(0xAC00).mod(28)
 
     return (if (onlyJosa) "" else this) + when (josa) {

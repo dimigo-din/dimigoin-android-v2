@@ -33,11 +33,11 @@ class PlaceSelectorViewModel(
 
     private var allPlace: List<Place> = emptyList()
         set(value) {
-            Log.d(TAG, "allPlaces: 0")
             field = value
-            Log.d(TAG, "allPlaces: 1")
             placesMap = value.associateBy(Place::_id)
-            Log.d(TAG, "allPlaces: $placesMap")
+            viewModelScope.launch {
+                _isPlaceLoaded.emit(true)
+            }
         }
     private var placesMap: Map<String, Place> = hashMapOf()
 
@@ -51,6 +51,9 @@ class PlaceSelectorViewModel(
 
     private val _recommendedBuildings = MutableStateFlow<Future<List<Building>>>(Future.Nothing())
     val recommendedBuildings = _recommendedBuildings.asStateFlow()
+
+    private val _isPlaceLoaded = MutableStateFlow(false)
+    val isPlaceLoaded = _isPlaceLoaded.asStateFlow()
 
     var selectedBuilding = mutableStateOf("즐겨찾기")
 
