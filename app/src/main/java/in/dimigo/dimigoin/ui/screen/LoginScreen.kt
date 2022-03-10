@@ -3,6 +3,7 @@ package `in`.dimigo.dimigoin.ui.screen
 import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
 import `in`.dimigo.dimigoin.ui.theme.BorderTextField
+import `in`.dimigo.dimigoin.ui.theme.C2
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.theme.Red
@@ -63,6 +64,7 @@ fun LoginScreen(
     val focusManager = LocalFocusManager.current
     var username by remember { mutableStateOf(TextFieldValue()) }
     var password by remember { mutableStateOf(TextFieldValue()) }
+    var color by remember { mutableStateOf( C2) }
 
     val  coroutineScope = rememberCoroutineScope()
     val  bringIntoViewRequester = BringIntoViewRequester()
@@ -72,7 +74,6 @@ fun LoginScreen(
             .fillMaxWidth()
             .align(Alignment.Center)
             .navigationBarsWithImePadding()
-//            .height(LocalConfiguration.current.screenHeightDp.dp)
             .padding(horizontal = 28.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -83,93 +84,56 @@ fun LoginScreen(
             contentDescription = null
         )
         Spacer(modifier = Modifier.height(50.dp))
+        BorderTextField(
+            modifier = Modifier
+                .bringIntoViewRequester(bringIntoViewRequester)
+                .onFocusEvent {
+                    if (it.isFocused || it.hasFocus) {
+                        coroutineScope.launch {
+                            delay(250)
+                            bringIntoViewRequester.bringIntoView()
+                        }
+                    }
+                },
+            value = username,
+            onValueChange = { username = it },
+            label = "아이디를 입력하세요",
+            keyboardActions = KeyboardActions(onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+            }),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            color = color
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        BorderTextField(
+            modifier = Modifier
+                .bringIntoViewRequester(bringIntoViewRequester)
+                .onFocusEvent {
+                    if (it.isFocused || it.hasFocus) {
+                        coroutineScope.launch {
+                            delay(250)
+                            bringIntoViewRequester.bringIntoView()
+                        }
+                    }
+                },
+            value = password,
+            onValueChange = { password = it },
+            label = "비밀번호를 입력하세요",
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = {
+                focusManager.clearFocus()
+            }),
+            visualTransformation = PasswordVisualTransformation(),
+            color = color
+        )
         when (val v = loginViewModel.loginResult.collectAsState().value) {
             is Future.Nothing<*> -> {
-                BorderTextField(
-                    modifier = Modifier
-                        .bringIntoViewRequester(bringIntoViewRequester)
-                        .onFocusEvent {
-                                      if (it.isFocused || it.hasFocus) {
-                                          coroutineScope.launch {
-                                              delay(250)
-                                              bringIntoViewRequester.bringIntoView()
-                                          }
-                                      }
-                        },
-                    value = username,
-                    onValueChange = { username = it },
-                    label = "아이디를 입력하세요",
-                    keyboardActions = KeyboardActions(onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                BorderTextField(
-                    modifier = Modifier
-                        .bringIntoViewRequester(bringIntoViewRequester)
-                        .onFocusEvent {
-                            if (it.isFocused || it.hasFocus) {
-                                coroutineScope.launch {
-                                    delay(250)
-                                    bringIntoViewRequester.bringIntoView()
-                                }
-                            }
-                        },
-                    value = password,
-                    onValueChange = { password = it },
-                    label = "비밀번호를 입력하세요",
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = {
-                        focusManager.clearFocus()
-                    }),
-                    visualTransformation = PasswordVisualTransformation()
-                )
                 Spacer(modifier = Modifier.height(50.dp))
             }
             is Future.Success<*> -> onLoginSuccess()
 //            is Future.Failure<*> -> Text(text = "Login failed. ${v.throwable.message}")
             is Future.Failure<*> -> {
-                BorderTextField(
-                    modifier = Modifier
-                        .bringIntoViewRequester(bringIntoViewRequester)
-                        .onFocusEvent {
-                            if (it.isFocused || it.hasFocus) {
-                                coroutineScope.launch {
-                                    delay(250)
-                                    bringIntoViewRequester.bringIntoView()
-                                }
-                            }
-                        },
-                    value = username,
-                    onValueChange = { username = it },
-                    label = "아이디를 입력하세요",
-                    keyboardActions = KeyboardActions(onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                BorderTextField(
-                    modifier = Modifier
-                        .bringIntoViewRequester(bringIntoViewRequester)
-                        .onFocusEvent {
-                            if (it.isFocused || it.hasFocus) {
-                                coroutineScope.launch {
-                                    delay(250)
-                                    bringIntoViewRequester.bringIntoView()
-                                }
-                            }
-                        },
-                    value = password,
-                    onValueChange = { password = it },
-                    label = "비밀번호를 입력하세요",
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = {
-                        focusManager.clearFocus()
-                    }),
-                    visualTransformation = PasswordVisualTransformation()
-                )
+                color = Red
                 Spacer(modifier = Modifier.height(18.dp))
                 Text(
                     modifier = modifier
