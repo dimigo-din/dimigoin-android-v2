@@ -89,7 +89,10 @@ class MainActivity : ComponentActivity() {
         )
 
         setContent {
-            ProvideWindowInsets {
+            ProvideWindowInsets (
+                windowInsetsAnimationsEnabled = true,
+                consumeWindowInsets = false,
+            ) {
                 DimigoinTheme {
                     App(screens)
                 }
