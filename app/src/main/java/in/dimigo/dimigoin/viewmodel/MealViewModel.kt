@@ -38,4 +38,8 @@ class MealViewModel(
             _mealTime.emit(Future.Failure(it))
         }
     }
+
+    companion object {
+        private const val TAG = "MealViewModel"
+    }
 }

@@ -10,6 +10,7 @@ import `in`.dimigo.dimigoin.domain.entity.meal.Meal
 import `in`.dimigo.dimigoin.domain.entity.meal.MealTime
 import `in`.dimigo.dimigoin.domain.entity.meal.MealTimes
 import `in`.dimigo.dimigoin.domain.repository.MealRepository
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +40,7 @@ class MealRepositoryImpl(
 
         List(7) { days ->
             response.meals.map(MealResponseModel::toEntity).find {
-                it.date == now.plusDays(days.toLong())
+                it.date == now.with(DayOfWeek.MONDAY).plusDays(days.toLong())
             } ?: FAILED_MEAL
         }.also {
             weeklyMeal = it
@@ -116,6 +117,7 @@ class MealRepositoryImpl(
     }
 
     companion object {
+        private const val TAG = "MealRepositoryImpl"
         private val FAILED_MEAL = Meal(
             "급식 정보가 없습니다.",
             "급식 정보가 없습니다.",
