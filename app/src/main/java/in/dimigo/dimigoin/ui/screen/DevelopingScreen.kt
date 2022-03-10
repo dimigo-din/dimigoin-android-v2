@@ -1,9 +1,7 @@
 package `in`.dimigo.dimigoin.ui.screen
 
-import `in`.dimigo.dimigoin.ui.theme.C2
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.Point
-import `in`.dimigo.dimigoin.ui.theme.Shapes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -28,7 +25,8 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun DevelopingScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    backOnClick: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -54,8 +52,6 @@ fun DevelopingScreen(
             Text(
                 text = "추후 업데이트 될 예정입니다",
                 style = DTypography.explainText,
-//                fontWeight = Bold,
-//                color = C2
             )
         }
         Text(
@@ -64,7 +60,7 @@ fun DevelopingScreen(
                 .align(Alignment.BottomCenter)
                 .background(Point, shape = RoundedCornerShape(30))
                 .padding(vertical = 16.dp)
-                .clickable {  },
+                .clickable { backOnClick() },
             textAlign = TextAlign.Center,
             text = "돌아가기",
             style = DTypography.t3,
@@ -77,5 +73,5 @@ fun DevelopingScreen(
 @Preview(showSystemUi = true)
 @Composable
 fun DevelopingPrev() {
-    DevelopingScreen()
+    DevelopingScreen(modifier = Modifier, backOnClick = {})
 }

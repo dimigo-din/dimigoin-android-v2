@@ -239,7 +239,10 @@ fun App(
             composable(Screen.MyInfo.route) { Text(text = "내 정보") }
             composable("developing") {
                 DevelopingScreen(
-                    Modifier.systemBarsPadding()
+                    Modifier.systemBarsPadding(),
+                    backOnClick = {
+                        navController.popBackStack()
+                    }
                 )
             }
             placeSelectorNavGraph(navController, onPlaceChange, onFavoriteAdd, onFavoriteRemove)
