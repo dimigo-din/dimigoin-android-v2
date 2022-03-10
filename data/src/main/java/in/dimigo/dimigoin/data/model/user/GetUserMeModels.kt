@@ -13,7 +13,7 @@ data class IdentityResponseModel(
     val number: Int,
     val serial: Int,
     val photos: List<String>,
-    val birthDate: LocalDate,
+    val birthDate: String,
     val libraryId: String,
     val permissions: List<String>,
 )
