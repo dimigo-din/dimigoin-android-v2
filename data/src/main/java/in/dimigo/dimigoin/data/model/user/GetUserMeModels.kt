@@ -1,7 +1,5 @@
 package `in`.dimigo.dimigoin.data.model.user
 
-import java.time.LocalDate
-
 data class GetUserMeResponseModel(
     val identity: IdentityResponseModel
 )
