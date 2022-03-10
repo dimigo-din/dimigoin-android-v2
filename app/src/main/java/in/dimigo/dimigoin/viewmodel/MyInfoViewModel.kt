@@ -1,27 +1,24 @@
 package `in`.dimigo.dimigoin.viewmodel
 
-import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.domain.entity.user.User
 import `in`.dimigo.dimigoin.domain.usecase.user.GetMyIdentityUseCase
-import `in`.dimigo.dimigoin.ui.MainActivity
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
 import kotlinx.coroutines.launch
-import kotlin.coroutines.coroutineContext
 
 class MyInfoViewModel(
     private val getMyIdentityUseCase: GetMyIdentityUseCase,
@@ -60,5 +57,18 @@ class MyInfoViewModel(
             .setAllowedAuthenticators(BIOMETRIC_WEAK or DEVICE_CREDENTIAL)
             .build()
         biometricPrompt.authenticate(promptInfo)
+    }
+
+    fun renderBarcode(width: Int, height: Int): Bitmap? {
+        val barcodeString = myIdentity.libraryId ?: return null
+        val bitMatrix = MultiFormatWriter().encode(barcodeString, BarcodeFormat.CODE_39, width, height)
+        val bitmap = Bitmap.createBitmap(bitMatrix.width, bitMatrix.height, Bitmap.Config.ARGB_8888)
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                val color = if (bitMatrix[x, y]) Color.BLACK else Color.TRANSPARENT
+                bitmap.setPixel(x, y, color)
+            }
+        }
+        return bitmap
     }
 }

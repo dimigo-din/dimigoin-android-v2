@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -252,6 +253,7 @@ fun MyInfoPrev() {
 @Composable
 fun StudentCard(
     modifier: Modifier = Modifier,
+    viewModel: MyInfoViewModel = getViewModel(),
     name: String,
     birth: String,
     grade: Int,
@@ -352,13 +354,23 @@ fun StudentCard(
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 106.dp, bottom = 35.dp)
             ) {
-                Column() {
+                Column {
                     Icon(
                         modifier = Modifier,
                         painter = painterResource(id = R.drawable.ic_kdmhs),
                         contentDescription = null,
                         tint = Color.Black
                     )
+                    Spacer(modifier = Modifier.height(15.dp))
+                    viewModel.renderBarcode(width = 200, height = 40)?.asImageBitmap()
+                        ?.let {
+                            Image(
+                                modifier = Modifier
+                                    .size(200.dp, 40.dp),
+                                bitmap = it,
+                                contentDescription = null
+                            )
+                        }
                 }
             }
         }
