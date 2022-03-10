@@ -10,6 +10,6 @@ data class User(
     val serial: Int,
     val photos: List<String>,
     val birthdate: LocalDate,
-    val libraryId: String,
+    val libraryId: String?,
     val permissions: List<String>,
 )
