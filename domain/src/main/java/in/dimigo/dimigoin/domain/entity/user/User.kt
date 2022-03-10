@@ -9,7 +9,7 @@ data class User(
     val number: Int,
     val serial: Int,
     val photos: List<String>,
-    val birthDate: LocalDate,
+    val birthdate: LocalDate,
     val libraryId: String,
     val permissions: List<String>,
 )
