@@ -3,8 +3,6 @@ package `in`.dimigo.dimigoin.domain.entity.user
 import java.time.LocalDate
 
 data class User(
-    val _id: String,
-    val idx: Int,
     val name: String,
     val grade: Int,
     val `class`: Int,

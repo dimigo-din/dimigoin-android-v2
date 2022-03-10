@@ -7,8 +7,6 @@ data class GetUserMeResponseModel(
 )
 
 data class IdentityResponseModel(
-    val _id: String,
-    val idx: Int,
     val name: String,
     val grade: Int,
     val `class`: Int,
