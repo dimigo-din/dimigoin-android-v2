@@ -226,7 +226,7 @@ fun MyInfoScreen(
                         modifier = Modifier
                             .size(320.dp, 500.dp),
                         name = it.name,
-                        birth = it.birthDate.format(DateTimeFormatter.ofPattern()),
+                        birth = it.birthdate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
                         grade = it.grade,
                         `class` = it.`class`,
                         number = it.number
