@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.google.accompanist.pager.ExperimentalPagerApi
 import org.koin.androidx.compose.getViewModel
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -225,7 +226,7 @@ fun MyInfoScreen(
                         modifier = Modifier
                             .size(320.dp, 500.dp),
                         name = it.name,
-                        birth = "",
+                        birth = it.birthDate.format(DateTimeFormatter.ofPattern()),
                         grade = it.grade,
                         `class` = it.`class`,
                         number = it.number

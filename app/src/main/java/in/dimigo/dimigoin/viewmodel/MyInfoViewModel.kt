@@ -60,7 +60,7 @@ class MyInfoViewModel(
     }
 
     fun renderBarcode(width: Int, height: Int): Bitmap? {
-        val barcodeString = myIdentity.libraryId ?: return null
+        val barcodeString = myIdentity?.libraryId ?: return null
         val bitMatrix = MultiFormatWriter().encode(barcodeString, BarcodeFormat.CODE_39, width, height)
         val bitmap = Bitmap.createBitmap(bitMatrix.width, bitMatrix.height, Bitmap.Config.ARGB_8888)
         for (x in 0 until width) {
