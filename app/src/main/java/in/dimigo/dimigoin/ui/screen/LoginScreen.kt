@@ -131,10 +131,7 @@ fun LoginScreen(
             is Future.Nothing<*> -> {
                 Spacer(modifier = Modifier.height(50.dp))
             }
-            is Future.Success<*> -> {
-                onLoginSuccess()
-                Spacer(modifier = Modifier.height(50.dp))
-            }
+            is Future.Success<*> -> onLoginSuccess()
             is Future.Failure<*> -> {
                 color = Red
                 isLoading = false
