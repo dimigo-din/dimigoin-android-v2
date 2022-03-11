@@ -47,17 +47,15 @@ class LocalSharedPreferenceManager(context: Context) {
         }
 
     var places: List<Place>?
-        get() = sharedPreference.getStringSet(PREF_FAVORITES, setOf())?.map(String::toPlace)
-            ?: emptyList()
+        get() = sharedPreference.getStringSet(PREF_PLACES, null)?.map(String::toPlace)
         set(value) = sharedPreference.edit {
-            putStringSet(PREF_FAVORITES, value?.map(Place::toJsonString)?.toSet())
+            putStringSet(PREF_PLACES, value?.map(Place::toJsonString)?.toSet())
         }
 
     var schedules: List<Schedule>?
-        get() = sharedPreference.getStringSet(PREF_FAVORITES, setOf())?.map(String::toSchedule)
-            ?: emptyList()
+        get() = sharedPreference.getStringSet(PREF_SCHEDULES, null)?.map(String::toSchedule)
         set(value) = sharedPreference.edit {
-            putStringSet(PREF_FAVORITES, value?.map(Schedule::toJsonString)?.toSet())
+            putStringSet(PREF_SCHEDULES, value?.map(Schedule::toJsonString)?.toSet())
         }
 
     companion object {
@@ -67,5 +65,7 @@ class LocalSharedPreferenceManager(context: Context) {
         private const val PREF_ACCESS_TOKEN = "PREF_ACCESS_TOKEN"
         private const val PREF_REFRESH_TOKEN = "PREF_REFRESH_TOKEN"
         private const val PREF_FAVORITES = "PREF_FAVORITES"
+        private const val PREF_PLACES = "PREF_PLACES"
+        private const val PREF_SCHEDULES = "PREF_SCHEDULES"
     }
 }

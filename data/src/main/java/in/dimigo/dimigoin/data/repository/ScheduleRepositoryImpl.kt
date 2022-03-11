@@ -11,6 +11,7 @@ import `in`.dimigo.dimigoin.domain.entity.schedule.AnnualSchedule
 import `in`.dimigo.dimigoin.domain.entity.schedule.DailyTimetable
 import `in`.dimigo.dimigoin.domain.entity.schedule.WeeklyTimetable
 import `in`.dimigo.dimigoin.domain.repository.ScheduleRepository
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -54,6 +55,7 @@ class ScheduleRepositoryImpl(
 
     override suspend fun getSchoolSchedule(): Result<AnnualSchedule> {
         return getSchoolScheduleFromLocal().recoverCatching {
+            Log.d(TAG, "getSchoolSchedule: schedule not found in local")
             getSchoolScheduleFromRemote().getOrThrow()
         }
     }
@@ -61,6 +63,7 @@ class ScheduleRepositoryImpl(
     private suspend fun getSchoolScheduleFromLocal(): Result<AnnualSchedule> {
         return scheduleMutex.withLock {
             sharedPreferenceManager.schedules?.let {
+                Log.d(TAG, "getSchoolScheduleFromLocal: schedule found in local: $it")
                 it.groupBy { schedule -> YearMonth.from(schedule.date) }
             }?.let {
                 Result.success(it)
@@ -78,6 +81,7 @@ class ScheduleRepositoryImpl(
                 }.map {
                     it.value.toSchedulesWithType(it.key)
                 }.flatten().also {
+                    Log.d(TAG, "getSchoolScheduleFromRemote: storing schedule $it")
                     sharedPreferenceManager.schedules = it
                 }.groupBy {
                     YearMonth.from(it.date)
@@ -88,5 +92,9 @@ class ScheduleRepositoryImpl(
         }
     } catch (e: Exception) {
         Result.failure(e)
+    }
+
+    companion object {
+        private const val TAG = "ScheduleRepositoryImpl"
     }
 }
