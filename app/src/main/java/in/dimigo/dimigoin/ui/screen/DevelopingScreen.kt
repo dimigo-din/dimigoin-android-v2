@@ -2,8 +2,6 @@ package `in`.dimigo.dimigoin.ui.screen
 
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.Point
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -54,19 +54,22 @@ fun DevelopingScreen(
                 style = DTypography.explainText,
             )
         }
-        Text(
+        Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .background(Point, shape = RoundedCornerShape(30))
-                .padding(vertical = 16.dp)
-                .clickable { backOnClick() },
-            textAlign = TextAlign.Center,
-            text = "돌아가기",
-            style = DTypography.t3,
-            fontWeight = Bold,
-            color = Color.White,
-        )
+                .align(Alignment.BottomCenter),
+            onClick = { backOnClick() },
+            shape = RoundedCornerShape(30),
+            colors = ButtonDefaults.buttonColors(contentColor = Point)
+        ) {
+            Text(
+                modifier = Modifier.padding(vertical = 10.dp),
+                textAlign = TextAlign.Center,
+                text = "돌아가기",
+                style = DTypography.t4,
+                color = Color.White,
+            )
+        }
     }
 }
 
