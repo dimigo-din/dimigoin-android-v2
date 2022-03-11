@@ -79,11 +79,11 @@ import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
-    private val placeSelectorViewModel: PlaceSelectorViewModel by viewModel()
     private val navController = NavHostController(this).apply {
         navigatorProvider.addNavigator(ComposeNavigator())
         navigatorProvider.addNavigator(DialogNavigator())
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
                 consumeWindowInsets = false,
             ) {
                 DimigoinTheme {
-                    App(screens, navController, placeSelectorViewModel)
+                    App(screens, navController)
                 }
             }
         }
@@ -126,7 +126,6 @@ class MainActivity : AppCompatActivity() {
 fun App(
     navBarScreens: List<Screen>,
     navController: NavHostController,
-    placeSelectorViewModel: PlaceSelectorViewModel,
 ) {
     val snackbarHostState = remember { CustomSnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -268,7 +267,7 @@ fun App(
                     }
                 )
             }
-            placeSelectorNavGraph(navController, onPlaceChange, onFavoriteAdd, onFavoriteRemove, placeSelectorViewModel)
+            placeSelectorNavGraph(navController, onPlaceChange, onFavoriteAdd, onFavoriteRemove)
         }
         CustomSnackbarHost(snackbarHostState)
     }
@@ -279,7 +278,6 @@ fun NavGraphBuilder.placeSelectorNavGraph(
     onPlaceChange: (Place, String?) -> Unit,
     onFavoriteAdd: (Place, String?) -> Unit,
     onFavoriteRemove: (Place) -> Unit,
-    placeSelectorViewModel: PlaceSelectorViewModel,
 ) {
     val navigateToRemark = { place: Place ->
         navController.navigate("remark/${place._id}")
@@ -288,6 +286,8 @@ fun NavGraphBuilder.placeSelectorNavGraph(
         navController.navigate("remark_favorite/${place._id}")
     }
     composable("building") {
+        val placeSelectorViewModel: PlaceSelectorViewModel = getViewModel()
+
         BuildingScreen(
             modifier = Modifier.systemBarsPadding(),
             placeSelectorViewModel = placeSelectorViewModel,
@@ -309,6 +309,8 @@ fun NavGraphBuilder.placeSelectorNavGraph(
         ),
     ) {
         val category = it.arguments?.getString("category") ?: ""
+        val placeSelectorViewModel: PlaceSelectorViewModel = getViewModel()
+
         PlacesScreen(
             modifier = Modifier
                 .background(MaterialTheme.colors.surface)
@@ -323,6 +325,8 @@ fun NavGraphBuilder.placeSelectorNavGraph(
         )
     }
     composable("search") {
+        val placeSelectorViewModel: PlaceSelectorViewModel = getViewModel()
+
         PlaceSearchScreen(
             modifier = Modifier
                 .background(MaterialTheme.colors.surface)
@@ -346,6 +350,7 @@ fun NavGraphBuilder.placeSelectorNavGraph(
         )
     ) {
         val placeId = it.arguments?.getString("placeId") ?: ""
+        val placeSelectorViewModel: PlaceSelectorViewModel = getViewModel()
         Log.d(TAG, "placeSelectorNavGraph: $placeId")
         Log.d(TAG, "placeSelectorNavGraph: ${placeSelectorViewModel.placeIdToPlace(placeId)}")
 
@@ -375,6 +380,8 @@ fun NavGraphBuilder.placeSelectorNavGraph(
         ),
     ) {
         val placeId = it.arguments?.getString("placeId") ?: ""
+        val placeSelectorViewModel: PlaceSelectorViewModel = getViewModel()
+
         ReasonScreen(
             modifier = Modifier
                 .background(MaterialTheme.colors.surface)
