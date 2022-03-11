@@ -13,6 +13,7 @@ import `in`.dimigo.dimigoin.ui.theme.LightPoint
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.theme.Shapes
 import `in`.dimigo.dimigoin.ui.theme.YellowLight
+import `in`.dimigo.dimigoin.ui.util.icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,23 +50,9 @@ fun PlaceItem(
         .fillMaxWidth(),
     verticalAlignment = Alignment.CenterVertically,
 ) {
-    val icon = when (place.type) {
-        PlaceType.CLASSROOM -> R.drawable.ic_classroom
-        PlaceType.RESTROOM -> R.drawable.ic_restroom
-        PlaceType.CIRCLE, PlaceType.AFTERSCHOOL -> R.drawable.ic_circle_afterschool
-        PlaceType.TEACHER -> R.drawable.ic_teacher_room
-        PlaceType.CORRIDOR -> R.drawable.ic_corridor
-        PlaceType.FARM -> R.drawable.ic_farm
-        PlaceType.PLAYGROUND -> R.drawable.ic_playground
-        PlaceType.GYM -> R.drawable.ic_gym
-        PlaceType.LAUNDRY -> R.drawable.ic_laundry
-        PlaceType.SCHOOL -> R.drawable.ic_school
-        PlaceType.DORMITORY -> R.drawable.ic_dormitory
-        PlaceType.ETC, PlaceType.ABSENT -> R.drawable.ic_idk_room
-    }
     Icon(
         modifier = Modifier.size(24.dp),
-        painter = painterResource(id = icon), contentDescription = null,
+        painter = painterResource(id = place.type.icon), contentDescription = null,
         tint = if (isSelected) Point else C3,
     )
     Spacer(modifier = Modifier.width(20.dp))
