@@ -2,22 +2,34 @@ package `in`.dimigo.dimigoin.ui.screen
 
 import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.domain.entity.place.Place
+import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
 import `in`.dimigo.dimigoin.ui.composables.ContentBox
 import `in`.dimigo.dimigoin.ui.composables.OnLifecycleEvent
+import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
+import `in`.dimigo.dimigoin.ui.theme.C3
+import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.util.Future
+import `in`.dimigo.dimigoin.ui.util.icon
 import `in`.dimigo.dimigoin.viewmodel.MainViewModel
-import `in`.dimigo.dimigoin.viewmodel.PlaceSelectorViewModel
+import androidx.annotation.DrawableRes
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
+import androidx.compose.material.LocalContentColor
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -31,9 +43,7 @@ import org.koin.androidx.compose.getViewModel
 fun MainScreen(
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel = getViewModel(),
-    placeSelectorViewModel: PlaceSelectorViewModel = getViewModel(),
     onPlaceSelectorNavigate: () -> Unit,
-    onPlaceSelect: (Place) -> Unit,
     hasNewNotification: Boolean,
 ) = Column(modifier) {
     val currentPlace by mainViewModel.currentPlace.collectAsState()
@@ -72,6 +82,74 @@ fun MainScreen(
         },
         onNavigate = onPlaceSelectorNavigate,
     ) {
+        PlaceSelectorContent(
+            onPlaceTypeSelect = { mainViewModel.setCurrentPlace(it) },
+            onSelectOther = onPlaceSelectorNavigate,
+            selectedPlaceType = mainViewModel.currentPlace.collectAsState().value.data?.type ?: PlaceType.CLASSROOM
+        )
+    }
+}
 
+@Composable
+private fun PlaceSelectorContent(
+    onPlaceTypeSelect: (PlaceType) -> Unit,
+    onSelectOther: () -> Unit,
+    selectedPlaceType: PlaceType,
+) {
+    val places = listOf(PlaceType.CLASSROOM, PlaceType.RESTROOM, PlaceType.CORRIDOR, PlaceType.TEACHER)
+
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        places.forEach {
+            SimplePlaceItem(
+                placeType = it,
+                onClick = {
+                    onPlaceTypeSelect(it)
+                },
+                selected = selectedPlaceType == it,
+            )
+        }
+        SimplePlaceItem(
+            icon = R.drawable.ic_other_plus,
+            name = "기타",
+            onClick = onSelectOther,
+            selected = false,
+        )
+    }
+}
+
+@Composable
+private fun SimplePlaceItem(
+    placeType: PlaceType,
+    onClick: () -> Unit,
+    selected: Boolean,
+) {
+    SimplePlaceItem(icon = placeType.icon, name = placeType.value, onClick = onClick, selected = selected)
+}
+
+@Composable
+private fun SimplePlaceItem(
+    @DrawableRes icon: Int,
+    name: String,
+    onClick: () -> Unit,
+    selected: Boolean,
+) {
+    val color = animateColorAsState(if (selected) Point else C3)
+
+    CompositionLocalProvider(LocalContentColor provides color.value) {
+        Column(
+            Modifier.noRippleClickable { if (!selected) onClick() },
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            val painter = painterResource(id = icon)
+            Icon(
+                modifier = Modifier.size(24.dp),
+                painter = painter, contentDescription = null,
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(text = name, style = DTypography.t6)
+        }
     }
 }

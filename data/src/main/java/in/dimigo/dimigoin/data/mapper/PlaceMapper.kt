@@ -36,7 +36,7 @@ fun PlaceResponseModel.toEntity(): Place {
     return Place(
         _id = _id,
         name = name,
-        alias = nick,
+        alias = nick ?: name,
         building = building,
         description = description,
         floor = floor,

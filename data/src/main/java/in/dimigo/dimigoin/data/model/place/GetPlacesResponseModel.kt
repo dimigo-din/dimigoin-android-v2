@@ -10,7 +10,7 @@ data class PlaceResponseModel(
     val _id: String,
     val type: PlaceType,
     val name: String,
-    val nick: String,
+    val nick: String?,
     val building: String,
     val floor: Int,
 )
