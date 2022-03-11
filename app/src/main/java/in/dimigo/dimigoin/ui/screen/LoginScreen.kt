@@ -12,8 +12,6 @@ import `in`.dimigo.dimigoin.viewmodel.LoginViewModel
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +25,8 @@ import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -64,10 +64,11 @@ fun LoginScreen(
     val focusManager = LocalFocusManager.current
     var username by remember { mutableStateOf(TextFieldValue()) }
     var password by remember { mutableStateOf(TextFieldValue()) }
-    var color by remember { mutableStateOf( C2) }
+    var color by remember { mutableStateOf(C2) }
+    var isLoading by remember { mutableStateOf(false) }
 
-    val  coroutineScope = rememberCoroutineScope()
-    val  bringIntoViewRequester = BringIntoViewRequester()
+    val coroutineScope = rememberCoroutineScope()
+    val bringIntoViewRequester = BringIntoViewRequester()
 
     Column(
         Modifier
@@ -130,10 +131,13 @@ fun LoginScreen(
             is Future.Nothing<*> -> {
                 Spacer(modifier = Modifier.height(50.dp))
             }
-            is Future.Success<*> -> onLoginSuccess()
-//            is Future.Failure<*> -> Text(text = "Login failed. ${v.throwable.message}")
+            is Future.Success<*> -> {
+                onLoginSuccess()
+                Spacer(modifier = Modifier.height(50.dp))
+            }
             is Future.Failure<*> -> {
                 color = Red
+                isLoading = false
                 Spacer(modifier = Modifier.height(18.dp))
                 Text(
                     modifier = modifier
@@ -151,22 +155,29 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(17.dp))
             }
             is Future.Loading<*> -> {
-                Spacer(modifier = Modifier.height(80.dp))
-                CircularProgressIndicator()
+                isLoading = true
                 Spacer(modifier = Modifier.height(50.dp))
             }
         }
-        Text(
+        Button(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(Point, shape = RoundedCornerShape(30))
-                .padding(vertical = 16.dp)
-                .clickable { loginViewModel.login(username.text, password.text) },
-            textAlign = TextAlign.Center,
-            text = "로그인",
-            style = DTypography.t3,
-            color = Color.White,
-        )
+                .fillMaxWidth(),
+            onClick = { loginViewModel.login(username.text, password.text) },
+            shape = RoundedCornerShape(30),
+            colors = ButtonDefaults.buttonColors(contentColor = Point)
+        ) {
+            if (!isLoading) {
+                Text(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    textAlign = TextAlign.Center,
+                    text = "로그인",
+                    style = DTypography.t5,
+                    color = Color.White,
+                )
+            } else {
+                CircularProgressIndicator(modifier = Modifier, color = Color.White)
+            }
+        }
 
     }
 }
