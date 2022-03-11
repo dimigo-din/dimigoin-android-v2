@@ -159,7 +159,11 @@ fun LoginScreen(
         Button(
             modifier = Modifier
                 .fillMaxWidth(),
-            onClick = { loginViewModel.login(username.text, password.text) },
+            onClick = {
+                if (username.text.isNotBlank() && password.text.isNotBlank()) {
+                    loginViewModel.login(username.text, password.text)
+                }
+            },
             shape = RoundedCornerShape(30),
             colors = ButtonDefaults.buttonColors(contentColor = Point)
         ) {
