@@ -2,7 +2,11 @@ package `in`.dimigo.dimigoin.data.datasource
 
 import `in`.dimigo.dimigoin.data.mapper.toAttendanceLog
 import `in`.dimigo.dimigoin.data.mapper.toJsonString
+import `in`.dimigo.dimigoin.data.mapper.toPlace
+import `in`.dimigo.dimigoin.data.mapper.toSchedule
 import `in`.dimigo.dimigoin.domain.entity.place.AttendanceLog
+import `in`.dimigo.dimigoin.domain.entity.place.Place
+import `in`.dimigo.dimigoin.domain.entity.schedule.Schedule
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import androidx.core.content.edit
@@ -36,9 +40,22 @@ class LocalSharedPreferenceManager(context: Context) {
         }
 
     var favoriteAttendanceLogs: List<AttendanceLog>
-        get() = sharedPreference.getStringSet(PREF_FAVORITES, setOf())?.map(String::toAttendanceLog) ?: emptyList()
+        get() = sharedPreference.getStringSet(PREF_FAVORITES, setOf())?.map(String::toAttendanceLog)
+            ?: emptyList()
         set(value) = sharedPreference.edit {
             putStringSet(PREF_FAVORITES, value.map(AttendanceLog::toJsonString).toSet())
+        }
+
+    var places: List<Place>?
+        get() = sharedPreference.getStringSet(PREF_PLACES, null)?.map(String::toPlace)
+        set(value) = sharedPreference.edit {
+            putStringSet(PREF_PLACES, value?.map(Place::toJsonString)?.toSet())
+        }
+
+    var schedules: List<Schedule>?
+        get() = sharedPreference.getStringSet(PREF_SCHEDULES, null)?.map(String::toSchedule)
+        set(value) = sharedPreference.edit {
+            putStringSet(PREF_SCHEDULES, value?.map(Schedule::toJsonString)?.toSet())
         }
 
     companion object {
@@ -48,5 +65,7 @@ class LocalSharedPreferenceManager(context: Context) {
         private const val PREF_ACCESS_TOKEN = "PREF_ACCESS_TOKEN"
         private const val PREF_REFRESH_TOKEN = "PREF_REFRESH_TOKEN"
         private const val PREF_FAVORITES = "PREF_FAVORITES"
+        private const val PREF_PLACES = "PREF_PLACES"
+        private const val PREF_SCHEDULES = "PREF_SCHEDULES"
     }
 }

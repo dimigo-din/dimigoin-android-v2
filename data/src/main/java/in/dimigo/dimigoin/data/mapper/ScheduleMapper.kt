@@ -1,6 +1,8 @@
 package `in`.dimigo.dimigoin.data.mapper
 
+import `in`.dimigo.dimigoin.data.model.place.LocalScheduleModel
 import `in`.dimigo.dimigoin.data.model.schedule.WeeklyTimetableResponseModel
+import `in`.dimigo.dimigoin.data.util.gson
 import `in`.dimigo.dimigoin.domain.entity.schedule.DailyTimetable
 import `in`.dimigo.dimigoin.domain.entity.schedule.Schedule
 import `in`.dimigo.dimigoin.domain.entity.schedule.ScheduleType
@@ -9,6 +11,18 @@ import biweekly.util.ICalDate
 import java.io.InputStream
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+
+fun String.toSchedule(): Schedule =
+    gson.fromJson(this, LocalScheduleModel::class.java).toEntity()
+
+fun Schedule.toJsonString(): String =
+    gson.toJson(this.toLocalModel())
+
+fun Schedule.toLocalModel(): LocalScheduleModel =
+    LocalScheduleModel(type, date.toString(), name)
+
+fun LocalScheduleModel.toEntity(): Schedule =
+    Schedule(type, LocalDate.parse(date), name)
 
 fun WeeklyTimetableResponseModel.Timetable.toEntity() = DailyTimetable(
     sequence,
@@ -26,7 +40,8 @@ fun InputStream.toSchedulesWithType(type: ScheduleType) =
         }.flatten()
     }.flatten()
 
-private fun ICalDate.toLocalDate() = LocalDate.of(rawComponents.year, rawComponents.month, rawComponents.date)
+private fun ICalDate.toLocalDate() =
+    LocalDate.of(rawComponents.year, rawComponents.month, rawComponents.date)
 
 private operator fun LocalDate.rangeTo(that: LocalDate) = LocalDateRange(this, that)
 

@@ -6,11 +6,7 @@ import `in`.dimigo.dimigoin.data.mapper.toEntity
 import `in`.dimigo.dimigoin.data.model.place.PlaceResponseModel
 import `in`.dimigo.dimigoin.data.model.place.PostAttendanceRequestModel
 import `in`.dimigo.dimigoin.data.util.resultFromCall
-import `in`.dimigo.dimigoin.domain.entity.place.AttendanceLog
-import `in`.dimigo.dimigoin.domain.entity.place.Building
-import `in`.dimigo.dimigoin.domain.entity.place.Place
-import `in`.dimigo.dimigoin.domain.entity.place.PlaceCategory
-import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
+import `in`.dimigo.dimigoin.domain.entity.place.*
 import `in`.dimigo.dimigoin.domain.repository.PlaceRepository
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -22,24 +18,39 @@ class PlaceRepositoryImpl(
     private var places: List<Place>? = null
     private var currentPlace: Place? = null
 
-    val attendanceLogMutex = Mutex()
+    private val attendanceLogMutex = Mutex()
+    private val placesMutex = Mutex()
 
-    override suspend fun getPlaces(): Result<List<Place>> = resultFromCall(
+    override suspend fun getPlaces(): Result<List<Place>> {
+        return getPlacesFromLocal().recoverCatching {
+            getPlacesFromRemote().getOrThrow()
+        }
+    }
+
+    private suspend fun getPlacesFromRemote(): Result<List<Place>> = resultFromCall(
         service.getPlaces(),
         cached = places,
     ) { response ->
         response.places.map(PlaceResponseModel::toEntity).also {
             places = it
+            sharedPreferenceManager.places = it
         }
     }
 
-    override suspend fun setCurrentPlace(placeId: String, remark: String?): Result<Boolean> = resultFromCall(
-        service.addAttendanceLog(PostAttendanceRequestModel(placeId, remark))
-    ) { response ->
-        places?.find { it._id == response.attendanceLog.placeId }.also {
-            currentPlace = it
-        } != null
+    private suspend fun getPlacesFromLocal(): Result<List<Place>> = placesMutex.withLock {
+        sharedPreferenceManager.places?.let {
+            Result.success(it)
+        } ?: Result.failure(NoSuchElementException("Places are not stored in local"))
     }
+
+    override suspend fun setCurrentPlace(placeId: String, remark: String?): Result<Boolean> =
+        resultFromCall(
+            service.addAttendanceLog(PostAttendanceRequestModel(placeId, remark))
+        ) { response ->
+            places?.find { it._id == response.attendanceLog.placeId }.also {
+                currentPlace = it
+            } != null
+        }
 
     override suspend fun getCurrentPlace(): Result<Place?> = resultFromCall(
         service.getAttendanceLogs()
@@ -156,24 +167,28 @@ class PlaceRepositoryImpl(
                 ),
                 Building(
                     "생활관", "우정학사",
-                    listOf(Place(
-                        "620fd105a0469d4750585a37",
-                        "우정학사 호실",
-                        "여호실",
-                        "생활관",
-                        "우정학사",
-                        null,
-                        PlaceType.DORMITORY,
-                    )),
-                    listOf(Place(
-                        "620fc9c3c1ce4101d43d5f98",
-                        "우정학사 세탁",
-                        "세탁",
-                        "세탁하러 오셨나요?",
-                        "우정학사",
-                        null,
-                        PlaceType.DORMITORY,
-                    ))
+                    listOf(
+                        Place(
+                            "620fd105a0469d4750585a37",
+                            "우정학사 호실",
+                            "여호실",
+                            "생활관",
+                            "우정학사",
+                            null,
+                            PlaceType.DORMITORY,
+                        )
+                    ),
+                    listOf(
+                        Place(
+                            "620fc9c3c1ce4101d43d5f98",
+                            "우정학사 세탁",
+                            "세탁",
+                            "세탁하러 오셨나요?",
+                            "우정학사",
+                            null,
+                            PlaceType.DORMITORY,
+                        )
+                    )
                 ),
                 Building(
                     "기타", "기타 장소",
