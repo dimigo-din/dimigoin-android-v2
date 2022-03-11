@@ -1,6 +1,7 @@
 package `in`.dimigo.dimigoin.data.repository
 
 import `in`.dimigo.dimigoin.data.datasource.DimigoinApiService
+import `in`.dimigo.dimigoin.data.datasource.LocalSharedPreferenceManager
 import `in`.dimigo.dimigoin.data.datasource.SchoolScheduleDataSource
 import `in`.dimigo.dimigoin.data.mapper.toEntity
 import `in`.dimigo.dimigoin.data.mapper.toSchedulesWithType
@@ -10,37 +11,64 @@ import `in`.dimigo.dimigoin.domain.entity.schedule.AnnualSchedule
 import `in`.dimigo.dimigoin.domain.entity.schedule.DailyTimetable
 import `in`.dimigo.dimigoin.domain.entity.schedule.WeeklyTimetable
 import `in`.dimigo.dimigoin.domain.repository.ScheduleRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class ScheduleRepositoryImpl(
     private val dimigoinService: DimigoinApiService,
     private val scheduleDataSource: SchoolScheduleDataSource,
+    private val sharedPreferenceManager: LocalSharedPreferenceManager,
 ) : ScheduleRepository {
 
-    var weeklyTimetable: WeeklyTimetable? = null
+    private var weeklyTimetable: WeeklyTimetable? = null
+    private var schoolSchedules: AnnualSchedule? = null
 
-    override suspend fun getTimetableByClass(grade: Int, `class`: Int): Result<WeeklyTimetable> = resultFromCall(
-        dimigoinService.getTimetable(grade, `class`),
-        cached = weeklyTimetable
-    ) { response ->
-        val weeklyTimetable = response.timetable.map(WeeklyTimetableResponseModel.Timetable::toEntity)
+    private val scheduleMutex = Mutex()
 
-        val monday = getFirstDayOfWeek(weeklyTimetable.firstOrNull()?.date ?: LocalDate.now())
+    override suspend fun getTimetableByClass(grade: Int, `class`: Int): Result<WeeklyTimetable> =
+        resultFromCall(
+            dimigoinService.getTimetable(grade, `class`),
+            cached = weeklyTimetable
+        ) { response ->
+            val weeklyTimetable =
+                response.timetable.map(WeeklyTimetableResponseModel.Timetable::toEntity)
 
-        List(5) { days ->
-            monday.plusDays(days.toLong())
-        }.map {
-            weeklyTimetable.find { timetable -> timetable.date == it } ?: DailyTimetable(emptyList(), it)
+            val monday = getFirstDayOfWeek(weeklyTimetable.firstOrNull()?.date ?: LocalDate.now())
+
+            List(5) { days ->
+                monday.plusDays(days.toLong())
+            }.map {
+                weeklyTimetable.find { timetable -> timetable.date == it } ?: DailyTimetable(
+                    emptyList(),
+                    it
+                )
+            }
         }
-    }
 
     private fun getFirstDayOfWeek(date: LocalDate) = date.with(DayOfWeek.MONDAY)
 
-    override suspend fun getSchoolSchedule(): Result<AnnualSchedule> = try {
+    override suspend fun getSchoolSchedule(): Result<AnnualSchedule> {
+        return getSchoolScheduleFromLocal().recoverCatching {
+            getSchoolScheduleFromRemote().getOrThrow()
+        }
+    }
+
+    private suspend fun getSchoolScheduleFromLocal(): Result<AnnualSchedule> {
+        return scheduleMutex.withLock {
+            sharedPreferenceManager.schedules?.let {
+                it.groupBy { schedule -> YearMonth.from(schedule.date) }
+            }?.let {
+                Result.success(it)
+            } ?: Result.failure(NoSuchElementException("Schedules are not stored in local"))
+        }
+    }
+
+    private suspend fun getSchoolScheduleFromRemote(): Result<AnnualSchedule> = try {
         withContext(Dispatchers.IO) {
             Result.success(
                 SchoolScheduleDataSource.Calendar.values().associateBy {
@@ -49,8 +77,12 @@ class ScheduleRepositoryImpl(
                     scheduleDataSource.getICalStream(it.value)
                 }.map {
                     it.value.toSchedulesWithType(it.key)
-                }.flatten().groupBy {
+                }.flatten().also {
+                    sharedPreferenceManager.schedules = it
+                }.groupBy {
                     YearMonth.from(it.date)
+                }.also {
+                    schoolSchedules = it
                 }
             )
         }
