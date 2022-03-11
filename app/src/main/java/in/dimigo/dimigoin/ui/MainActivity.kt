@@ -207,7 +207,6 @@ fun App(
                         .padding(top = 36.dp)
                         .systemBarsPadding(),
                     onPlaceSelectorNavigate = { navController.navigate("place_selector") },
-                    onPlaceSelect = { },
                     hasNewNotification = false
                 )
             }

@@ -31,9 +31,7 @@ import org.koin.androidx.compose.getViewModel
 fun MainScreen(
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel = getViewModel(),
-    placeSelectorViewModel: PlaceSelectorViewModel = getViewModel(),
     onPlaceSelectorNavigate: () -> Unit,
-    onPlaceSelect: (Place) -> Unit,
     hasNewNotification: Boolean,
 ) = Column(modifier) {
     val currentPlace by mainViewModel.currentPlace.collectAsState()
