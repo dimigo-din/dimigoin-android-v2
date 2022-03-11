@@ -8,5 +8,5 @@ sealed class Screen(val route: String, val name: String, @DrawableRes val icon: 
     object Meal : Screen("meal", "급식", R.drawable.ic_meal)
     object Calendar : Screen("calendar", "일정", R.drawable.ic_calendar)
     object Application : Screen("application", "신청", R.drawable.ic_application)
-    object MyInfo : Screen("my_info", "내 정보", R.drawable.ic_my_information)
+    object MyInfo : Screen("my_info", "학생증", R.drawable.ic_my_information)
 }

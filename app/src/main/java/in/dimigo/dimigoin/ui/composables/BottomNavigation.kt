@@ -122,7 +122,7 @@ fun BNItemPreviewSelected() {
 @Composable
 fun BottomNavigationPreview() {
     BottomNavigation {
-        listOf("메인", "급식", "일정", "신청", "내 정보").forEach {
+        listOf("메인", "급식", "일정", "신청", "학생증").forEach {
             BottomNavigationItem(
                 icon = { Icon(Icons.Filled.Favorite, contentDescription = null) },
                 label = { Text(it, style = DTypography.t6) },
