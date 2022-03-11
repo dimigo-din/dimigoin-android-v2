@@ -104,7 +104,10 @@ class MainActivity : AppCompatActivity() {
         )
 
         setContent {
-            ProvideWindowInsets {
+            ProvideWindowInsets (
+                windowInsetsAnimationsEnabled = true,
+                consumeWindowInsets = false,
+            ) {
                 DimigoinTheme {
                     App(screens, navController, placeSelectorViewModel)
                 }
@@ -215,7 +218,7 @@ fun App(
             }
             composable("login") {
                 LoginScreen(
-                    modifier = Modifier.systemBarsPadding(),
+                    modifier = Modifier,
                     onLoginSuccess = {
                         navController.navigate(Screen.Main.route) {
                             popUpTo("login") { inclusive = true }
