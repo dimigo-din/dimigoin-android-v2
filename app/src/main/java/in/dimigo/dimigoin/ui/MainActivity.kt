@@ -125,7 +125,6 @@ fun App(
     navController: NavHostController,
     placeSelectorViewModel: PlaceSelectorViewModel,
 ) {
-    val navController = rememberNavController()
     val snackbarHostState = remember { CustomSnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
