@@ -86,7 +86,7 @@ val dataModules = module {
 val presentationModules = module {
     viewModel { LoginViewModel(get()) }
     viewModel { SplashViewModel(get()) }
-    viewModel { MainViewModel(get(), get(), get()) }
+    viewModel { MainViewModel(get(), get(), get(), get()) }
     viewModel { PlaceSelectorViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModel { MealViewModel(get(), get()) }
     viewModel { MealTimeViewModel(get(), get()) }
