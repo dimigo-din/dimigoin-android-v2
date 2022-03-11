@@ -11,6 +11,7 @@ import `in`.dimigo.dimigoin.ui.screen.DevelopingScreen
 import `in`.dimigo.dimigoin.ui.screen.ApplicationScreen
 import `in`.dimigo.dimigoin.ui.screen.LoginScreen
 import `in`.dimigo.dimigoin.ui.screen.MainScreen
+import `in`.dimigo.dimigoin.ui.screen.MyInfoScreen
 import `in`.dimigo.dimigoin.ui.screen.ScheduleScreen
 import `in`.dimigo.dimigoin.ui.screen.Screen
 import `in`.dimigo.dimigoin.ui.screen.SplashScreen
@@ -30,6 +31,7 @@ import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
@@ -69,6 +71,7 @@ import androidx.navigation.compose.DialogNavigator
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import com.google.accompanist.insets.ProvideWindowInsets
@@ -78,7 +81,7 @@ import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     private val placeSelectorViewModel: PlaceSelectorViewModel by viewModel()
     private val navController = NavHostController(this).apply {
@@ -122,6 +125,7 @@ fun App(
     navController: NavHostController,
     placeSelectorViewModel: PlaceSelectorViewModel,
 ) {
+    val navController = rememberNavController()
     val snackbarHostState = remember { CustomSnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
@@ -254,6 +258,7 @@ fun App(
                 )
             }
             composable(Screen.MyInfo.route) { Text(text = "내 정보") }
+            composable(Screen.MyInfo.route) { MyInfoScreen() }
             composable("developing") {
                 DevelopingScreen(
                     Modifier.systemBarsPadding(),
