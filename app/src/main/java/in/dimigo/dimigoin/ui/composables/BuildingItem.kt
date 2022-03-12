@@ -8,6 +8,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -55,6 +56,7 @@ fun BuildingItem(
                     end.linkTo(parent.end)
                     bottom.linkTo(parent.bottom, 15.dp)
                 }
+                    .width(115.dp),
             )
         }
     }
