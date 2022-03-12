@@ -85,7 +85,7 @@ fun MyInfoScreen(
                 Spacer(Modifier.height(5.dp))
                 Text(
                     modifier = Modifier.padding(start = 15.dp),
-                    text = Screen.MyInfo.name, style = DTypography.t0
+                    text = NavScreen.MyInfo.name, style = DTypography.t0
                 )
             }
             Column(
