@@ -51,10 +51,11 @@ import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
+    private val lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel> = viewModel()
     private val navController = NavHostController(this).apply {
         navigatorProvider.addNavigator(ComposeNavigator())
         navigatorProvider.addNavigator(DialogNavigator())
@@ -72,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                 consumeWindowInsets = false,
             ) {
                 DimigoinTheme {
-                    App(navController)
+                    App(navController, lazyPlaceSelectorViewModel)
                 }
             }
         }
@@ -88,6 +89,7 @@ class MainActivity : AppCompatActivity() {
 @Composable
 fun App(
     navController: NavHostController,
+    lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel>,
 ) {
     val snackbarHostState = remember { CustomSnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -181,7 +183,13 @@ fun App(
         ) {
             preMainNavGraph(navController)
             mainNavGraph(navController, onPlaceChange)
-            placeSelectorNavGraph(navController, onPlaceChange, onFavoriteAdd, onFavoriteRemove)
+            placeSelectorNavGraph(
+                navController,
+                onPlaceChange,
+                onFavoriteAdd,
+                onFavoriteRemove,
+                lazyPlaceSelectorViewModel
+            )
         }
         CustomSnackbarHost(snackbarHostState)
     }
@@ -276,6 +284,7 @@ fun NavGraphBuilder.placeSelectorNavGraph(
     onPlaceChange: (Place, String?) -> Unit,
     onFavoriteAdd: (Place, String?) -> Unit,
     onFavoriteRemove: (Place) -> Unit,
+    lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel>,
 ) {
     val navigateToRemark = { place: Place ->
         navController.navigate(PlaceSelectorScreen.SetRemark.place(place))
@@ -284,7 +293,7 @@ fun NavGraphBuilder.placeSelectorNavGraph(
         navController.navigate(PlaceSelectorScreen.AddFavorite.place(place))
     }
     composable(PlaceSelectorScreen.Building.route) {
-        val placeSelectorViewModel: PlaceSelectorViewModel = getViewModel()
+        val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
 
         BuildingScreen(
             modifier = Modifier.systemBarsPadding(),
@@ -308,7 +317,7 @@ fun NavGraphBuilder.placeSelectorNavGraph(
         PlaceSelectorScreen.Category.navArguments,
     ) {
         val category = it.arguments?.getString("category") ?: ""
-        val placeSelectorViewModel: PlaceSelectorViewModel = getViewModel()
+        val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
 
         PlacesScreen(
             modifier = Modifier
@@ -324,7 +333,7 @@ fun NavGraphBuilder.placeSelectorNavGraph(
         )
     }
     composable(PlaceSelectorScreen.Search.route) {
-        val placeSelectorViewModel: PlaceSelectorViewModel = getViewModel()
+        val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
 
         PlaceSearchScreen(
             modifier = Modifier
@@ -347,7 +356,7 @@ fun NavGraphBuilder.placeSelectorNavGraph(
         )
     ) {
         val placeId = it.arguments?.getString("placeId") ?: ""
-        val placeSelectorViewModel: PlaceSelectorViewModel = getViewModel()
+        val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
         Log.d(TAG, "placeSelectorNavGraph: $placeId")
         Log.d(TAG, "placeSelectorNavGraph: ${placeSelectorViewModel.placeIdToPlace(placeId)}")
 
@@ -375,7 +384,7 @@ fun NavGraphBuilder.placeSelectorNavGraph(
         PlaceSelectorScreen.AddFavorite.navArguments,
     ) {
         val placeId = it.arguments?.getString("placeId") ?: ""
-        val placeSelectorViewModel: PlaceSelectorViewModel = getViewModel()
+        val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
 
         ReasonScreen(
             modifier = Modifier

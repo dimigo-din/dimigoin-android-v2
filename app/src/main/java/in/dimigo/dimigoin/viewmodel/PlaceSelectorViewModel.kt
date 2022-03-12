@@ -13,7 +13,6 @@ import `in`.dimigo.dimigoin.domain.usecase.place.GetRecommendedBuildingsUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.RemoveFavoriteAttendanceLogUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.SetCurrentPlaceUseCase
 import `in`.dimigo.dimigoin.ui.util.Future
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -150,7 +149,7 @@ class PlaceSelectorViewModel(
     }
 
     companion object {
-        private const val TAG = "LoginViewModel"
+        private const val TAG = "PlaceSelectorViewModel"
         private val fallbackPlace = Place("", "", "", "", "", null, PlaceType.ETC)
     }
 }
