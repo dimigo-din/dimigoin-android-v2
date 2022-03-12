@@ -54,7 +54,7 @@ class PlaceSelectorViewModel(
     private val _isPlaceLoaded = MutableStateFlow(false)
     val isPlaceLoaded = _isPlaceLoaded.asStateFlow()
 
-    var selectedBuilding = mutableStateOf("즐겨찾기")
+    val selectedBuilding = mutableStateOf("즐겨찾기")
 
     init {
         getAllPlaces()
@@ -67,7 +67,7 @@ class PlaceSelectorViewModel(
         getAllPlacesUseCase().onSuccess { allPlace = it }
     }
 
-    private fun getCurrentPlace() = viewModelScope.launch {
+    fun getCurrentPlace() = viewModelScope.launch {
         getCurrentPlaceUseCase().onSuccess {
             val cp = it
                 ?: allPlace.find { place ->
@@ -122,7 +122,7 @@ class PlaceSelectorViewModel(
     ) = viewModelScope.launch {
         removeFavoriteAttendanceLogUseCase(attendanceLog._id).onSuccess {
             if (it) {
-                getFavoriteAttendanceLogs()
+                    getFavoriteAttendanceLogs()
                 callback(placeIdToPlace(attendanceLog.placeId))
             }
         }
