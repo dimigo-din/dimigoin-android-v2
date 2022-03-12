@@ -17,6 +17,7 @@ import `in`.dimigo.dimigoin.ui.screen.placeselector.ReasonScreen
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
+import `in`.dimigo.dimigoin.ui.util.Future
 import `in`.dimigo.dimigoin.viewmodel.PlaceSelectorViewModel
 import android.content.Intent
 import android.os.Bundle
@@ -24,18 +25,15 @@ import android.util.Log
 import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -50,6 +48,7 @@ import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.systemBarsPadding
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -138,41 +137,6 @@ fun App(
 
     Scaffold(
         bottomBar = bottomBar@{
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
-
-            currentDestination ?: return@bottomBar
-
-            val currentRoute = currentDestination.route ?: return@bottomBar
-            val currentScreen = Screen.findByRoute(currentRoute)
-
-            AnimatedVisibility(
-                visible = currentScreen is NavScreen,
-                enter = slideInVertically(initialOffsetY = { it }),
-                exit = slideOutVertically(targetOffsetY = { it })
-            ) {
-                val navScreens = listOf(
-                    NavScreen.Main,
-                    NavScreen.Meal,
-                    NavScreen.Calendar,
-                    NavScreen.Application,
-                    NavScreen.MyInfo,
-                )
-                Column {
-                    BottomNavBarImpl(
-                        navController,
-                        navScreens,
-                        currentDestination
-                    )
-                    Spacer(
-                        modifier = Modifier
-                            .background(Color.White)
-                            .fillMaxWidth()
-                            .navigationBarsHeight(),
-                    )
-
-                }
-            }
         }
     ) { innerPadding ->
         NavHost(
@@ -192,6 +156,98 @@ fun App(
             )
         }
         CustomSnackbarHost(snackbarHostState)
+        CustomBottomBar(navController, lazyPlaceSelectorViewModel)
+    }
+}
+
+@Composable
+fun CustomBottomBar(
+    navController: NavHostController,
+    lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel>
+) {
+    val placeSelectorViewModel by lazyPlaceSelectorViewModel
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    val currentRoute = currentDestination?.route ?: return
+    val currentScreen = Screen.findByRoute(currentRoute)
+
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+        AnimatedVisibility(
+            visible = currentScreen is NavScreen ||
+                    (currentScreen is PlaceSelectorScreen && currentScreen.showCurrentPlace),
+            enter = slideInVertically(initialOffsetY = { it }),
+            exit = slideOutVertically(targetOffsetY = { it })
+        ) {
+            Crossfade(targetState = currentScreen) {
+                if (it is NavScreen) {
+                    BottomNavBar(navController, currentDestination)
+                } else {
+                    PlaceBottomBar(placeSelectorViewModel.currentPlace.collectAsState().value)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun PlaceBottomBar(currentPlace: Future<Place>) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .navigationBarsHeight(60.dp)
+            .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Spacer(Modifier.weight(1f))
+            Text(
+                text = buildAnnotatedString {
+                    when (val v = currentPlace) {
+                        is Future.Success -> {
+                            append("나의 위치는 현재 ")
+                            withStyle(SpanStyle(color = Point)) { append(v._data.name) }
+                            append("입니다")
+                        }
+                        is Future.Failure -> append("위치 정보를 불러오지 못했습니다")
+                        is Future.Loading, is Future.Nothing<*> -> append("위치 정보를 가져오는 중입니다")
+                    }
+                },
+                style = DTypography.t4,
+            )
+            Spacer(Modifier.weight(1f))
+            Spacer(
+                modifier = Modifier
+                    .background(Color.White)
+                    .fillMaxWidth()
+                    .navigationBarsHeight(),
+            )
+        }
+    }
+}
+
+@Composable
+fun BottomNavBar(navController: NavHostController, currentDestination: NavDestination?) {
+    val navScreens = listOf(
+        NavScreen.Main,
+        NavScreen.Meal,
+        NavScreen.Calendar,
+        NavScreen.Application,
+        NavScreen.MyInfo,
+    )
+    Column {
+        BottomNavBarImpl(
+            navController,
+            navScreens,
+            currentDestination
+        )
+        Spacer(
+            modifier = Modifier
+                .background(Color.White)
+                .fillMaxWidth()
+                .navigationBarsHeight(),
+        )
     }
 }
 

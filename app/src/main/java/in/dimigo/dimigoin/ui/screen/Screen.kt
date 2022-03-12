@@ -84,7 +84,7 @@ sealed class PlaceSelectorScreen(
         listOf(
             navArgument("category") { type = NavType.StringType }
         ),
-        true
+        false
     ) {
         override fun matchesRoute(route: String): Boolean {
             val regex = """ps_category/.+""".toRegex()
