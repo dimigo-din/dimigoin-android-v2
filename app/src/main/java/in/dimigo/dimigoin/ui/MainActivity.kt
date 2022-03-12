@@ -103,7 +103,7 @@ fun App(
                     withStyle(SpanStyle(color = Point)) { append(place.name) }
                     append("${place.name.josa("으로", true)} 변경 완료")
                 },
-                description = "사유: $remark",
+                description = remark?.let { "사유: $it" },
             )
         }
         Unit
@@ -146,7 +146,8 @@ fun App(
 
             AnimatedVisibility(
                 visible = currentScreen is NavScreen,
-                enter = slideInVertically(), exit = slideOutVertically()
+                enter = slideInVertically(initialOffsetY = { it }),
+                exit = slideOutVertically(targetOffsetY = { it })
             ) {
                 val navScreens = listOf(
                     NavScreen.Main,
@@ -178,79 +179,95 @@ fun App(
             modifier = Modifier
                 .padding(innerPadding),
         ) {
-            composable(NoNavScreen.Splash.route) {
-                SplashScreen(
-                    onAutoLoginSuccess = {
-                        navController.navigate(NavScreen.Main.route) {
-                            popUpTo(NoNavScreen.Splash.route) { inclusive = true }
-                        }
-                    },
-                    onAutoLoginFail = {
-                        navController.navigate(NoNavScreen.Login.route) {
-                            popUpTo(NoNavScreen.Splash.route) { inclusive = true }
-                        }
-                    },
-                )
-            }
-            composable(NoNavScreen.Login.route) {
-                LoginScreen(
-                    modifier = Modifier,
-                    onLoginSuccess = {
-                        navController.navigate(NavScreen.Main.route) {
-                            popUpTo(NoNavScreen.Login.route) { inclusive = true }
-                        }
-                    }
-                )
-            }
-            composable(NavScreen.Main.route) {
-                MainScreen(
-                    modifier = Modifier
-                        .padding(horizontal = 20.dp)
-                        .padding(top = 36.dp)
-                        .systemBarsPadding(),
-                    onPlaceSelectorNavigate = {
-                        navController.navigate(PlaceSelectorScreen.Building.route)
-                    },
-                    hasNewNotification = false
-                )
-            }
-            composable(NavScreen.Meal.route) {
-                MealScreen(
-                    onMealTimeClick = {
-                        navController.navigate(NoNavScreen.MealTime.type(it))
-                    },
-                )
-            }
-            composable(
-                NoNavScreen.MealTime.route,
-                NoNavScreen.MealTime.navArguments
-            ) {
-                val startPage = it.arguments?.getInt("type") ?: 0
-                MealTimeScreen(
-                    startPage = startPage,
-                    onBackPress = { navController.popBackStack() }
-                )
-            }
-            composable(NavScreen.Calendar.route) { ScheduleScreen() }
-            composable(NavScreen.Application.route) {
-                ApplicationScreen(
-                    onApplicationClick = { route ->
-                        navController.navigate(route)
-                    }
-                )
-            }
-            composable(NavScreen.MyInfo.route) { MyInfoScreen() }
-            composable(NoNavScreen.Developing.route) {
-                DevelopingScreen(
-                    Modifier.systemBarsPadding(),
-                    backOnClick = {
-                        navController.popBackStack()
-                    }
-                )
-            }
+            preMainNavGraph(navController)
+            mainNavGraph(navController, onPlaceChange)
             placeSelectorNavGraph(navController, onPlaceChange, onFavoriteAdd, onFavoriteRemove)
         }
         CustomSnackbarHost(snackbarHostState)
+    }
+}
+
+fun NavGraphBuilder.preMainNavGraph(
+    navController: NavHostController
+) {
+    composable(NoNavScreen.Splash.route) {
+        SplashScreen(
+            onAutoLoginSuccess = {
+                navController.navigate(NavScreen.Main.route) {
+                    popUpTo(NoNavScreen.Splash.route) { inclusive = true }
+                }
+            },
+            onAutoLoginFail = {
+                navController.navigate(NoNavScreen.Login.route) {
+                    popUpTo(NoNavScreen.Splash.route) { inclusive = true }
+                }
+            },
+        )
+    }
+    composable(NoNavScreen.Login.route) {
+        LoginScreen(
+            modifier = Modifier,
+            onLoginSuccess = {
+                navController.navigate(NavScreen.Main.route) {
+                    popUpTo(NoNavScreen.Login.route) { inclusive = true }
+                }
+            }
+        )
+    }
+}
+
+fun NavGraphBuilder.mainNavGraph(
+    navController: NavHostController,
+    onPlaceChange: (Place, String?) -> Unit
+) {
+    composable(NavScreen.Main.route) {
+        MainScreen(
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .padding(top = 36.dp)
+                .systemBarsPadding(),
+            onPlaceChange = {
+                onPlaceChange(it, null)
+            },
+            onPlaceSelectorNavigate = {
+                navController.navigate(PlaceSelectorScreen.Building.route)
+            },
+            hasNewNotification = false
+        )
+    }
+    composable(NavScreen.Meal.route) {
+        MealScreen(
+            onMealTimeClick = {
+                navController.navigate(NoNavScreen.MealTime.type(it))
+            },
+        )
+    }
+    composable(
+        NoNavScreen.MealTime.route,
+        NoNavScreen.MealTime.navArguments
+    ) {
+        val startPage = it.arguments?.getInt("type") ?: 0
+        MealTimeScreen(
+            startPage = startPage,
+            onBackPress = { navController.popBackStack() }
+        )
+    }
+    composable(NavScreen.Calendar.route) { ScheduleScreen() }
+    composable(NavScreen.Application.route) {
+        ApplicationScreen(
+            onApplicationClick = { route ->
+                navController.navigate(route)
+            }
+        )
+    }
+    composable(NavScreen.MyInfo.route) { MyInfoScreen() }
+    composable(NoNavScreen.Developing.route) {
+        DevelopingScreen(
+            Modifier.systemBarsPadding(),
+            backOnClick = {
+                navController.popBackStack()
+            }
+        )
     }
 }
 

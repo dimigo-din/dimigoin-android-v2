@@ -43,10 +43,11 @@ import org.koin.androidx.compose.getViewModel
 fun MainScreen(
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel = getViewModel(),
+    onPlaceChange: (Place) -> Unit,
     onPlaceSelectorNavigate: () -> Unit,
     hasNewNotification: Boolean,
 ) = Column(modifier) {
-    val currentPlace by mainViewModel.currentPlace.collectAsState()
+    val currentPlace = mainViewModel.currentPlace.collectAsState().value
     OnLifecycleEvent { _, event ->
         if (event == Lifecycle.Event.ON_RESUME) {
             mainViewModel.getCurrentPlace()
@@ -83,7 +84,7 @@ fun MainScreen(
         onNavigate = onPlaceSelectorNavigate,
     ) {
         PlaceSelectorContent(
-            onPlaceTypeSelect = { mainViewModel.setCurrentPlace(it) },
+            onPlaceTypeSelect = { mainViewModel.setCurrentPlace(it, onPlaceChange) },
             onSelectOther = onPlaceSelectorNavigate,
             selectedPlaceType = mainViewModel.currentPlace.collectAsState().value.data?.type ?: PlaceType.CLASSROOM
         )

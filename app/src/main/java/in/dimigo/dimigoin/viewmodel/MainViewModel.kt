@@ -46,18 +46,29 @@ class MainViewModel(
                 ?: allPlaces.find { place ->
                     place.name == "${myIdentity?.grade}학년 ${myIdentity?.`class`}반"
                 }
-                ?: Place("", "${myIdentity?.grade}학년 ${myIdentity?.`class`}반", "", "", "", null, PlaceType.CLASSROOM)
+                ?: Place(
+                    "",
+                    "${myIdentity?.grade}학년 ${myIdentity?.`class`}반",
+                    "",
+                    "",
+                    "",
+                    null,
+                    PlaceType.CLASSROOM
+                )
             _currentPlace.emit(Future.Success(cp))
         }.onFailure {
             _currentPlace.emit(Future.Failure(it))
         }
     }
 
-    fun setCurrentPlace(placeType: PlaceType) {
+    fun setCurrentPlace(placeType: PlaceType, callback: (Place) -> Unit) {
         val place = placeType.toDefaultPlace() ?: return
         viewModelScope.launch {
             setCurrentPlaceUseCase(place._id).onSuccess {
-                if (it) { _currentPlace.emit(Future.Success(place)) }
+                if (it) {
+                    _currentPlace.emit(Future.Success(place))
+                    callback(place)
+                }
             }
         }
     }
