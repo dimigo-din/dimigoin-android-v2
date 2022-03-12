@@ -182,7 +182,7 @@ fun App(
                 .padding(innerPadding),
         ) {
             preMainNavGraph(navController)
-            mainNavGraph(navController, onPlaceChange)
+            mainNavGraph(navController, onPlaceChange, lazyPlaceSelectorViewModel)
             placeSelectorNavGraph(
                 navController,
                 onPlaceChange,
@@ -226,9 +226,11 @@ fun NavGraphBuilder.preMainNavGraph(
 
 fun NavGraphBuilder.mainNavGraph(
     navController: NavHostController,
-    onPlaceChange: (Place, String?) -> Unit
+    onPlaceChange: (Place, String?) -> Unit,
+    lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel>
 ) {
     composable(NavScreen.Main.route) {
+        val placeSelectorViewModel by lazyPlaceSelectorViewModel
         MainScreen(
             modifier = Modifier
                 .padding(horizontal = 20.dp)
@@ -239,6 +241,7 @@ fun NavGraphBuilder.mainNavGraph(
             },
             onPlaceSelectorNavigate = {
                 navController.navigate(PlaceSelectorScreen.Building.route)
+                placeSelectorViewModel.selectedBuilding.value = "즐겨찾기"
             },
             hasNewNotification = false
         )
@@ -294,6 +297,8 @@ fun NavGraphBuilder.placeSelectorNavGraph(
     }
     composable(PlaceSelectorScreen.Building.route) {
         val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
+
+        placeSelectorViewModel.getCurrentPlace()
 
         BuildingScreen(
             modifier = Modifier.systemBarsPadding(),
