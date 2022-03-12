@@ -7,14 +7,8 @@ import `in`.dimigo.dimigoin.ui.composables.BottomNavigation
 import `in`.dimigo.dimigoin.ui.composables.BottomNavigationItem
 import `in`.dimigo.dimigoin.ui.composables.CustomSnackbarHost
 import `in`.dimigo.dimigoin.ui.composables.CustomSnackbarHostState
-import `in`.dimigo.dimigoin.ui.screen.DevelopingScreen
-import `in`.dimigo.dimigoin.ui.screen.ApplicationScreen
-import `in`.dimigo.dimigoin.ui.screen.LoginScreen
-import `in`.dimigo.dimigoin.ui.screen.MainScreen
-import `in`.dimigo.dimigoin.ui.screen.MyInfoScreen
-import `in`.dimigo.dimigoin.ui.screen.ScheduleScreen
-import `in`.dimigo.dimigoin.ui.screen.Screen
-import `in`.dimigo.dimigoin.ui.screen.SplashScreen
+import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
+import `in`.dimigo.dimigoin.ui.screen.*
 import `in`.dimigo.dimigoin.ui.screen.meal.MealScreen
 import `in`.dimigo.dimigoin.ui.screen.meal.MealTimeScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.BuildingScreen
@@ -29,7 +23,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
@@ -37,20 +30,12 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -59,28 +44,15 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
+import androidx.navigation.*
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.compose.ComposeNavigator
-import androidx.navigation.compose.DialogNavigator
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import androidx.navigation.navDeepLink
+import androidx.navigation.compose.*
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -104,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         )
 
         setContent {
-            ProvideWindowInsets (
+            ProvideWindowInsets(
                 windowInsetsAnimationsEnabled = true,
                 consumeWindowInsets = false,
             ) {
@@ -121,7 +93,7 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, NavControllerVisibleEntries::class)
 @Composable
 fun App(
     navBarScreens: List<Screen>,
@@ -270,7 +242,21 @@ fun App(
             placeSelectorNavGraph(navController, onPlaceChange, onFavoriteAdd, onFavoriteRemove)
         }
         CustomSnackbarHost(snackbarHostState)
+
+        val isInTransition = navController.visibleEntries.collectAsState().value.size >= 2
+        if (isInTransition) {
+            ClickPreventingBox()
+        }
     }
+}
+
+@Composable
+fun ClickPreventingBox() {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .noRippleClickable { }
+    )
 }
 
 fun NavGraphBuilder.placeSelectorNavGraph(
