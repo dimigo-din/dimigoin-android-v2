@@ -160,14 +160,14 @@ class PlaceSelectorViewModel(
 
     private fun filterPlaceByFirstConsonants(allPlace: List<Place>, search: String): List<Place> {
         return allPlace.filter {
-            it.name.toConsonants().contains(search)
+            it.name.toConsonants().removeWhitespace().contains(search.removeWhitespace())
         }
     }
 
     private fun filterPlaceByLinearHangul(allPlace: List<Place>, search: String): List<Place> {
-        val linearSearch = search.makeLinear().lowercase()
+        val linearSearch = search.makeLinear().lowercase().removeWhitespace()
         return allPlace.filter {
-            it.name.makeLinear().lowercase().contains(linearSearch)
+            it.name.makeLinear().lowercase().removeWhitespace().contains(linearSearch)
         }
     }
 
@@ -179,6 +179,8 @@ class PlaceSelectorViewModel(
     }
 
     private fun Char.isSyllable(): Boolean = this in '가'..'힣'
+
+    private fun String.removeWhitespace(): String = this.filterNot { it.isWhitespace() }
 
     fun placeIdToPlace(placeId: String): Place {
         return placesMap.getOrDefault(placeId, fallbackPlace)
