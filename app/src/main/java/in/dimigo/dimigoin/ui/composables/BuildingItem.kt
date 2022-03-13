@@ -1,5 +1,6 @@
 package `in`.dimigo.dimigoin.ui.composables
 
+import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.domain.entity.place.Building
 import `in`.dimigo.dimigoin.ui.theme.C1
 import `in`.dimigo.dimigoin.ui.theme.C2
@@ -8,6 +9,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -23,7 +25,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 fun BuildingItem(
     modifier: Modifier = Modifier,
     building: Building,
-    @DrawableRes image: Int? = null,
+    @DrawableRes image: Int? = getBuildingImage(building),
     onClick: () -> Unit,
 ) = Surface(
     modifier
@@ -55,6 +57,7 @@ fun BuildingItem(
                     end.linkTo(parent.end)
                     bottom.linkTo(parent.bottom, 15.dp)
                 }
+                    .width(115.dp),
             )
         }
     }
@@ -64,7 +67,18 @@ fun BuildingItem(
 @Composable
 fun BuildingItemPreview() {
     BuildingItem(
-        building = Building(type = "학교", name = "본관", listOf()),
+        building = Building(type = "학교", name = "본관",  listOf()),
         onClick = { }
     )
+}
+
+fun getBuildingImage(building: Building): Int? {
+    return when (building.name) {
+        "본관" -> R.drawable.bongwan
+        "신관" -> R.drawable.singwan
+        "학봉관" -> R.drawable.hakbonggwan
+        "우정학사" -> R.drawable.woojeonghaksa
+        "기타 장소" -> R.drawable.cheyuggwan
+        else -> null
+    }
 }
