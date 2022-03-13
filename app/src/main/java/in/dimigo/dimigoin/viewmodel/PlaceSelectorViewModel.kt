@@ -6,6 +6,7 @@ import `in`.dimigo.dimigoin.domain.entity.place.Place
 import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
 import `in`.dimigo.dimigoin.domain.entity.user.User
 import `in`.dimigo.dimigoin.domain.usecase.place.*
+import `in`.dimigo.dimigoin.domain.usecase.user.GetMyIdentityUseCase
 import `in`.dimigo.dimigoin.ui.util.Future
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +24,7 @@ class PlaceSelectorViewModel(
     private val addFavoriteAttendanceLogUseCase: AddFavoriteAttendanceLogUseCase,
     private val removeFavoriteAttendanceLogUseCase: RemoveFavoriteAttendanceLogUseCase,
     private val getFavoriteAttendanceLogsUseCase: GetFavoriteAttendanceLogsUseCase,
+    private val getMyIdentityUseCase: GetMyIdentityUseCase,
     private val getRecommendedBuildingsUseCase: GetRecommendedBuildingsUseCase,
 ) : ViewModel() {
 
@@ -54,10 +56,15 @@ class PlaceSelectorViewModel(
     val selectedBuilding = mutableStateOf("즐겨찾기")
 
     init {
+        getMyIdentity()
         getAllPlaces()
         getCurrentPlace()
         getFavoriteAttendanceLogs()
         getRecommendedBuildings()
+    }
+
+    private fun getMyIdentity() = viewModelScope.launch {
+        getMyIdentityUseCase().onSuccess { myIdentity = it }
     }
 
     private fun getAllPlaces() = viewModelScope.launch {
