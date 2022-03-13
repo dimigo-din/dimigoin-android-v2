@@ -65,13 +65,13 @@ fun MyInfoScreen(
     Surface(
         Modifier
             .fillMaxHeight()
-            .statusBarsPadding()
     ) {
         var visible by remember { mutableStateOf(false) }
 
         Column(
             Modifier
                 .fillMaxSize()
+                .statusBarsPadding()
                 .padding(top = 36.dp)
         ) {
             Column(

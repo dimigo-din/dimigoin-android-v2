@@ -4,14 +4,7 @@ import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.ui.composables.ApplicationBox
 import `in`.dimigo.dimigoin.ui.theme.C2
 import `in`.dimigo.dimigoin.ui.theme.DTypography
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -29,14 +22,11 @@ fun ApplicationScreen(
     gridPadding: Dp = 10.dp,
     onApplicationClick: (String) -> Unit,
 ) {
-    Surface(
-        Modifier
-            .fillMaxHeight()
-            .statusBarsPadding()
-    ) {
+    Surface(Modifier.fillMaxHeight()) {
         Column(
             Modifier
                 .fillMaxHeight()
+                .statusBarsPadding()
                 .padding(top = 36.dp)
         ) {
             Column(

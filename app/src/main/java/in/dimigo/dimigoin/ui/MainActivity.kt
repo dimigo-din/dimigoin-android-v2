@@ -339,7 +339,6 @@ fun NavGraphBuilder.mainNavGraph(
     composable(NavScreen.MyInfo.route) { MyInfoScreen() }
     composable(NoNavScreen.Developing.route) {
         DevelopingScreen(
-            Modifier.systemBarsPadding(),
             backOnClick = {
                 navController.popBackStack()
             }
