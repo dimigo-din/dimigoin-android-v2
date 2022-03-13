@@ -1,5 +1,6 @@
 package `in`.dimigo.dimigoin.ui.composables
 
+import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.domain.entity.place.Building
 import `in`.dimigo.dimigoin.ui.theme.C1
 import `in`.dimigo.dimigoin.ui.theme.C2
@@ -24,7 +25,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 fun BuildingItem(
     modifier: Modifier = Modifier,
     building: Building,
-    @DrawableRes image: Int? = null,
+    @DrawableRes image: Int? = getBuildingImage(building),
     onClick: () -> Unit,
 ) = Surface(
     modifier
@@ -66,7 +67,18 @@ fun BuildingItem(
 @Composable
 fun BuildingItemPreview() {
     BuildingItem(
-        building = Building(type = "학교", name = "본관", listOf()),
+        building = Building(type = "학교", name = "본관",  listOf()),
         onClick = { }
     )
+}
+
+fun getBuildingImage(building: Building): Int? {
+    return when (building.name) {
+        "본관" -> R.drawable.bongwan
+        "신관" -> R.drawable.singwan
+        "학봉관" -> R.drawable.hakbonggwan
+        "우정학사" -> R.drawable.woojeonghaksa
+        "기타 장소" -> R.drawable.cheyuggwan
+        else -> null
+    }
 }
