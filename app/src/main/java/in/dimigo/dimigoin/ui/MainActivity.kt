@@ -7,6 +7,7 @@ import `in`.dimigo.dimigoin.ui.composables.BottomNavigation
 import `in`.dimigo.dimigoin.ui.composables.BottomNavigationItem
 import `in`.dimigo.dimigoin.ui.composables.CustomSnackbarHost
 import `in`.dimigo.dimigoin.ui.composables.CustomSnackbarHostState
+import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
 import `in`.dimigo.dimigoin.ui.screen.*
 import `in`.dimigo.dimigoin.ui.screen.meal.MealScreen
 import `in`.dimigo.dimigoin.ui.screen.meal.MealTimeScreen
@@ -28,9 +29,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.runtime.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,7 +53,6 @@ import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.systemBarsPadding
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -84,7 +88,7 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, NavControllerVisibleEntries::class)
 @Composable
 fun App(
     navController: NavHostController,
@@ -157,6 +161,11 @@ fun App(
         }
         CustomSnackbarHost(snackbarHostState)
         CustomBottomBar(navController, lazyPlaceSelectorViewModel)
+
+        val isInTransition = navController.visibleEntries.collectAsState().value.size >= 2
+        if (isInTransition) {
+            ClickPreventingBox()
+        }
     }
 }
 
@@ -336,6 +345,15 @@ fun NavGraphBuilder.mainNavGraph(
             }
         )
     }
+}
+
+@Composable
+fun ClickPreventingBox() {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .noRippleClickable { }
+    )
 }
 
 fun NavGraphBuilder.placeSelectorNavGraph(
