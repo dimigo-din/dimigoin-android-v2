@@ -8,12 +8,7 @@ import `in`.dimigo.dimigoin.domain.entity.schedule.WeeklyTimetable
 import `in`.dimigo.dimigoin.domain.entity.user.User
 import `in`.dimigo.dimigoin.ui.composables.PageSelector
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
-import `in`.dimigo.dimigoin.ui.theme.C1
-import `in`.dimigo.dimigoin.ui.theme.C2
-import `in`.dimigo.dimigoin.ui.theme.C3
-import `in`.dimigo.dimigoin.ui.theme.C4
-import `in`.dimigo.dimigoin.ui.theme.DTypography
-import `in`.dimigo.dimigoin.ui.theme.Point
+import `in`.dimigo.dimigoin.ui.theme.*
 import `in`.dimigo.dimigoin.viewmodel.ScheduleViewModel
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -25,18 +20,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,40 +31,52 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.statusBarsPadding
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.launch
+import org.koin.androidx.compose.getViewModel
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
 import java.util.Locale
-import org.koin.androidx.compose.getViewModel
 import java.time.DayOfWeek
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun ScheduleScreen(
     viewModel: ScheduleViewModel = getViewModel(),
 ) {
 
     val timetable =
-        viewModel.timetable.collectAsState().value.data ?: List(5) { DailyTimetable(emptyList(), LocalDate.now()) }
+        viewModel.timetable.collectAsState().value.data ?: List(5) {
+            DailyTimetable(
+                emptyList(),
+                LocalDate.now()
+            )
+        }
     val annualSchedule = viewModel.schedule.collectAsState().value.data ?: mapOf()
     val user = viewModel.me.collectAsState().value.data ?: return
 
-    var page by remember { mutableStateOf(0) }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    val pagerState = rememberPagerState()
+    val coroutineScope = rememberCoroutineScope()
 
     Surface(
         Modifier
             .fillMaxHeight()
             .statusBarsPadding()
     ) {
+        HorizontalPager(count = 2, state = pagerState, userScrollEnabled = false) { }
         Column(
             Modifier
                 .fillMaxHeight()
                 .padding(top = 36.dp, bottom = 60.dp)
                 .padding(horizontal = 20.dp)
         ) {
-            when (page) {
+            when (pagerState.currentPage) {
                 0 -> TimetableHeader(user)
                 1 -> SchoolScheduleHeader(
                     selectedDate,
@@ -89,11 +86,15 @@ fun ScheduleScreen(
             Spacer(Modifier.height(24.dp))
             PageSelector(
                 elements = listOf("학급시간표", "학사일정"),
-                selected = page,
-                onChangeSelected = { page = it },
+                pagerState = pagerState,
+                onChangeSelected = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(it)
+                    }
+                },
             )
             Spacer(Modifier.height(33.dp))
-            when (page) {
+            when (pagerState.currentPage) {
                 0 -> Timetable(timetable)
                 1 -> SchoolSchedule(
                     selectedDate = selectedDate,
@@ -106,10 +107,13 @@ fun ScheduleScreen(
     }
 }
 
-fun getNearSchedules(schedule: Map<YearMonth, List<Schedule>>, yearMonth: YearMonth): List<Schedule> =
+fun getNearSchedules(
+    schedule: Map<YearMonth, List<Schedule>>,
+    yearMonth: YearMonth
+): List<Schedule> =
     schedule.getOrDefault(yearMonth.minusMonths(1), emptyList()) +
-        schedule.getOrDefault(yearMonth, emptyList()) +
-        schedule.getOrDefault(yearMonth.plusMonths(1), emptyList())
+            schedule.getOrDefault(yearMonth, emptyList()) +
+            schedule.getOrDefault(yearMonth.plusMonths(1), emptyList())
 
 @Composable
 fun TimetableHeader(user: User) {
@@ -117,10 +121,10 @@ fun TimetableHeader(user: User) {
     Text(
         modifier = Modifier.padding(start = 15.dp),
         text = "${date.minusMonths(2).year}학년도 " +
-            when (date.monthValue) {
-                in 3..7 -> "1학기"
-                else -> "2학기"
-            } + " ${user.grade}학년 ${user.`class`}반",
+                when (date.monthValue) {
+                    in 3..7 -> "1학기"
+                    else -> "2학기"
+                } + " ${user.grade}학년 ${user.`class`}반",
         style = DTypography.t5, color = C2
     )
     Spacer(Modifier.height(5.dp))
@@ -284,7 +288,8 @@ fun SchoolScheduleHeader(
         Text(text = "학사일정", style = DTypography.t0)
         Spacer(modifier = Modifier.weight(1f))
         Icon(
-            painter = painterResource(id = R.drawable.ic_round_arrow_left), contentDescription = null,
+            painter = painterResource(id = R.drawable.ic_round_arrow_left),
+            contentDescription = null,
             tint = C2,
             modifier = Modifier
                 .padding(vertical = 10.dp, horizontal = 15.dp)
@@ -297,7 +302,8 @@ fun SchoolScheduleHeader(
             modifier = Modifier.widthIn(min = 50.dp)
         )
         Icon(
-            painter = painterResource(id = R.drawable.ic_round_arrow_right), contentDescription = null,
+            painter = painterResource(id = R.drawable.ic_round_arrow_right),
+            contentDescription = null,
             tint = C2,
             modifier = Modifier
                 .padding(vertical = 10.dp, horizontal = 15.dp)
@@ -372,7 +378,8 @@ fun SchoolSchedule(
                             date = date,
                             selected = date.equals(selectedDate),
                             today = date.equals(today),
-                            scheduleColors = schedules.filter { it.date == date }.map { it.type.color },
+                            scheduleColors = schedules.filter { it.date == date }
+                                .map { it.type.color },
                             onSelect = { onDateSelect(date) }
                         )
                     }
