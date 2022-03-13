@@ -34,14 +34,14 @@ fun MealItem(
     type: MealTimeType,
     time: LocalTime?,
     meal: String?,
-    onMealTimeClick: (Int) -> Unit,
+    onMealTimeClick: (MealTimeType) -> Unit,
     highlight: Boolean,
 ) = ConstraintLayout(
     modifier
         .clip(RoundedCornerShape(10.dp))
         .background(if (highlight) Point else Color.Transparent)
         .padding(vertical = 25.dp)
-        .noRippleClickable { onMealTimeClick(type.integerValue) }
+        .noRippleClickable { onMealTimeClick(type) }
 ) {
     val (typeText, timeText, mealText, startPad, endPad) = createRefs()
     val textColor = if (highlight) {

@@ -13,7 +13,6 @@ import `in`.dimigo.dimigoin.domain.usecase.place.GetRecommendedBuildingsUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.RemoveFavoriteAttendanceLogUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.SetCurrentPlaceUseCase
 import `in`.dimigo.dimigoin.ui.util.Future
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -55,7 +54,7 @@ class PlaceSelectorViewModel(
     private val _isPlaceLoaded = MutableStateFlow(false)
     val isPlaceLoaded = _isPlaceLoaded.asStateFlow()
 
-    var selectedBuilding = mutableStateOf("즐겨찾기")
+    val selectedBuilding = mutableStateOf("즐겨찾기")
 
     init {
         getAllPlaces()
@@ -68,7 +67,7 @@ class PlaceSelectorViewModel(
         getAllPlacesUseCase().onSuccess { allPlace = it }
     }
 
-    private fun getCurrentPlace() = viewModelScope.launch {
+    fun getCurrentPlace() = viewModelScope.launch {
         getCurrentPlaceUseCase().onSuccess {
             val cp = it
                 ?: allPlace.find { place ->
@@ -123,7 +122,7 @@ class PlaceSelectorViewModel(
     ) = viewModelScope.launch {
         removeFavoriteAttendanceLogUseCase(attendanceLog._id).onSuccess {
             if (it) {
-                getFavoriteAttendanceLogs()
+                    getFavoriteAttendanceLogs()
                 callback(placeIdToPlace(attendanceLog.placeId))
             }
         }
@@ -150,7 +149,7 @@ class PlaceSelectorViewModel(
     }
 
     companion object {
-        private const val TAG = "LoginViewModel"
+        private const val TAG = "PlaceSelectorViewModel"
         private val fallbackPlace = Place("", "", "", "", "", null, PlaceType.ETC)
     }
 }
