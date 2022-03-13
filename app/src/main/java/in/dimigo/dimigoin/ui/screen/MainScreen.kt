@@ -45,6 +45,7 @@ fun MainScreen(
     mainViewModel: MainViewModel = getViewModel(),
     onPlaceChange: (Place) -> Unit,
     onPlaceSelectorNavigate: () -> Unit,
+    onNotificationNavigate: () -> Unit,
     hasNewNotification: Boolean,
 ) = Column(modifier) {
     val currentPlace = mainViewModel.currentPlace.collectAsState().value
@@ -63,7 +64,10 @@ fun MainScreen(
         Spacer(Modifier.width(10.dp))
         Icon(painter = painterResource(id = R.drawable.ic_dimigoin), contentDescription = null, tint = Point)
         Spacer(Modifier.weight(1f))
-        Icon(painter = painterResource(id = notificationIcon), contentDescription = null)
+        Icon(
+            painter = painterResource(id = notificationIcon), contentDescription = null,
+            modifier = Modifier.noRippleClickable { onNotificationNavigate() }
+        )
     }
 
     Spacer(Modifier.height(26.dp))

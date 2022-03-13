@@ -29,13 +29,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.runtime.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -308,6 +304,9 @@ fun NavGraphBuilder.mainNavGraph(
                 navController.navigate(PlaceSelectorScreen.Building.route)
                 placeSelectorViewModel.selectedBuilding.value = "즐겨찾기"
             },
+            onNotificationNavigate = {
+                navController.navigate(NoNavScreen.Notification.route)
+            },
             hasNewNotification = false
         )
     }
@@ -341,6 +340,13 @@ fun NavGraphBuilder.mainNavGraph(
         DevelopingScreen(
             Modifier.systemBarsPadding(),
             backOnClick = {
+                navController.popBackStack()
+            }
+        )
+    }
+    composable(NoNavScreen.Notification.route) {
+        NotificationScreen(
+            onBackNavigation = {
                 navController.popBackStack()
             }
         )
