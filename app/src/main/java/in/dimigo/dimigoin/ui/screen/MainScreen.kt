@@ -49,6 +49,7 @@ fun MainScreen(
     hasNewNotification: Boolean,
 ) = Column(modifier) {
     val currentPlace = mainViewModel.currentPlace.collectAsState().value
+    val currentMealTime =
     OnLifecycleEvent { _, event ->
         if (event == Lifecycle.Event.ON_RESUME) {
             mainViewModel.getCurrentPlace()
@@ -74,6 +75,28 @@ fun MainScreen(
 
     ContentBox(
         title = "나의 위치",
+        summary = buildAnnotatedString {
+            when (currentPlace) {
+                is Future.Success -> {
+                    append("우리 반의 아침 급식 시간은 ")
+                    withStyle(SpanStyle(color = Point)) { append((currentPlace as Future.Success<Place>)._data.name) }
+                    append("입니다")
+                }
+                is Future.Failure -> append("위치 정보를 불러오지 못했습니다")
+                is Future.Loading, is Future.Nothing -> append("위치 정보를 가져오는 중입니다")
+            }
+        },
+        onNavigate = onPlaceSelectorNavigate,
+    ) {
+        PlaceSelectorContent(
+            onPlaceTypeSelect = { mainViewModel.setCurrentPlace(it, onPlaceChange) },
+            onSelectOther = onPlaceSelectorNavigate,
+            selectedPlaceType = mainViewModel.currentPlace.collectAsState().value.data?.type ?: PlaceType.CLASSROOM
+        )
+    }
+
+    ContentBox(
+        title = "오늘의 급식",
         summary = buildAnnotatedString {
             when (currentPlace) {
                 is Future.Success -> {
