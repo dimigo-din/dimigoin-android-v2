@@ -84,7 +84,7 @@ fun MealScreen(
                 state = pagerState,
                 contentPadding = PaddingValues(horizontal = 20.dp),
                 itemSpacing = 20.dp,
-            ) {
+            ) { page ->
                 Column(
                     Modifier
                         .fillMaxHeight()
@@ -94,7 +94,7 @@ fun MealScreen(
                         modifier = Modifier.fillMaxWidth(),
                         type = MealTimeType.BREAKFAST,
                         time = mealTime.data?.breakfastTime,
-                        meal = weeklyMeal.data?.get(pagerState.currentPage)?.breakfast,
+                        meal = weeklyMeal.data?.get(page)?.breakfast,
                         onMealTimeClick = onMealTimeClick,
                         highlight = timeNow.isAfter(LocalTime.of(6, 30)) &&
                             timeNow.isBefore(LocalTime.of(8, 20)),
@@ -103,7 +103,7 @@ fun MealScreen(
                         modifier = Modifier.fillMaxWidth(),
                         type = MealTimeType.LUNCH,
                         time = mealTime.data?.lunchTime,
-                        meal = weeklyMeal.data?.get(pagerState.currentPage)?.lunch,
+                        meal = weeklyMeal.data?.get(page)?.lunch,
                         onMealTimeClick = onMealTimeClick,
                         highlight = timeNow.isAfter(LocalTime.of(8, 20)) &&
                             timeNow.isBefore(LocalTime.of(13, 50)),
@@ -112,7 +112,7 @@ fun MealScreen(
                         modifier = Modifier.fillMaxWidth(),
                         type = MealTimeType.DINNER,
                         time = mealTime.data?.dinnerTime,
-                        meal = weeklyMeal.data?.get(pagerState.currentPage)?.dinner,
+                        meal = weeklyMeal.data?.get(page)?.dinner,
                         onMealTimeClick = onMealTimeClick,
                         highlight = timeNow.isAfter(LocalTime.of(13, 50)) &&
                             timeNow.isBefore(LocalTime.of(19, 50)),
