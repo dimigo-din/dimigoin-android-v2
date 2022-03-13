@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -40,7 +41,8 @@ import java.time.LocalTime
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
-import java.util.*
+import java.util.Locale
+import java.time.DayOfWeek
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -71,7 +73,7 @@ fun ScheduleScreen(
         Column(
             Modifier
                 .fillMaxHeight()
-                .padding(top = 36.dp)
+                .padding(top = 36.dp, bottom = 60.dp)
                 .padding(horizontal = 20.dp)
         ) {
             when (pagerState.currentPage) {
@@ -135,76 +137,115 @@ fun TimetableHeader(user: User) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Timetable(weeklyTimetable: WeeklyTimetable) {
+    if (weeklyTimetable.all { it.sequence.isEmpty() }) {
+        TimetableContentEmpty()
+        return
+    }
+
+    val today = LocalDate.now().dayOfWeek
     Column(
-        modifier = Modifier.requiredHeightIn(max = 421.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colors.surface),
-            horizontalArrangement = Arrangement.SpaceAround,
-        ) {
-            val today = LocalDate.now().dayOfWeek.value
-            "월화수목금".forEachIndexed { index, day ->
-                Text(
-                    text = day.toString(),
-                    style = DTypography.t3,
-                    color = if (index + 1 == today) MaterialTheme.colors.onSurface else C2,
-                )
-            }
-        }
+        TimetableDayHeader(today)
         Spacer(
             modifier = Modifier
-                .weight(1f)
                 .fillMaxWidth()
+                .height(20.dp)
                 .background(MaterialTheme.colors.surface)
         )
         Divider(color = C4)
-        Spacer(Modifier.weight(1f))
         CompositionLocalProvider(LocalOverScrollConfiguration provides null) {
             Column(
                 Modifier.verticalScroll(rememberScrollState())
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    weeklyTimetable.forEach { dailyTimetable ->
-                        Column(
-                            modifier = Modifier.padding(bottom = 15.dp),
-                            verticalArrangement = Arrangement.spacedBy(15.dp)
-                        ) {
-                            val date = dailyTimetable.date
-                            val time = LocalTime.now()
-                            val isToday = LocalDate.now().equals(date)
-
-                            operator fun LocalTime.rangeTo(other: LocalTime) = this to other
-                            operator fun Pair<LocalTime, LocalTime>.contains(value: LocalTime) =
-                                value.isAfter(first) && value.isBefore(second)
-
-                            dailyTimetable.sequence.forEachIndexed { index, name ->
-                                ClassItem(
-                                    name = name ?: "",
-                                    today = isToday,
-                                    highlight = isToday && when (index + 1) {
-                                        1 -> time in LocalTime.of(6, 30)..LocalTime.of(9, 50)
-                                        2 -> time in LocalTime.of(9, 50)..LocalTime.of(10, 50)
-                                        3 -> time in LocalTime.of(10, 50)..LocalTime.of(11, 50)
-                                        4 -> time in LocalTime.of(11, 50)..LocalTime.of(12, 50)
-                                        5 -> time in LocalTime.of(12, 50)..LocalTime.of(14, 40)
-                                        6 -> time in LocalTime.of(14, 40)..LocalTime.of(15, 40)
-                                        7 -> time in LocalTime.of(15, 40)..LocalTime.of(16, 40)
-                                        else -> false
-                                    }
-                                )
-                            }
-                        }
-                    }
-                }
+                Spacer(Modifier.height(20.dp))
+                TimetableContent(weeklyTimetable)
             }
         }
     }
+}
+
+@Composable
+fun TimetableContent(weeklyTimetable: WeeklyTimetable) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        weeklyTimetable.forEach { dailyTimetable ->
+            DailyTimetableContent(dailyTimetable)
+        }
+    }
+}
+
+@Composable
+fun DailyTimetableContent(dailyTimetable: DailyTimetable) {
+    Column(
+        modifier = Modifier.padding(bottom = 15.dp),
+        verticalArrangement = Arrangement.spacedBy(15.dp)
+    ) {
+        val date = dailyTimetable.date
+        val time = LocalTime.now()
+        val isToday = LocalDate.now().equals(date)
+
+        operator fun LocalTime.rangeTo(other: LocalTime) = this to other
+        operator fun Pair<LocalTime, LocalTime>.contains(value: LocalTime) =
+            value.isAfter(first) && value.isBefore(second)
+
+        dailyTimetable.sequence.forEachIndexed { index, name ->
+            ClassItem(
+                name = name ?: "",
+                today = isToday,
+                highlight = isToday && isPeriodInTime(index + 1, time)
+            )
+        }
+    }
+}
+
+@Composable
+fun TimetableDayHeader(today: DayOfWeek) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colors.surface),
+        horizontalArrangement = Arrangement.SpaceAround,
+    ) {
+        "월화수목금".forEachIndexed { index, day ->
+            Text(
+                text = day.toString(),
+                style = DTypography.t3,
+                color = if (index + 1 == today.value) MaterialTheme.colors.onSurface else C2,
+            )
+        }
+    }
+}
+
+fun isPeriodInTime(period: Int, time: LocalTime): Boolean =
+    when (period) {
+        1 -> time in LocalTime.of(6, 30)..LocalTime.of(9, 50)
+        2 -> time in LocalTime.of(9, 50)..LocalTime.of(10, 50)
+        3 -> time in LocalTime.of(10, 50)..LocalTime.of(11, 50)
+        4 -> time in LocalTime.of(11, 50)..LocalTime.of(12, 50)
+        5 -> time in LocalTime.of(12, 50)..LocalTime.of(14, 40)
+        6 -> time in LocalTime.of(14, 40)..LocalTime.of(15, 40)
+        7 -> time in LocalTime.of(15, 40)..LocalTime.of(16, 40)
+        else -> false
+    }
+
+@Composable
+fun TimetableContentEmpty() {
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+        Text(text = "시간표 정보가 없습니다", style = DTypography.t4, color = C1)
+    }
+}
+
+@Preview
+@Composable
+fun TimetablePreview() {
+    Timetable(
+        weeklyTimetable = List(5) {
+            DailyTimetable(List(20) { "데프" }, LocalDate.of(1970, 1, 1))
+        }
+    )
 }
 
 @Composable

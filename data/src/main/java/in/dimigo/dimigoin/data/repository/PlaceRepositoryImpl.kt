@@ -39,6 +39,7 @@ class PlaceRepositoryImpl(
 
     private suspend fun getPlacesFromLocal(): Result<List<Place>> = placesMutex.withLock {
         sharedPreferenceManager.places?.let {
+            places = it
             Result.success(it)
         } ?: Result.failure(NoSuchElementException("Places are not stored in local"))
     }
@@ -225,5 +226,9 @@ class PlaceRepositoryImpl(
                 ),
             )
         )
+    }
+
+    companion object {
+        private const val TAG = "PlaceRepositoryImpl"
     }
 }

@@ -50,7 +50,7 @@ fun BuildingScreen(
 
     Column(
         modifier = modifier
-            .padding(top = 26.dp),
+            .padding(top = 26.dp, bottom = 60.dp),
     ) {
         PlaceSelectorTopBar(
             modifier = Modifier.padding(horizontal = 20.dp),

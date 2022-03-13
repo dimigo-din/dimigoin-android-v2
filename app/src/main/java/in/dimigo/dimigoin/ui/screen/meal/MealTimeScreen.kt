@@ -102,7 +102,7 @@ fun MealTimeScreen(
                 state = pagerState,
                 contentPadding = PaddingValues(horizontal = 20.dp),
                 itemSpacing = 20.dp,
-            ) {
+            ) { page ->
                 Column(
                     Modifier
                         .fillMaxHeight()
@@ -110,13 +110,13 @@ fun MealTimeScreen(
                     verticalArrangement = Arrangement.spacedBy(11.dp)
                 ) {
                     mealTimes.data?.sortedBy {
-                        getRankByPage(it, currentPage)
+                        getRankByPage(it, page)
                     }?.forEach {
                         MealTimeItem(
-                            order = getRankByPage(it, currentPage),
+                            order = getRankByPage(it, page),
                             grade = it.grade,
                             `class` = it.`class`,
-                            time = getTimeByPage(it, currentPage),
+                            time = getTimeByPage(it, page),
                             highlight = it.`class` == user.`class`
                         )
                     }
@@ -133,7 +133,7 @@ fun getRankByPage(mealTime: MealTime, page: Int) =
         else -> 1
     }
 
-fun getTimeByPage(mealTime: MealTime, page: Int) =
+fun getTimeByPage(mealTime: MealTime, page: Int): LocalTime =
     when (page) {
         BREAKFAST -> mealTime.breakfastTime
         LUNCH -> mealTime.lunchTime
