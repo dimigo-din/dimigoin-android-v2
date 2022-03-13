@@ -25,6 +25,7 @@ sealed interface Screen {
             NoNavScreen.Login,
             NoNavScreen.MealTime,
             NoNavScreen.Developing,
+            NoNavScreen.Notification,
             PlaceSelectorScreen.AddFavorite,
             PlaceSelectorScreen.Building,
             PlaceSelectorScreen.Category,
@@ -71,6 +72,7 @@ sealed class NoNavScreen(
         fun type(type: MealTimeType) = route.replace("{type}", type.integerValue.toString())
     }
     object Developing : NoNavScreen("developing", emptyList())
+    object Notification : NoNavScreen("notification", emptyList())
 }
 
 sealed class PlaceSelectorScreen(
