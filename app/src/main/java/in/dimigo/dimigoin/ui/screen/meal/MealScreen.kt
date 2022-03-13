@@ -7,13 +7,7 @@ import `in`.dimigo.dimigoin.ui.theme.C2
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.util.asKoreanWeekString
 import `in`.dimigo.dimigoin.viewmodel.MealViewModel
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Surface
@@ -27,10 +21,10 @@ import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import java.time.LocalDate
-import java.time.LocalTime
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
+import java.time.LocalDate
+import java.time.LocalTime
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -46,14 +40,11 @@ fun MealScreen(
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
 
-    Surface(
-        Modifier
-            .fillMaxHeight()
-            .statusBarsPadding()
-    ) {
+    Surface(Modifier.fillMaxHeight()) {
         Column(
             Modifier
                 .fillMaxHeight()
+                .statusBarsPadding()
                 .padding(top = 36.dp)
         ) {
             Column(Modifier.padding(horizontal = 20.dp)) {
@@ -97,7 +88,7 @@ fun MealScreen(
                         meal = weeklyMeal.data?.get(page)?.breakfast,
                         onMealTimeClick = onMealTimeClick,
                         highlight = timeNow.isAfter(LocalTime.of(6, 30)) &&
-                            timeNow.isBefore(LocalTime.of(8, 20)),
+                                timeNow.isBefore(LocalTime.of(8, 20)),
                     )
                     MealItem(
                         modifier = Modifier.fillMaxWidth(),
@@ -106,7 +97,7 @@ fun MealScreen(
                         meal = weeklyMeal.data?.get(page)?.lunch,
                         onMealTimeClick = onMealTimeClick,
                         highlight = timeNow.isAfter(LocalTime.of(8, 20)) &&
-                            timeNow.isBefore(LocalTime.of(13, 50)),
+                                timeNow.isBefore(LocalTime.of(13, 50)),
                     )
                     MealItem(
                         modifier = Modifier.fillMaxWidth(),
@@ -115,7 +106,7 @@ fun MealScreen(
                         meal = weeklyMeal.data?.get(page)?.dinner,
                         onMealTimeClick = onMealTimeClick,
                         highlight = timeNow.isAfter(LocalTime.of(13, 50)) &&
-                            timeNow.isBefore(LocalTime.of(19, 50)),
+                                timeNow.isBefore(LocalTime.of(19, 50)),
                     )
                 }
             }

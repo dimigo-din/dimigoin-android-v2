@@ -67,12 +67,12 @@ fun ScheduleScreen(
     Surface(
         Modifier
             .fillMaxHeight()
-            .statusBarsPadding()
     ) {
         HorizontalPager(count = 2, state = pagerState, userScrollEnabled = false) { }
         Column(
             Modifier
                 .fillMaxHeight()
+                .statusBarsPadding()
                 .padding(top = 36.dp, bottom = 60.dp)
                 .padding(horizontal = 20.dp)
         ) {

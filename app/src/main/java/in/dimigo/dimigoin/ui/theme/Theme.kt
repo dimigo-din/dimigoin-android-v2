@@ -54,6 +54,7 @@ fun DimigoinTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composab
 
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(Color.Transparent)
+    systemUiController.statusBarDarkContentEnabled = !darkTheme
 
     MaterialTheme(
         colors = colors,

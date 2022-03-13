@@ -2,16 +2,11 @@ package `in`.dimigo.dimigoin.ui.screen
 
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.Point
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,17 +23,18 @@ fun DevelopingScreen(
     modifier: Modifier = Modifier,
     backOnClick: () -> Unit
 ) {
-    Box(
+    Surface(
         modifier = modifier
             .fillMaxSize()
-            .padding(vertical = 35.dp, horizontal = 20.dp)
     ) {
         Column(
             Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 240.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .systemBarsPadding()
+                .padding(vertical = 35.dp, horizontal = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceAround,
         ) {
+            Spacer(Modifier.weight(1f))
             Text(
                 text = "해당 기능은" +
                         "\n" +
@@ -53,22 +49,22 @@ fun DevelopingScreen(
                 text = "추후 업데이트 될 예정입니다",
                 style = DTypography.explainText,
             )
-        }
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter),
-            onClick = { backOnClick() },
-            shape = RoundedCornerShape(30),
-            colors = ButtonDefaults.buttonColors(contentColor = Point)
-        ) {
-            Text(
-                modifier = Modifier.padding(vertical = 10.dp),
-                textAlign = TextAlign.Center,
-                text = "돌아가기",
-                style = DTypography.t4,
-                color = Color.White,
-            )
+            Spacer(Modifier.weight(1f))
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                onClick = { backOnClick() },
+                shape = RoundedCornerShape(30),
+                colors = ButtonDefaults.buttonColors(contentColor = Point)
+            ) {
+                Text(
+                    modifier = Modifier.padding(vertical = 10.dp),
+                    textAlign = TextAlign.Center,
+                    text = "돌아가기",
+                    style = DTypography.t4,
+                    color = Color.White,
+                )
+            }
         }
     }
 }
