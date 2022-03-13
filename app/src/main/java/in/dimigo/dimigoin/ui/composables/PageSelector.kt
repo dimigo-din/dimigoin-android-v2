@@ -37,13 +37,18 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.rememberPagerState
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun PageSelector(
     modifier: Modifier = Modifier,
     elements: List<String>,
-    selected: Int,
+    pagerState: PagerState,
     horizontalTextPadding: Dp = 10.dp,
     onChangeSelected: (Int) -> Unit,
 ) {
@@ -52,11 +57,6 @@ fun PageSelector(
     val selectedWidth = with(LocalDensity.current) {
         (rowXPos * 2 + textWidth).toDp() - 8.dp
     }
-    val offset = animateDpAsState(
-        with(LocalDensity.current) {
-            (textWidth * selected).toDp()
-        }
-    )
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(25.dp))
@@ -67,7 +67,18 @@ fun PageSelector(
             modifier = Modifier
                 .padding(4.dp)
                 .width(selectedWidth)
-                .offset(offset.value, 0.dp)
+                .offset {
+                    val scrollPosition = (pagerState.currentPage + pagerState.currentPageOffset)
+                        .coerceIn(0f,
+                            (pagerState.pageCount - 1)
+                                .coerceAtLeast(0)
+                                .toFloat()
+                        )
+                    IntOffset(
+                        x = (textWidth * scrollPosition).toInt(),
+                        y = 0
+                    )
+                }
                 .size(selectedWidth, 42.dp)
                 .clip(RoundedCornerShape(21.dp))
                 .background(MaterialTheme.colors.surface)
@@ -84,7 +95,13 @@ fun PageSelector(
             verticalAlignment = Alignment.CenterVertically
         ) {
             elements.forEachIndexed { index, element ->
-                val color = animateColorAsState(targetValue = if (selected == index) C0 else C2)
+                val color = animateColorAsState(
+                    if (pagerState.targetPage == index && !pagerState.isScrollInProgress) {
+                        C0
+                    } else {
+                        C2
+                    }
+                )
                 Box(
                     Modifier
                         .fillMaxHeight()
@@ -106,6 +123,7 @@ fun PageSelector(
     }
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFF)
 @Composable
 fun PageSelectorPreview() {
@@ -114,7 +132,7 @@ fun PageSelectorPreview() {
         PageSelector(
             modifier = Modifier.fillMaxWidth(),
             elements = listOf("월", "화", "수", "목", "금", "토", "일"),
-            selected = selected1,
+            pagerState = rememberPagerState(),
             horizontalTextPadding = 10.dp,
             onChangeSelected = { selected1 = it }
         )
@@ -122,7 +140,7 @@ fun PageSelectorPreview() {
         PageSelector(
             modifier = Modifier.fillMaxWidth(),
             elements = listOf("아침", "점심", "저녁"),
-            selected = selected2,
+            pagerState = rememberPagerState(),
             horizontalTextPadding = 10.dp,
             onChangeSelected = { selected2 = it }
         )
@@ -130,7 +148,7 @@ fun PageSelectorPreview() {
         PageSelector(
             modifier = Modifier.fillMaxWidth(),
             elements = listOf("학급시간표", "학사일정"),
-            selected = selected3,
+            pagerState = rememberPagerState(),
             horizontalTextPadding = 10.dp,
             onChangeSelected = { selected3 = it }
         )

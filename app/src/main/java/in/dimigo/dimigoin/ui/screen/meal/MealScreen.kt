@@ -69,10 +69,10 @@ fun MealScreen(
                 Spacer(Modifier.height(24.dp))
                 PageSelector(
                     elements = listOf("월", "화", "수", "목", "금", "토", "일"),
-                    selected = pagerState.currentPage,
+                    pagerState = pagerState,
                     onChangeSelected = {
                         coroutineScope.launch {
-                            pagerState.scrollToPage(it)
+                            pagerState.animateScrollToPage(it)
                         }
                     },
                 )
