@@ -86,7 +86,7 @@ fun ScheduleScreen(
         Column(
             Modifier
                 .fillMaxHeight()
-                .padding(top = 36.dp)
+                .padding(top = 36.dp, bottom = 60.dp)
                 .padding(horizontal = 20.dp)
         ) {
             when (page) {

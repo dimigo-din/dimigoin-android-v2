@@ -36,7 +36,7 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun MealScreen(
     mealViewModel: MealViewModel = getViewModel(),
-    onMealTimeClick: (Int) -> Unit,
+    onMealTimeClick: (MealTimeType) -> Unit,
 ) {
     val mealTime = mealViewModel.mealTime.collectAsState().value
     val weeklyMeal = mealViewModel.weeklyMeal.collectAsState().value

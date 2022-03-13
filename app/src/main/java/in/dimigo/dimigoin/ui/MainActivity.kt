@@ -18,6 +18,7 @@ import `in`.dimigo.dimigoin.ui.screen.placeselector.ReasonScreen
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
+import `in`.dimigo.dimigoin.ui.util.Future
 import `in`.dimigo.dimigoin.viewmodel.PlaceSelectorViewModel
 import android.content.Intent
 import android.os.Bundle
@@ -25,10 +26,7 @@ import android.util.Log
 import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
@@ -36,7 +34,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -52,10 +54,11 @@ import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
+    private val lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel> = viewModel()
     private val navController = NavHostController(this).apply {
         navigatorProvider.addNavigator(ComposeNavigator())
         navigatorProvider.addNavigator(DialogNavigator())
@@ -67,21 +70,13 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
-        val screens = listOf(
-            Screen.Main,
-            Screen.Meal,
-            Screen.Calendar,
-            Screen.Application,
-            Screen.MyInfo,
-        )
-
         setContent {
             ProvideWindowInsets(
                 windowInsetsAnimationsEnabled = true,
                 consumeWindowInsets = false,
             ) {
                 DimigoinTheme {
-                    App(screens, navController)
+                    App(navController, lazyPlaceSelectorViewModel)
                 }
             }
         }
@@ -96,8 +91,8 @@ class MainActivity : AppCompatActivity() {
 @OptIn(ExperimentalAnimationApi::class, NavControllerVisibleEntries::class)
 @Composable
 fun App(
-    navBarScreens: List<Screen>,
     navController: NavHostController,
+    lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel>,
 ) {
     val snackbarHostState = remember { CustomSnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -113,7 +108,7 @@ fun App(
                     withStyle(SpanStyle(color = Point)) { append(place.name) }
                     append("${place.name.josa("으로", true)} 변경 완료")
                 },
-                description = "사유: $remark",
+                description = remark?.let { "사유: $it" },
             )
         }
         Unit
@@ -145,108 +140,210 @@ fun App(
     }
 
     Scaffold(
-        bottomBar = {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
-
-            val navBarVisible = navBarScreens.any { currentDestination?.route == it.route }
-            AnimatedVisibility(
-                visible = navBarVisible, enter = fadeIn(), exit = fadeOut()
-            ) {
-                Column {
-                    BottomNavBarImpl(navController, navBarScreens, currentDestination)
-                    Spacer(
-                        modifier = Modifier
-                            .background(Color.White)
-                            .fillMaxWidth()
-                            .navigationBarsHeight(),
-                    )
-
-                }
-            }
+        bottomBar = bottomBar@{
         }
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = "splash",
+            startDestination = NoNavScreen.Splash.route,
             modifier = Modifier
                 .padding(innerPadding),
         ) {
-            composable("splash") {
-                SplashScreen(
-                    onAutoLoginSuccess = {
-                        navController.navigate(Screen.Main.route) {
-                            popUpTo("splash") { inclusive = true }
-                        }
-                    },
-                    onAutoLoginFail = {
-                        navController.navigate("login") {
-                            popUpTo("splash") { inclusive = true }
-                        }
-                    },
-                )
-            }
-            composable("login") {
-                LoginScreen(
-                    modifier = Modifier,
-                    onLoginSuccess = {
-                        navController.navigate(Screen.Main.route) {
-                            popUpTo("login") { inclusive = true }
-                        }
-                    }
-                )
-            }
-            composable(Screen.Main.route) {
-                MainScreen(
-                    modifier = Modifier
-                        .padding(horizontal = 20.dp)
-                        .padding(top = 36.dp)
-                        .systemBarsPadding(),
-                    onPlaceSelectorNavigate = { navController.navigate("building") },
-                    hasNewNotification = false
-                )
-            }
-            composable(Screen.Meal.route) {
-                MealScreen(
-                    onMealTimeClick = { navController.navigate("meal_time/$it") },
-                )
-            }
-            composable(
-                "meal_time/{type}",
-                arguments = listOf(navArgument("type") { type = NavType.IntType })
-            ) {
-                val startPage = it.arguments?.getInt("type") ?: 0
-                MealTimeScreen(
-                    startPage = startPage,
-                    onBackPress = { navController.popBackStack() }
-                )
-            }
-            composable(Screen.Calendar.route) { ScheduleScreen() }
-            composable(Screen.Application.route) {
-                ApplicationScreen(
-                    onApplicationClick = { route ->
-                        navController.navigate(route)
-                    }
-                )
-            }
-            composable(Screen.MyInfo.route) { Text(text = "내 정보") }
-            composable(Screen.MyInfo.route) { MyInfoScreen() }
-            composable("developing") {
-                DevelopingScreen(
-                    Modifier.systemBarsPadding(),
-                    backOnClick = {
-                        navController.popBackStack()
-                    }
-                )
-            }
-            placeSelectorNavGraph(navController, onPlaceChange, onFavoriteAdd, onFavoriteRemove)
+            preMainNavGraph(navController)
+            mainNavGraph(navController, onPlaceChange, lazyPlaceSelectorViewModel)
+            placeSelectorNavGraph(
+                navController,
+                onPlaceChange,
+                onFavoriteAdd,
+                onFavoriteRemove,
+                lazyPlaceSelectorViewModel
+            )
         }
         CustomSnackbarHost(snackbarHostState)
+        CustomBottomBar(navController, lazyPlaceSelectorViewModel)
 
         val isInTransition = navController.visibleEntries.collectAsState().value.size >= 2
         if (isInTransition) {
             ClickPreventingBox()
         }
+    }
+}
+
+@Composable
+fun CustomBottomBar(
+    navController: NavHostController,
+    lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel>
+) {
+    val placeSelectorViewModel by lazyPlaceSelectorViewModel
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    val currentRoute = currentDestination?.route ?: return
+    val currentScreen = Screen.findByRoute(currentRoute)
+
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+        AnimatedVisibility(
+            visible = currentScreen is NavScreen ||
+                    (currentScreen is PlaceSelectorScreen && currentScreen.showCurrentPlace),
+            enter = slideInVertically(initialOffsetY = { it }),
+            exit = slideOutVertically(targetOffsetY = { it })
+        ) {
+            Crossfade(targetState = currentScreen) {
+                if (it is NavScreen) {
+                    BottomNavBar(navController, currentDestination)
+                } else {
+                    PlaceBottomBar(placeSelectorViewModel.currentPlace.collectAsState().value)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun PlaceBottomBar(currentPlace: Future<Place>) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .navigationBarsHeight(60.dp)
+            .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Spacer(Modifier.weight(1f))
+            Text(
+                text = buildAnnotatedString {
+                    when (val v = currentPlace) {
+                        is Future.Success -> {
+                            append("나의 위치는 현재 ")
+                            withStyle(SpanStyle(color = Point)) { append(v._data.name) }
+                            append("입니다")
+                        }
+                        is Future.Failure -> append("위치 정보를 불러오지 못했습니다")
+                        is Future.Loading, is Future.Nothing<*> -> append("위치 정보를 가져오는 중입니다")
+                    }
+                },
+                style = DTypography.t4,
+            )
+            Spacer(Modifier.weight(1f))
+            Spacer(
+                modifier = Modifier
+                    .background(Color.White)
+                    .fillMaxWidth()
+                    .navigationBarsHeight(),
+            )
+        }
+    }
+}
+
+@Composable
+fun BottomNavBar(navController: NavHostController, currentDestination: NavDestination?) {
+    val navScreens = listOf(
+        NavScreen.Main,
+        NavScreen.Meal,
+        NavScreen.Calendar,
+        NavScreen.Application,
+        NavScreen.MyInfo,
+    )
+    Column {
+        BottomNavBarImpl(
+            navController,
+            navScreens,
+            currentDestination
+        )
+        Spacer(
+            modifier = Modifier
+                .background(Color.White)
+                .fillMaxWidth()
+                .navigationBarsHeight(),
+        )
+    }
+}
+
+fun NavGraphBuilder.preMainNavGraph(
+    navController: NavHostController
+) {
+    composable(NoNavScreen.Splash.route) {
+        SplashScreen(
+            onAutoLoginSuccess = {
+                navController.navigate(NavScreen.Main.route) {
+                    popUpTo(NoNavScreen.Splash.route) { inclusive = true }
+                }
+            },
+            onAutoLoginFail = {
+                navController.navigate(NoNavScreen.Login.route) {
+                    popUpTo(NoNavScreen.Splash.route) { inclusive = true }
+                }
+            },
+        )
+    }
+    composable(NoNavScreen.Login.route) {
+        LoginScreen(
+            modifier = Modifier,
+            onLoginSuccess = {
+                navController.navigate(NavScreen.Main.route) {
+                    popUpTo(NoNavScreen.Login.route) { inclusive = true }
+                }
+            }
+        )
+    }
+}
+
+fun NavGraphBuilder.mainNavGraph(
+    navController: NavHostController,
+    onPlaceChange: (Place, String?) -> Unit,
+    lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel>
+) {
+    composable(NavScreen.Main.route) {
+        val placeSelectorViewModel by lazyPlaceSelectorViewModel
+        MainScreen(
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .padding(top = 36.dp)
+                .systemBarsPadding(),
+            onPlaceChange = {
+                onPlaceChange(it, null)
+            },
+            onPlaceSelectorNavigate = {
+                navController.navigate(PlaceSelectorScreen.Building.route)
+                placeSelectorViewModel.selectedBuilding.value = "즐겨찾기"
+            },
+            hasNewNotification = false
+        )
+    }
+    composable(NavScreen.Meal.route) {
+        MealScreen(
+            onMealTimeClick = {
+                navController.navigate(NoNavScreen.MealTime.type(it))
+            },
+        )
+    }
+    composable(
+        NoNavScreen.MealTime.route,
+        NoNavScreen.MealTime.navArguments
+    ) {
+        val startPage = it.arguments?.getInt("type") ?: 0
+        MealTimeScreen(
+            startPage = startPage,
+            onBackPress = { navController.popBackStack() }
+        )
+    }
+    composable(NavScreen.Calendar.route) { ScheduleScreen() }
+    composable(NavScreen.Application.route) {
+        ApplicationScreen(
+            onApplicationClick = { route ->
+                navController.navigate(route)
+            }
+        )
+    }
+    composable(NavScreen.MyInfo.route) { MyInfoScreen() }
+    composable(NoNavScreen.Developing.route) {
+        DevelopingScreen(
+            Modifier.systemBarsPadding(),
+            backOnClick = {
+                navController.popBackStack()
+            }
+        )
     }
 }
 
@@ -264,38 +361,42 @@ fun NavGraphBuilder.placeSelectorNavGraph(
     onPlaceChange: (Place, String?) -> Unit,
     onFavoriteAdd: (Place, String?) -> Unit,
     onFavoriteRemove: (Place) -> Unit,
+    lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel>,
 ) {
     val navigateToRemark = { place: Place ->
-        navController.navigate("remark/${place._id}")
+        navController.navigate(PlaceSelectorScreen.SetRemark.place(place))
     }
     val navigateToRemarkFavorite = { place: Place ->
-        navController.navigate("remark_favorite/${place._id}")
+        navController.navigate(PlaceSelectorScreen.AddFavorite.place(place))
     }
-    composable("building") {
-        val placeSelectorViewModel: PlaceSelectorViewModel = getViewModel()
+    composable(PlaceSelectorScreen.Building.route) {
+        val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
+
+        placeSelectorViewModel.getCurrentPlace()
 
         BuildingScreen(
             modifier = Modifier.systemBarsPadding(),
             placeSelectorViewModel = placeSelectorViewModel,
             title = placeSelectorViewModel.selectedBuilding.value,
             onBackNavigation = { navController.popBackStack() },
-            onSearch = { navController.navigate("search") },
+            onSearch = { navController.navigate(PlaceSelectorScreen.Search.route) },
             onBuildingClick = { placeSelectorViewModel.selectedBuilding.value = it.name },
             onTryPlaceChange = navigateToRemark,
             onPlaceChange = onPlaceChange,
-            onCategoryClick = { navController.navigate("category/${placeSelectorViewModel.selectedBuilding.value} ${it.name}") },
+            onCategoryClick = {
+                val category = "${placeSelectorViewModel.selectedBuilding.value} ${it.name}"
+                navController.navigate(PlaceSelectorScreen.Category.category(category))
+            },
             onTryFavoriteAdd = navigateToRemarkFavorite,
             onFavoriteRemove = onFavoriteRemove,
         )
     }
     composable(
-        "category/{category}",
-        arguments = listOf(
-            navArgument("category") { type = NavType.StringType },
-        ),
+        PlaceSelectorScreen.Category.route,
+        PlaceSelectorScreen.Category.navArguments,
     ) {
         val category = it.arguments?.getString("category") ?: ""
-        val placeSelectorViewModel: PlaceSelectorViewModel = getViewModel()
+        val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
 
         PlacesScreen(
             modifier = Modifier
@@ -310,8 +411,8 @@ fun NavGraphBuilder.placeSelectorNavGraph(
             onFavoriteRemove = onFavoriteRemove,
         )
     }
-    composable("search") {
-        val placeSelectorViewModel: PlaceSelectorViewModel = getViewModel()
+    composable(PlaceSelectorScreen.Search.route) {
+        val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
 
         PlaceSearchScreen(
             modifier = Modifier
@@ -327,16 +428,14 @@ fun NavGraphBuilder.placeSelectorNavGraph(
         )
     }
     composable(
-        "remark/{placeId}",
-        arguments = listOf(
-            navArgument("placeId") { type = NavType.StringType },
-        ),
+        PlaceSelectorScreen.SetRemark.route,
+        PlaceSelectorScreen.SetRemark.navArguments,
         deepLinks = listOf(
             navDeepLink { uriPattern = "dimigoin://set-place/{placeId}" }
         )
     ) {
         val placeId = it.arguments?.getString("placeId") ?: ""
-        val placeSelectorViewModel: PlaceSelectorViewModel = getViewModel()
+        val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
         Log.d(TAG, "placeSelectorNavGraph: $placeId")
         Log.d(TAG, "placeSelectorNavGraph: ${placeSelectorViewModel.placeIdToPlace(placeId)}")
 
@@ -360,13 +459,11 @@ fun NavGraphBuilder.placeSelectorNavGraph(
         }
     }
     composable(
-        "remark_favorite/{placeId}",
-        arguments = listOf(
-            navArgument("placeId") { type = NavType.StringType },
-        ),
+        PlaceSelectorScreen.AddFavorite.route,
+        PlaceSelectorScreen.AddFavorite.navArguments,
     ) {
         val placeId = it.arguments?.getString("placeId") ?: ""
-        val placeSelectorViewModel: PlaceSelectorViewModel = getViewModel()
+        val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
 
         ReasonScreen(
             modifier = Modifier
@@ -389,21 +486,23 @@ fun NavGraphBuilder.placeSelectorNavGraph(
 @Composable
 fun BottomNavBarImpl(
     navController: NavController,
-    screens: List<Screen>,
+    screens: List<NavScreen>,
     currentDestination: NavDestination?,
 ) {
     BottomNavigation {
         screens.forEach { screen ->
             BottomNavigationItem(
                 icon = {
-                    Icon(painter = painterResource(screen.icon),
-                        contentDescription = null)
+                    Icon(
+                        painter = painterResource(screen.icon),
+                        contentDescription = null
+                    )
                 },
                 label = { Text(screen.name, style = DTypography.t6) },
                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                 onClick = {
                     navController.navigate(screen.route) {
-                        navController.graph.findNode(Screen.Main.route)?.id?.let {
+                        navController.graph.findNode(NavScreen.Main.route)?.id?.let {
                             popUpTo(it) {
                                 saveState = true
                             }
