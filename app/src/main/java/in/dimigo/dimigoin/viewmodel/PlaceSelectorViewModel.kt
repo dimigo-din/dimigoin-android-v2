@@ -5,15 +5,12 @@ import `in`.dimigo.dimigoin.domain.entity.place.Building
 import `in`.dimigo.dimigoin.domain.entity.place.Place
 import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
 import `in`.dimigo.dimigoin.domain.entity.user.User
-import `in`.dimigo.dimigoin.domain.usecase.place.AddFavoriteAttendanceLogUseCase
-import `in`.dimigo.dimigoin.domain.usecase.place.GetAllPlacesUseCase
-import `in`.dimigo.dimigoin.domain.usecase.place.GetCurrentPlaceUseCase
-import `in`.dimigo.dimigoin.domain.usecase.place.GetFavoriteAttendanceLogsUseCase
-import `in`.dimigo.dimigoin.domain.usecase.place.GetRecommendedBuildingsUseCase
-import `in`.dimigo.dimigoin.domain.usecase.place.RemoveFavoriteAttendanceLogUseCase
-import `in`.dimigo.dimigoin.domain.usecase.place.SetCurrentPlaceUseCase
+import `in`.dimigo.dimigoin.domain.usecase.place.*
+import `in`.dimigo.dimigoin.domain.usecase.user.GetMyIdentityUseCase
 import `in`.dimigo.dimigoin.ui.util.Future
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +24,7 @@ class PlaceSelectorViewModel(
     private val addFavoriteAttendanceLogUseCase: AddFavoriteAttendanceLogUseCase,
     private val removeFavoriteAttendanceLogUseCase: RemoveFavoriteAttendanceLogUseCase,
     private val getFavoriteAttendanceLogsUseCase: GetFavoriteAttendanceLogsUseCase,
+    private val getMyIdentityUseCase: GetMyIdentityUseCase,
     private val getRecommendedBuildingsUseCase: GetRecommendedBuildingsUseCase,
 ) : ViewModel() {
 
@@ -45,7 +43,8 @@ class PlaceSelectorViewModel(
     private val _currentPlace = MutableStateFlow<Future<Place>>(Future.Nothing())
     val currentPlace = _currentPlace.asStateFlow()
 
-    private val _favoriteAttendanceLogs = MutableStateFlow<Future<List<AttendanceLog>>>(Future.Nothing())
+    private val _favoriteAttendanceLogs =
+        MutableStateFlow<Future<List<AttendanceLog>>>(Future.Nothing())
     val favoriteAttendanceLog = _favoriteAttendanceLogs.asStateFlow()
 
     private val _recommendedBuildings = MutableStateFlow<Future<List<Building>>>(Future.Nothing())
@@ -57,10 +56,15 @@ class PlaceSelectorViewModel(
     val selectedBuilding = mutableStateOf("즐겨찾기")
 
     init {
+        getMyIdentity()
         getAllPlaces()
         getCurrentPlace()
         getFavoriteAttendanceLogs()
         getRecommendedBuildings()
+    }
+
+    private fun getMyIdentity() = viewModelScope.launch {
+        getMyIdentityUseCase().onSuccess { myIdentity = it }
     }
 
     private fun getAllPlaces() = viewModelScope.launch {
@@ -73,7 +77,15 @@ class PlaceSelectorViewModel(
                 ?: allPlace.find { place ->
                     place.name == "${myIdentity?.grade}학년 ${myIdentity?.`class`}반"
                 }
-                ?: Place("", "${myIdentity?.grade}학년 ${myIdentity?.`class`}반", "", "", "", null, PlaceType.CLASSROOM)
+                ?: Place(
+                    "",
+                    "${myIdentity?.grade}학년 ${myIdentity?.`class`}반",
+                    "",
+                    "",
+                    "",
+                    null,
+                    PlaceType.CLASSROOM
+                )
             _currentPlace.emit(Future.Success(cp))
         }.onFailure {
             _currentPlace.emit(Future.Failure(it))
@@ -122,7 +134,7 @@ class PlaceSelectorViewModel(
     ) = viewModelScope.launch {
         removeFavoriteAttendanceLogUseCase(attendanceLog._id).onSuccess {
             if (it) {
-                    getFavoriteAttendanceLogs()
+                getFavoriteAttendanceLogs()
                 callback(placeIdToPlace(attendanceLog.placeId))
             }
         }
@@ -138,11 +150,44 @@ class PlaceSelectorViewModel(
         return allPlace.filter { "${it.building} ${it.floor}" == category }
     }
 
-    fun getFilteredPlaceByName(search: String): List<Place> {
+    fun getFilteredPlaceByName(search: String): List<Place> =
+        when {
+            search.isEmpty() -> emptyList()
+            search.isSearchByConsonant() -> filterPlaceByFirstConsonants(allPlace, search)
+            else -> filterPlaceByLinearHangul(allPlace, search)
+        }
+
+    private fun String.isSearchByConsonant(): Boolean =
+        all { it.isConsonant() || it.isDigit() || it.isWhitespace() }
+
+    private fun Char.isConsonant(): Boolean = this in 'ㄱ'..'ㅎ'
+
+    private fun String.toConsonants(): String =
+        map { if (it.isSyllable()) FIRST[(it.code - 0xAC00) / 588] else it }.joinToString("")
+
+    private fun filterPlaceByFirstConsonants(allPlace: List<Place>, search: String): List<Place> {
         return allPlace.filter {
-            it.name.contains(search).or(it._id.contains(search))
+            it.name.toConsonants().removeWhitespace().contains(search.removeWhitespace())
         }
     }
+
+    private fun filterPlaceByLinearHangul(allPlace: List<Place>, search: String): List<Place> {
+        val linearSearch = search.makeLinear().lowercase().removeWhitespace()
+        return allPlace.filter {
+            it.name.makeLinear().lowercase().removeWhitespace().contains(linearSearch)
+        }
+    }
+
+    private fun String.makeLinear(): String =
+        map { if (it.isSyllable()) it.makeLinear() else it }.joinToString("")
+
+    private fun Char.makeLinear(): String = (code - 0xAC00).let {
+        "${FIRST[it / 588]}${MIDDLE[it % 588 / 28]}${LAST[it % 28]}"
+    }
+
+    private fun Char.isSyllable(): Boolean = this in '가'..'힣'
+
+    private fun String.removeWhitespace(): String = this.filterNot { it.isWhitespace() }
 
     fun placeIdToPlace(placeId: String): Place {
         return placesMap.getOrDefault(placeId, fallbackPlace)
@@ -151,5 +196,79 @@ class PlaceSelectorViewModel(
     companion object {
         private const val TAG = "PlaceSelectorViewModel"
         private val fallbackPlace = Place("", "", "", "", "", null, PlaceType.ETC)
+        private val FIRST = listOf(
+            "ㄱ",
+            "ㄲ",
+            "ㄴ",
+            "ㄷ",
+            "ㄸ",
+            "ㄹ",
+            "ㅁ",
+            "ㅂ",
+            "ㅃ",
+            "ㅅ",
+            "ㅆ",
+            "ㅇ",
+            "ㅈ",
+            "ㅉ",
+            "ㅊ",
+            "ㅋ",
+            "ㅌ",
+            "ㅍ",
+            "ㅎ"
+        )
+        private val MIDDLE = listOf(
+            "ㅏ",
+            "ㅐ",
+            "ㅑ",
+            "ㅒ",
+            "ㅓ",
+            "ㅔ",
+            "ㅕ",
+            "ㅖ",
+            "ㅗ",
+            "ㅘ",
+            "ㅙ",
+            "ㅚ",
+            "ㅛ",
+            "ㅜ",
+            "ㅝ",
+            "ㅞ",
+            "ㅟ",
+            "ㅠ",
+            "ㅡ",
+            "ㅢ",
+            "ㅣ"
+        )
+        private val LAST = listOf(
+            "",
+            "ㄱ",
+            "ㄲ",
+            "ㄱㅅ",
+            "ㄴ",
+            "ㄴㅈ",
+            "ㄴㅎ",
+            "ㄷ",
+            "ㄹ",
+            "ㄹㄱ",
+            "ㄹㅁ",
+            "ㄹㅂ",
+            "ㄹㅅ",
+            "ㄹㅌ",
+            "ㄹㅍ",
+            "ㄹㅎ",
+            "ㅁ",
+            "ㅂ",
+            "ㅄ",
+            "ㅅ",
+            "ㅆ",
+            "ㅇ",
+            "ㅈ",
+            "ㅊ",
+            "ㅋ",
+            "ㅌ",
+            "ㅍ",
+            "ㅎ"
+        )
     }
 }
