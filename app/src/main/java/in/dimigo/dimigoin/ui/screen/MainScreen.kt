@@ -5,7 +5,9 @@ import `in`.dimigo.dimigoin.domain.entity.place.Place
 import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
 import `in`.dimigo.dimigoin.ui.composables.ContentBox
 import `in`.dimigo.dimigoin.ui.composables.OnLifecycleEvent
+import `in`.dimigo.dimigoin.ui.composables.PageSelector2
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
+import `in`.dimigo.dimigoin.ui.theme.C2
 import `in`.dimigo.dimigoin.ui.theme.C3
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.Point
@@ -20,6 +22,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
@@ -28,7 +31,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -37,19 +40,27 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel = getViewModel(),
     onPlaceChange: (Place) -> Unit,
     onPlaceSelectorNavigate: () -> Unit,
+    onMealPageSelectorNavigate: () -> Unit,
     onNotificationNavigate: () -> Unit,
     hasNewNotification: Boolean,
 ) = Column(modifier) {
     val currentPlace = mainViewModel.currentPlace.collectAsState().value
-    val currentMealTime =
+    val pagerState = rememberPagerState()
+    val coroutineScope = rememberCoroutineScope()
+
     OnLifecycleEvent { _, event ->
         if (event == Lifecycle.Event.ON_RESUME) {
             mainViewModel.getCurrentPlace()
@@ -78,9 +89,9 @@ fun MainScreen(
         summary = buildAnnotatedString {
             when (currentPlace) {
                 is Future.Success -> {
-                    append("우리 반의 아침 급식 시간은 ")
-                    withStyle(SpanStyle(color = Point)) { append((currentPlace as Future.Success<Place>)._data.name) }
-                    append("입니다")
+                    append("나의 위치는 현재 ")
+                    withStyle(SpanStyle(color = Point)) { append(currentPlace._data.name) }
+                    append(" 입니다")
                 }
                 is Future.Failure -> append("위치 정보를 불러오지 못했습니다")
                 is Future.Loading, is Future.Nothing -> append("위치 정보를 가져오는 중입니다")
@@ -95,26 +106,43 @@ fun MainScreen(
         )
     }
 
+    Spacer(Modifier.height(20.dp))
+
     ContentBox(
         title = "오늘의 급식",
-        summary = buildAnnotatedString {
-            when (currentPlace) {
-                is Future.Success -> {
-                    append("나의 위치는 현재 ")
-                    withStyle(SpanStyle(color = Point)) { append((currentPlace as Future.Success<Place>)._data.name) }
-                    append("입니다")
-                }
-                is Future.Failure -> append("위치 정보를 불러오지 못했습니다")
-                is Future.Loading, is Future.Nothing -> append("위치 정보를 가져오는 중입니다")
-            }
-        },
-        onNavigate = onPlaceSelectorNavigate,
+        onNavigate = onMealPageSelectorNavigate,
     ) {
-        PlaceSelectorContent(
-            onPlaceTypeSelect = { mainViewModel.setCurrentPlace(it, onPlaceChange) },
-            onSelectOther = onPlaceSelectorNavigate,
-            selectedPlaceType = mainViewModel.currentPlace.collectAsState().value.data?.type ?: PlaceType.CLASSROOM
+        PageSelector2(
+            elements = listOf("아침", "점심", "저녁"),
+            pagerState = pagerState,
+            onChangeSelected = {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(it)
+                }
+            },
         )
+        HorizontalPager(count = 3, state = pagerState, userScrollEnabled = true) { page ->
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp, vertical = 25.dp),
+                verticalArrangement = Arrangement.spacedBy(25.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                Text(
+                    text = mainViewModel.getCurrentMealText(page),
+                    style = DTypography.mealMenu,
+                    color = C2,
+                    modifier = Modifier,
+                )
+                Text(
+                    text = mainViewModel.getCurrentMealTime(page),
+                    style = DTypography.t5,
+                )
+            }
+        }
+
+
     }
 }
 
