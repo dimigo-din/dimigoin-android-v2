@@ -1,12 +1,14 @@
 package `in`.dimigo.dimigoin.ui.composables
 
+import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
 import `in`.dimigo.dimigoin.ui.theme.C0
 import `in`.dimigo.dimigoin.ui.theme.C2
+import `in`.dimigo.dimigoin.ui.theme.C3
 import `in`.dimigo.dimigoin.ui.theme.C4
 import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.Point
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -31,9 +34,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -124,6 +129,69 @@ fun PageSelector(
 }
 
 @OptIn(ExperimentalPagerApi::class)
+@Composable
+fun PageSelector2(
+    modifier: Modifier = Modifier,
+    elements: List<String>,
+    pagerState: PagerState,
+    horizontalTextPadding: Dp = 10.dp,
+    onChangeSelected: (Int) -> Unit,
+) {
+    Box(
+        modifier = modifier.height(50.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = horizontalTextPadding),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            elements.forEachIndexed { index, element ->
+                val color = animateColorAsState(
+                    if (pagerState.targetPage == index && !pagerState.isScrollInProgress) {
+                        Point
+                    } else {
+                        C3
+                    }
+                )
+                val pointColor = animateColorAsState(
+                    if (pagerState.targetPage == index && !pagerState.isScrollInProgress) {
+                        Point
+                    } else {
+                        Color(0x00000000)
+                    }
+                )
+                Box(
+                    Modifier
+                        .fillMaxHeight()
+                        .weight(1f)
+                        .noRippleClickable {
+                            onChangeSelected(index)
+                        }
+                ) {
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = element,
+                        style = DTypography.t3,
+                        color = color.value,
+                        textAlign = TextAlign.Center,
+                    )
+                    Icon(
+                        modifier = Modifier
+                            .padding(top = 20.dp)
+                            .align(Alignment.BottomCenter),
+                        painter = painterResource(id = R.drawable.ic_point),
+                        tint = pointColor.value,
+                        contentDescription = null
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFF)
 @Composable
 fun PageSelectorPreview() {
@@ -148,6 +216,13 @@ fun PageSelectorPreview() {
         PageSelector(
             modifier = Modifier.fillMaxWidth(),
             elements = listOf("학급시간표", "학사일정"),
+            pagerState = rememberPagerState(),
+            horizontalTextPadding = 10.dp,
+            onChangeSelected = { selected3 = it }
+        )
+        PageSelector2(
+            modifier = Modifier.fillMaxWidth(),
+            elements = listOf("아침", "점심", "저녁"),
             pagerState = rememberPagerState(),
             horizontalTextPadding = 10.dp,
             onChangeSelected = { selected3 = it }
