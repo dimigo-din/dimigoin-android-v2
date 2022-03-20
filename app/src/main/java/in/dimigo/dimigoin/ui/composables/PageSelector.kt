@@ -181,8 +181,7 @@ fun PageSelector2(
                             .clip(RoundedCornerShape(100))
                             .background(pointColor.value)
                             .padding(top = 20.dp)
-                            .align(Alignment.BottomCenter)
-                        ,
+                            .align(Alignment.BottomCenter),
                     )
                 }
             }
