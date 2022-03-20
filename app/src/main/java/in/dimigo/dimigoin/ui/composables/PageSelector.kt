@@ -1,6 +1,5 @@
 package `in`.dimigo.dimigoin.ui.composables
 
-import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
 import `in`.dimigo.dimigoin.ui.theme.C0
 import `in`.dimigo.dimigoin.ui.theme.C2
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -38,7 +37,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -177,13 +175,14 @@ fun PageSelector2(
                         color = color.value,
                         textAlign = TextAlign.Center,
                     )
-                    Icon(
+                    Spacer(
                         modifier = Modifier
+                            .size(4.dp)
+                            .clip(RoundedCornerShape(100))
+                            .background(pointColor.value)
                             .padding(top = 20.dp)
-                            .align(Alignment.BottomCenter),
-                        painter = painterResource(id = R.drawable.ic_point),
-                        tint = pointColor.value,
-                        contentDescription = null
+                            .align(Alignment.BottomCenter)
+                        ,
                     )
                 }
             }
