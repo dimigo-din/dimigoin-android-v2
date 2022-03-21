@@ -41,10 +41,9 @@ class MainViewModel(
     private val _currentPlace = MutableStateFlow<Future<Place>>(Future.Nothing())
     val currentPlace = _currentPlace.asStateFlow()
     private val _weeklyMeal = MutableStateFlow<Future<List<Meal>>>(Future.Loading())
-    private val weeklyMeal = _weeklyMeal.asStateFlow()
-    private val todayMeal = weeklyMeal.value.data?.get(LocalDate.now().dayOfWeek.value - 1)
+    val weeklyMeal = _weeklyMeal.asStateFlow()
     private val _mealTime = MutableStateFlow<Future<MealTime>>(Future.Loading())
-    private val mealTime = _mealTime.asStateFlow()
+    val mealTime = _mealTime.asStateFlow()
 
     init {
         getAllPlaces()
@@ -132,57 +131,27 @@ class MainViewModel(
         }
     }
 
-    private fun getCurrentMealType(page: Int?): String? {
+    fun getCurrentMealType(page: Int?): String? {
         val timeNow = LocalTime.now()
         if (timeNow.isAfter(LocalTime.of(6, 30)) &&
             timeNow.isBefore(LocalTime.of(8, 20)) ||
             page == 0
         ) {
-            return "breakfast"
+            return "아침"
         } else if (
             timeNow.isAfter(LocalTime.of(8, 20)) &&
             timeNow.isBefore(LocalTime.of(13, 50)) ||
             page == 1
         ) {
-            return "lunch"
+            return "점심"
         } else if (
             timeNow.isAfter(LocalTime.of(13, 50)) &&
             timeNow.isBefore(LocalTime.of(19, 50)) ||
             page == 2
         ) {
-            return "dinner"
+            return "저녁"
         } else {
             return null
-        }
-    }
-
-    fun getCurrentMealText(page: Int?): String {
-        val mealText = when(getCurrentMealType(page)) {
-            "breakfast" -> todayMeal?.breakfast
-            "lunch" -> todayMeal?.lunch
-            "dinner" -> todayMeal?.dinner
-            else -> null
-        }
-        return mealText ?: ""
-    }
-
-    fun getCurrentMealTime(page: Int?): AnnotatedString {
-        val mealTime = when(getCurrentMealType(page)) {
-            "breakfast" -> mealTime.value.data?.breakfastTime?.asKorean12HoursString()
-            "lunch" -> mealTime.value.data?.lunchTime?.asKorean12HoursString()
-            "dinner" -> mealTime.value.data?.dinnerTime?.asKorean12HoursString()
-            else -> null
-        }
-        return buildAnnotatedString {
-            when (_mealTime.value) {
-                is Future.Success -> {
-                    append("우리 반의 아침 급식 시간은 ")
-                    withStyle(SpanStyle(color = Point)) { append(mealTime ?: "??:??") }
-                    append("입니다")
-                }
-                is Future.Failure -> append("급식시간 정보를 불러오지 못했습니다")
-                is Future.Loading, is Future.Nothing<*> -> append("급식시간 정보를 가져오는 중입니다")
-            }
         }
     }
 

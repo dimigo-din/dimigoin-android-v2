@@ -12,8 +12,10 @@ import `in`.dimigo.dimigoin.ui.theme.C3
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.util.Future
+import `in`.dimigo.dimigoin.ui.util.asKorean12HoursString
 import `in`.dimigo.dimigoin.ui.util.icon
 import `in`.dimigo.dimigoin.viewmodel.MainViewModel
+import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +35,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -46,7 +49,9 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
+import java.time.LocalDate
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MainScreen(
@@ -59,6 +64,8 @@ fun MainScreen(
     hasNewNotification: Boolean,
 ) = Column(modifier) {
     val currentPlace = mainViewModel.currentPlace.collectAsState().value
+    val mealTime = mainViewModel.mealTime.collectAsState().value
+    val todayMeal = mainViewModel.weeklyMeal.value.data?.get(LocalDate.now().dayOfWeek.value - 1)
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -75,7 +82,9 @@ fun MainScreen(
             R.drawable.ic_notification_false
         }
         Spacer(Modifier.width(10.dp))
-        Icon(painter = painterResource(id = R.drawable.ic_dimigoin), contentDescription = null, tint = Point)
+        Icon(painter = painterResource(id = R.drawable.ic_dimigoin),
+            contentDescription = null,
+            tint = Point)
         Spacer(Modifier.weight(1f))
         Icon(
             painter = painterResource(id = notificationIcon), contentDescription = null,
@@ -103,7 +112,8 @@ fun MainScreen(
         PlaceSelectorContent(
             onPlaceTypeSelect = { mainViewModel.setCurrentPlace(it, onPlaceChange) },
             onSelectOther = onPlaceSelectorNavigate,
-            selectedPlaceType = mainViewModel.currentPlace.collectAsState().value.data?.type ?: PlaceType.CLASSROOM
+            selectedPlaceType = mainViewModel.currentPlace.collectAsState().value.data?.type
+                ?: PlaceType.CLASSROOM
         )
     }
 
@@ -112,7 +122,28 @@ fun MainScreen(
     ContentBox(
         title = "오늘의 급식",
         onNavigate = onMealPageSelectorNavigate,
-        summary = mainViewModel.getCurrentMealTime(pagerState.currentPage),
+        summary = buildAnnotatedString {
+            when (mealTime) {
+                is Future.Success -> {
+                    append("우리 반의 ${
+                        mainViewModel.getCurrentMealType(pagerState.currentPage)
+                    } 급식 시간은 ")
+                    withStyle(SpanStyle(color = Point)) {
+                        append(
+                            when (mainViewModel.getCurrentMealType(pagerState.currentPage)) {
+                                "아침" -> mealTime._data.lunchTime.asKorean12HoursString()
+                                "점심" -> mealTime._data.lunchTime.asKorean12HoursString()
+                                "저녁" -> mealTime._data.dinnerTime.asKorean12HoursString()
+                                else -> ""
+                            }
+                        )
+                    }
+                    append("입니다")
+                }
+                is Future.Failure -> append("급식시간 정보를 불러오지 못했습니다")
+                is Future.Loading, is Future.Nothing<*> -> append("급식시간 정보를 가져오는 중입니다")
+            }
+        }
     ) {
         PageSelector2(
             elements = listOf("아침", "점심", "저녁"),
@@ -124,26 +155,28 @@ fun MainScreen(
             },
         )
         HorizontalPager(count = 3, state = pagerState, userScrollEnabled = true) { page ->
-            if (mainViewModel.getCurrentMealText(page).isNotEmpty()) {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    text = mainViewModel.getCurrentMealText(page),
-                    style = DTypography.mealMenu,
-                    color = C2,
-                )
-            } else {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    text = "급식 정보가 없습니다.",
-                    style = DTypography.mealMenu,
-                    color = C2,
-                    textAlign = TextAlign.Center
-                )
-            }
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = buildAnnotatedString {
+                    when (mealTime) {
+                        is Future.Success -> append(
+                            when(mainViewModel.getCurrentMealType(page)) {
+                                "아침" -> todayMeal?.breakfast
+                                "점심" -> todayMeal?.lunch
+                                "저녁" -> todayMeal?.dinner
+                                else -> ""
+                            } ?: ""
+                        )
+                        is Future.Failure -> append("급식 정보를 불러오지 못했습니다")
+                        is Future.Loading, is Future.Nothing<*> -> append("급식 정보를 가져오는 중입니다")
+                    }
+                },
+                style = DTypography.mealMenu,
+                color = C2,
+                textAlign = if (mealTime !is Future.Success) TextAlign.Center else null
+            )
         }
-
 
     }
 }
@@ -154,7 +187,8 @@ private fun PlaceSelectorContent(
     onSelectOther: () -> Unit,
     selectedPlaceType: PlaceType,
 ) {
-    val places = listOf(PlaceType.CLASSROOM, PlaceType.RESTROOM, PlaceType.CORRIDOR, PlaceType.TEACHER)
+    val places =
+        listOf(PlaceType.CLASSROOM, PlaceType.RESTROOM, PlaceType.CORRIDOR, PlaceType.TEACHER)
 
     Row(
         Modifier.fillMaxWidth(),
@@ -184,7 +218,10 @@ private fun SimplePlaceItem(
     onClick: () -> Unit,
     selected: Boolean,
 ) {
-    SimplePlaceItem(icon = placeType.icon, name = placeType.value, onClick = onClick, selected = selected)
+    SimplePlaceItem(icon = placeType.icon,
+        name = placeType.value,
+        onClick = onClick,
+        selected = selected)
 }
 
 @Composable
