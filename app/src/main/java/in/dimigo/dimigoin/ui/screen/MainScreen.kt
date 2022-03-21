@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -111,6 +112,7 @@ fun MainScreen(
     ContentBox(
         title = "오늘의 급식",
         onNavigate = onMealPageSelectorNavigate,
+        summary = mainViewModel.getCurrentMealTime(pagerState.currentPage),
     ) {
         PageSelector2(
             elements = listOf("아침", "점심", "저녁"),
@@ -122,22 +124,22 @@ fun MainScreen(
             },
         )
         HorizontalPager(count = 3, state = pagerState, userScrollEnabled = true) { page ->
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 30.dp, vertical = 25.dp),
-                verticalArrangement = Arrangement.spacedBy(25.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
+            if (mainViewModel.getCurrentMealText(page).isNotEmpty()) {
                 Text(
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     text = mainViewModel.getCurrentMealText(page),
                     style = DTypography.mealMenu,
                     color = C2,
-                    modifier = Modifier,
                 )
+            } else {
                 Text(
-                    text = mainViewModel.getCurrentMealTime(page),
-                    style = DTypography.t5,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = "급식 정보가 없습니다.",
+                    style = DTypography.mealMenu,
+                    color = C2,
+                    textAlign = TextAlign.Center
                 )
             }
         }

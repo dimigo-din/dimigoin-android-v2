@@ -12,6 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -31,6 +32,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -135,55 +137,47 @@ fun PageSelector2(
     horizontalTextPadding: Dp = 10.dp,
     onChangeSelected: (Int) -> Unit,
 ) {
-    Box(
-        modifier = modifier.height(50.dp)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = horizontalTextPadding),
+        horizontalArrangement = Arrangement.SpaceAround,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = horizontalTextPadding),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            elements.forEachIndexed { index, element ->
-                val color = animateColorAsState(
-                    if (pagerState.targetPage == index && !pagerState.isScrollInProgress) {
-                        Point
-                    } else {
-                        C3
-                    }
-                )
-                val pointColor = animateColorAsState(
-                    if (pagerState.targetPage == index && !pagerState.isScrollInProgress) {
-                        Point
-                    } else {
-                        Color(0x00000000)
-                    }
-                )
-                Box(
-                    Modifier
-                        .fillMaxHeight()
-                        .weight(1f)
-                        .noRippleClickable {
-                            onChangeSelected(index)
-                        }
-                ) {
-                    Text(
-                        modifier = Modifier.align(Alignment.Center),
-                        text = element,
-                        style = DTypography.t3,
-                        color = color.value,
-                        textAlign = TextAlign.Center,
-                    )
-                    Spacer(
-                        modifier = Modifier
-                            .size(4.dp)
-                            .clip(RoundedCornerShape(100))
-                            .background(pointColor.value)
-                            .padding(top = 20.dp)
-                            .align(Alignment.BottomCenter),
-                    )
+        elements.forEachIndexed { index, element ->
+            val color = animateColorAsState(
+                if (pagerState.targetPage == index && !pagerState.isScrollInProgress) {
+                    Point
+                } else {
+                    C3
                 }
+            )
+            val pointColor = animateColorAsState(
+                if (pagerState.targetPage == index && !pagerState.isScrollInProgress) {
+                    Point
+                } else {
+                    Color(0x00000000)
+                }
+            )
+            Column(
+                Modifier
+                    .noRippleClickable {
+                        onChangeSelected(index)
+                    }
+            ) {
+                Text(
+                    text = element,
+                    style = DTypography.t3,
+                    color = color.value,
+                    textAlign = TextAlign.Center,
+                )
+                Spacer(Modifier.height(10.dp))
+                Spacer(
+                    modifier = Modifier
+                        .size(4.dp)
+                        .clip(RoundedCornerShape(100))
+                        .background(pointColor.value)
+                        .align(CenterHorizontally)
+                )
             }
         }
     }

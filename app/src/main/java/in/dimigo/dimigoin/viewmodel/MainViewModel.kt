@@ -163,7 +163,7 @@ class MainViewModel(
             "dinner" -> todayMeal?.dinner
             else -> null
         }
-        return mealText ?: "급식 정보가 없습니다."
+        return mealText ?: ""
     }
 
     fun getCurrentMealTime(page: Int?): AnnotatedString {
