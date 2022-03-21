@@ -178,7 +178,7 @@ class MainViewModel(
                 is Future.Success -> {
                     append("우리 반의 아침 급식 시간은 ")
                     withStyle(SpanStyle(color = Point)) { append(mealTime ?: "??:??") }
-                    append(" 입니다")
+                    append("입니다")
                 }
                 is Future.Failure -> append("급식시간 정보를 불러오지 못했습니다")
                 is Future.Loading, is Future.Nothing<*> -> append("급식시간 정보를 가져오는 중입니다")
