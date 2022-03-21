@@ -305,7 +305,7 @@ fun NavGraphBuilder.mainNavGraph(
                 placeSelectorViewModel.selectedBuilding.value = "즐겨찾기"
             },
             onMealPageSelectorNavigate = {
-                navController.navigate(NavScreen.Meal.route) // <==================================================
+                navController.navigate(NavScreen.Meal.route)
             },
             onNotificationNavigate = {
                 navController.navigate(NoNavScreen.Notification.route)
