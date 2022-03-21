@@ -11,20 +11,13 @@ import `in`.dimigo.dimigoin.domain.usecase.place.GetAllPlacesUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.GetCurrentPlaceUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.SetCurrentPlaceUseCase
 import `in`.dimigo.dimigoin.domain.usecase.user.GetMyIdentityUseCase
-import `in`.dimigo.dimigoin.ui.theme.Point
+import `in`.dimigo.dimigoin.ui.composables.MealTimeType
 import `in`.dimigo.dimigoin.ui.util.Future
-import `in`.dimigo.dimigoin.ui.util.asKorean12HoursString
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.LocalTime
 
 class MainViewModel(
@@ -133,20 +126,18 @@ class MainViewModel(
 
     fun getCurrentMealType(page: Int?): String? {
         val timeNow = LocalTime.now()
-        if (timeNow.isAfter(LocalTime.of(6, 30)) &&
-            timeNow.isBefore(LocalTime.of(8, 20)) ||
+        if (
+            MealTimeType.BREAKFAST.timeRange.contains(timeNow) ||
             page == 0
         ) {
             return "아침"
         } else if (
-            timeNow.isAfter(LocalTime.of(8, 20)) &&
-            timeNow.isBefore(LocalTime.of(13, 50)) ||
+            MealTimeType.LUNCH.timeRange.contains(timeNow) ||
             page == 1
         ) {
             return "점심"
         } else if (
-            timeNow.isAfter(LocalTime.of(13, 50)) &&
-            timeNow.isBefore(LocalTime.of(19, 50)) ||
+            MealTimeType.DINNER.timeRange.contains(timeNow) ||
             page == 2
         ) {
             return "저녁"
