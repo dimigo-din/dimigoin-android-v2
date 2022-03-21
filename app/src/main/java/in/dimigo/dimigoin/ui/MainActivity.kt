@@ -168,7 +168,7 @@ fun App(
 @Composable
 fun CustomBottomBar(
     navController: NavHostController,
-    lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel>
+    lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel>,
 ) {
     val placeSelectorViewModel by lazyPlaceSelectorViewModel
 
@@ -257,7 +257,7 @@ fun BottomNavBar(navController: NavHostController, currentDestination: NavDestin
 }
 
 fun NavGraphBuilder.preMainNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     composable(NoNavScreen.Splash.route) {
         SplashScreen(
@@ -305,7 +305,15 @@ fun NavGraphBuilder.mainNavGraph(
                 placeSelectorViewModel.selectedBuilding.value = "즐겨찾기"
             },
             onMealPageSelectorNavigate = {
-                navController.navigate(NavScreen.Meal.route)
+                navController.navigate(NavScreen.Meal.route) {
+                    navController.graph.findNode(NavScreen.Main.route)?.id?.let {
+                        popUpTo(it) {
+                            saveState = true
+                        }
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
             },
             onNotificationNavigate = {
                 navController.navigate(NoNavScreen.Notification.route)
