@@ -124,25 +124,12 @@ class MainViewModel(
         }
     }
 
-    fun getCurrentMealType(page: Int?): String? {
-        val timeNow = LocalTime.now()
-        if (
-            MealTimeType.BREAKFAST.timeRange.contains(timeNow) ||
-            page == 0
-        ) {
-            return "아침"
-        } else if (
-            MealTimeType.LUNCH.timeRange.contains(timeNow) ||
-            page == 1
-        ) {
-            return "점심"
-        } else if (
-            MealTimeType.DINNER.timeRange.contains(timeNow) ||
-            page == 2
-        ) {
-            return "저녁"
-        } else {
-            return null
+    fun getCurrentMealType(page: Int?): String {
+        return when (page) {
+            0 -> MealTimeType.BREAKFAST.value
+            1 -> MealTimeType.LUNCH.value
+            2 -> MealTimeType.DINNER.value
+            else -> ""
         }
     }
 
