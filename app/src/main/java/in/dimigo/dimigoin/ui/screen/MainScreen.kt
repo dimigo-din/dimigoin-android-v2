@@ -51,7 +51,6 @@ import androidx.lifecycle.Lifecycle
 import com.google.accompanist.pager.ExperimentalPagerApi
 import org.koin.androidx.compose.getViewModel
 
-@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MainScreen(
@@ -65,7 +64,7 @@ fun MainScreen(
 ) = Column(modifier) {
     val currentPlace = mainViewModel.currentPlace.collectAsState().value
     val mealTime = mainViewModel.mealTime.collectAsState().value
-    val todayMeal = mainViewModel.todayMeal.value.data
+    val todayMeal = mainViewModel.todayMeal.collectAsState().value.data
     val pagerState = remember { mutableStateOf(mainViewModel.getCurrentMealType()) }
     val currentMealTypeByPage = when (pagerState.value) {
         0 -> MealTimeType.BREAKFAST.value
