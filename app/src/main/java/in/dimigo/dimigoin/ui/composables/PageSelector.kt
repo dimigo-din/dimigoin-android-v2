@@ -134,77 +134,6 @@ fun PageSelector(
 }
 
 @OptIn(ExperimentalPagerApi::class)
-@Composable
-fun PageSelector2(
-    modifier: Modifier = Modifier,
-    elements: List<String>,
-    pagerState: PagerState,
-    horizontalTextPadding: Dp = 10.dp,
-    onChangeSelected: (Int) -> Unit,
-) {
-    var rowXPos by remember { mutableStateOf(0f) }
-    var textWidth by remember { mutableStateOf(0f) }
-    val selectedWidth = with(LocalDensity.current) {
-        (rowXPos * 5 + textWidth).toDp()
-    }
-    Log.d("width", "textWidth : $textWidth")
-    Column() {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = horizontalTextPadding)
-                .onGloballyPositioned {
-                    rowXPos = it.positionInParent().x
-                    textWidth = (it.size.width.toFloat() / elements.size)
-                },
-            horizontalArrangement = Arrangement.SpaceAround,
-        ) {
-            elements.forEachIndexed { index, element ->
-                val color = animateColorAsState(
-                    if (pagerState.targetPage == index && !pagerState.isScrollInProgress) {
-                        Point
-                    } else {
-                        C3
-                    }
-                )
-                Column(
-                    Modifier
-                        .noRippleClickable {
-                            onChangeSelected(index)
-                        }
-                ) {
-                    Text(
-                        text = element,
-                        style = DTypography.t3,
-                        color = color.value,
-                        textAlign = TextAlign.Center,
-                    )
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Box(
-            modifier = Modifier
-                .size(4.dp)
-                .offset {
-                    val scrollPosition = (pagerState.currentPage + pagerState.currentPageOffset)
-                        .coerceIn(0f,
-                            (pagerState.pageCount - 1)
-                                .coerceAtLeast(0)
-                                .toFloat()
-                        )
-                    IntOffset(
-                        x = (textWidth * scrollPosition + selectedWidth.value).toInt(),
-                        y = 0
-                    )
-                }
-                .clip(RoundedCornerShape(100))
-                .background(Point)
-        )
-    }
-}
-
-@OptIn(ExperimentalPagerApi::class)
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFF)
 @Composable
 fun PageSelectorPreview() {
@@ -229,13 +158,6 @@ fun PageSelectorPreview() {
         PageSelector(
             modifier = Modifier.fillMaxWidth(),
             elements = listOf("학급시간표", "학사일정"),
-            pagerState = rememberPagerState(),
-            horizontalTextPadding = 10.dp,
-            onChangeSelected = { selected3 = it }
-        )
-        PageSelector2(
-            modifier = Modifier.fillMaxWidth(),
-            elements = listOf("아침", "점심", "저녁"),
             pagerState = rememberPagerState(),
             horizontalTextPadding = 10.dp,
             onChangeSelected = { selected3 = it }
