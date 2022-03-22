@@ -1,5 +1,6 @@
 package `in`.dimigo.dimigoin.ui.composables
 
+import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
 import `in`.dimigo.dimigoin.ui.theme.C0
 import `in`.dimigo.dimigoin.ui.theme.C2
@@ -7,6 +8,7 @@ import `in`.dimigo.dimigoin.ui.theme.C3
 import `in`.dimigo.dimigoin.ui.theme.C4
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.Point
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +26,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +35,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -137,49 +142,65 @@ fun PageSelector2(
     horizontalTextPadding: Dp = 10.dp,
     onChangeSelected: (Int) -> Unit,
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = horizontalTextPadding),
-        horizontalArrangement = Arrangement.SpaceAround,
-    ) {
-        elements.forEachIndexed { index, element ->
-            val color = animateColorAsState(
-                if (pagerState.targetPage == index && !pagerState.isScrollInProgress) {
-                    Point
-                } else {
-                    C3
-                }
-            )
-            val pointColor = animateColorAsState(
-                if (pagerState.targetPage == index && !pagerState.isScrollInProgress) {
-                    Point
-                } else {
-                    Color(0x00000000)
-                }
-            )
-            Column(
-                Modifier
-                    .noRippleClickable {
-                        onChangeSelected(index)
+    var rowXPos by remember { mutableStateOf(0f) }
+    var textWidth by remember { mutableStateOf(0f) }
+    val selectedWidth = with(LocalDensity.current) {
+        (rowXPos * 5 + textWidth).toDp()
+    }
+    Log.d("width", "textWidth : $textWidth")
+    Column() {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = horizontalTextPadding)
+                .onGloballyPositioned {
+                    rowXPos = it.positionInParent().x
+                    textWidth = (it.size.width.toFloat() / elements.size)
+                },
+            horizontalArrangement = Arrangement.SpaceAround,
+        ) {
+            elements.forEachIndexed { index, element ->
+                val color = animateColorAsState(
+                    if (pagerState.targetPage == index && !pagerState.isScrollInProgress) {
+                        Point
+                    } else {
+                        C3
                     }
-            ) {
-                Text(
-                    text = element,
-                    style = DTypography.t3,
-                    color = color.value,
-                    textAlign = TextAlign.Center,
                 )
-                Spacer(Modifier.height(10.dp))
-                Spacer(
-                    modifier = Modifier
-                        .size(4.dp)
-                        .clip(RoundedCornerShape(100))
-                        .background(pointColor.value)
-                        .align(CenterHorizontally)
-                )
+                Column(
+                    Modifier
+                        .noRippleClickable {
+                            onChangeSelected(index)
+                        }
+                ) {
+                    Text(
+                        text = element,
+                        style = DTypography.t3,
+                        color = color.value,
+                        textAlign = TextAlign.Center,
+                    )
+                }
             }
         }
+        Spacer(modifier = Modifier.height(10.dp))
+        Box(
+            modifier = Modifier
+                .size(4.dp)
+                .offset {
+                    val scrollPosition = (pagerState.currentPage + pagerState.currentPageOffset)
+                        .coerceIn(0f,
+                            (pagerState.pageCount - 1)
+                                .coerceAtLeast(0)
+                                .toFloat()
+                        )
+                    IntOffset(
+                        x = (textWidth * scrollPosition + selectedWidth.value).toInt(),
+                        y = 0
+                    )
+                }
+                .clip(RoundedCornerShape(100))
+                .background(Point)
+        )
     }
 }
 
