@@ -131,7 +131,7 @@ fun MainScreen(
                     withStyle(SpanStyle(color = Point)) {
                         append(
                             when (mainViewModel.getCurrentMealType(pagerState.currentPage)) {
-                                "아침" -> mealTime._data.lunchTime.asKorean12HoursString()
+                                "아침" -> mealTime._data.breakfastTime.asKorean12HoursString()
                                 "점심" -> mealTime._data.lunchTime.asKorean12HoursString()
                                 "저녁" -> mealTime._data.dinnerTime.asKorean12HoursString()
                                 else -> ""
