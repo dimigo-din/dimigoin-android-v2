@@ -124,12 +124,13 @@ class MainViewModel(
         }
     }
 
-    fun getCurrentMealType(page: Int?): String {
-        return when (page) {
-            0 -> MealTimeType.BREAKFAST.value
-            1 -> MealTimeType.LUNCH.value
-            2 -> MealTimeType.DINNER.value
-            else -> ""
+    fun getCurrentMealType(): Int {
+        val timeNow = LocalTime.now()
+        return when {
+            MealTimeType.BREAKFAST.timeRange.contains(timeNow) -> 0
+            MealTimeType.LUNCH.timeRange.contains(timeNow) -> 1
+            MealTimeType.DINNER.timeRange.contains(timeNow) -> 2
+            else -> 0
         }
     }
 
