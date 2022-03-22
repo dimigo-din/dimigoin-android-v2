@@ -6,7 +6,7 @@ import `in`.dimigo.dimigoin.domain.entity.place.Place
 import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
 import `in`.dimigo.dimigoin.domain.entity.user.User
 import `in`.dimigo.dimigoin.domain.usecase.meal.GetMyMealTimeUseCase
-import `in`.dimigo.dimigoin.domain.usecase.meal.GetWeeklyMealUseCase
+import `in`.dimigo.dimigoin.domain.usecase.meal.GetTodayMealUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.GetAllPlacesUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.GetCurrentPlaceUseCase
 import `in`.dimigo.dimigoin.domain.usecase.place.SetCurrentPlaceUseCase
@@ -25,7 +25,7 @@ class MainViewModel(
     private val getCurrentPlaceUseCase: GetCurrentPlaceUseCase,
     private val setCurrentPlaceUseCase: SetCurrentPlaceUseCase,
     private val getMyIdentityUseCase: GetMyIdentityUseCase,
-    private val getWeeklyMealUseCase: GetWeeklyMealUseCase,
+    private val getTodayMealUseCase: GetTodayMealUseCase,
     private val getMyMealTimeUseCase: GetMyMealTimeUseCase,
 ) : ViewModel() {
 
@@ -33,8 +33,8 @@ class MainViewModel(
     private var myIdentity: User? = null
     private val _currentPlace = MutableStateFlow<Future<Place>>(Future.Nothing())
     val currentPlace = _currentPlace.asStateFlow()
-    private val _weeklyMeal = MutableStateFlow<Future<List<Meal>>>(Future.Loading())
-    val weeklyMeal = _weeklyMeal.asStateFlow()
+    private val _todayMeal = MutableStateFlow<Future<Meal>>(Future.Loading())
+    val todayMeal = _todayMeal.asStateFlow()
     private val _mealTime = MutableStateFlow<Future<MealTime>>(Future.Loading())
     val mealTime = _mealTime.asStateFlow()
 
@@ -111,10 +111,10 @@ class MainViewModel(
     }
 
     private fun fetch() = viewModelScope.launch {
-        getWeeklyMealUseCase().onSuccess {
-            _weeklyMeal.emit(Future.Success(it))
+        getTodayMealUseCase().onSuccess {
+            _todayMeal.emit(Future.Success(it))
         }.onFailure {
-            _weeklyMeal.emit(Future.Failure(it))
+            _todayMeal.emit(Future.Failure(it))
         }
 
         getMyMealTimeUseCase().onSuccess {
