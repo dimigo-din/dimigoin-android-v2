@@ -72,7 +72,6 @@ fun MainScreen(
         2 -> MealTimeType.DINNER.value
         else -> ""
     }
-    val coroutineScope = rememberCoroutineScope()
 
     OnLifecycleEvent { _, event ->
         if (event == Lifecycle.Event.ON_RESUME) {
