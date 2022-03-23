@@ -162,7 +162,7 @@ fun MainScreen(
                     },
                     text = "아침",
                     style = DTypography.t3,
-                    color = if (pagerState.value == 0) Point else C3,
+                    color = animateColorAsState(if (pagerState.value == 0) Point else C3).value,
                     textAlign = TextAlign.Center
                 )
                 Spacer(Modifier.height(5.dp))
@@ -170,7 +170,7 @@ fun MainScreen(
                     modifier = Modifier
                         .size(4.dp)
                         .clip(RoundedCornerShape(100))
-                        .background(if (pagerState.value == 0) Point else Color.White)
+                        .background(animateColorAsState(if (pagerState.value == 0) Point else Color.White).value)
                 )
             }
             Column(
@@ -182,7 +182,7 @@ fun MainScreen(
                     },
                     text = "점심",
                     style = DTypography.t3,
-                    color = if (pagerState.value == 1) Point else C3,
+                    color = animateColorAsState(if (pagerState.value == 1) Point else C3).value,
                     textAlign = TextAlign.Center
                 )
                 Spacer(Modifier.height(5.dp))
@@ -190,7 +190,7 @@ fun MainScreen(
                     modifier = Modifier
                         .size(4.dp)
                         .clip(RoundedCornerShape(100))
-                        .background(if (pagerState.value == 1) Point else Color.White)
+                        .background(animateColorAsState(if (pagerState.value == 1) Point else Color.White).value)
                 )
             }
             Column(
@@ -202,7 +202,7 @@ fun MainScreen(
                     },
                     text = "저녁",
                     style = DTypography.t3,
-                    color = if (pagerState.value == 2) Point else C3,
+                    color = animateColorAsState(if (pagerState.value == 2) Point else C3).value,
                     textAlign = TextAlign.Center
                 )
                 Spacer(Modifier.height(5.dp))
@@ -210,7 +210,7 @@ fun MainScreen(
                     modifier = Modifier
                         .size(4.dp)
                         .clip(RoundedCornerShape(100))
-                        .background(if (pagerState.value == 2) Point else Color.White)
+                        .background(animateColorAsState(if (pagerState.value == 2) Point else Color.White).value)
                 )
             }
         }
