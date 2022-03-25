@@ -97,8 +97,10 @@ fun MealItem(
     }
 }
 
-enum class MealTimeType(val value: String, val integerValue: Int) {
-    BREAKFAST("아침", 0), LUNCH("점심", 1), DINNER("저녁", 2)
+enum class MealTimeType(val value: String, val integerValue: Int, val timeRange: ClosedRange<LocalTime>) {
+    BREAKFAST("아침", 0, LocalTime.of(6, 30)..LocalTime.of(8, 20)),
+    LUNCH("점심", 1, LocalTime.of(8, 20)..LocalTime.of(13, 50)),
+    DINNER("저녁", 2, LocalTime.of(13, 50)..LocalTime.of(19, 50))
 }
 
 @Preview
