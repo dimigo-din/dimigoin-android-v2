@@ -72,7 +72,7 @@ fun MyInfoScreen(
             Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-                .padding(top = 36.dp)
+                .padding(top = 36.dp, bottom = 120.dp)
         ) {
             Column(
                 Modifier
