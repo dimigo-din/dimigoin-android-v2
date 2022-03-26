@@ -1,7 +1,6 @@
 package `in`.dimigo.dimigoin.ui.screen
 
 import `in`.dimigo.dimigoin.R
-import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
 import `in`.dimigo.dimigoin.ui.theme.C2
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.Point
@@ -47,9 +46,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.skydoves.landscapist.glide.GlideImage
@@ -213,13 +212,7 @@ fun MyInfoScreen(
             exit = fadeOut()
         ) {
             myInfoViewModel.myIdentity?.let {
-                Box(
-                    Modifier
-                        .background(Color(0x99000000))
-                        .noRippleClickable { visible = false }
-                        .padding(horizontal = 35.dp),
-                    contentAlignment = Alignment.Center
-                ) {
+                Dialog(onDismissRequest = { visible = false}) {
                     StudentCard(
                         modifier = Modifier
                             .size(320.dp, 500.dp),
