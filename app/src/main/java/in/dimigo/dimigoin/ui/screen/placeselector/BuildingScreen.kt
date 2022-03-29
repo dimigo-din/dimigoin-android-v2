@@ -80,16 +80,21 @@ fun BuildingScreen(
                     Column(verticalArrangement = Arrangement.spacedBy(25.dp)) {
                         if (title == "즐겨찾기") {
                             favorites.data?.let {
-                                if (it.isEmpty()) Text(text = "등록된 즐겨찾기가 없습니다", style = DTypography.explainText)
+                                if (it.isEmpty()) Text(text = "등록된 즐겨찾기가 없습니다",
+                                    style = DTypography.explainText)
 
                                 it.forEach { attLog ->
                                     val isSelected = currentPlace.data?._id == attLog.placeId
-                                    val place = placeSelectorViewModel.placeIdToPlace(attLog.placeId)
+                                    val place =
+                                        placeSelectorViewModel.placeIdToPlace(attLog.placeId)
                                     PlaceItem(
-                                        place = place.copy(description = attLog.remark ?: "사유가 등록되지 않음"),
+                                        place = place.copy(description = attLog.remark
+                                            ?: "사유가 등록되지 않음"),
                                         isFavorite = true,
                                         onFavoriteChange = {
-                                            placeSelectorViewModel.removeFavoriteAttendanceLog(attLog, onFavoriteRemove)
+                                            placeSelectorViewModel.removeFavoriteAttendanceLog(
+                                                attLog,
+                                                onFavoriteRemove)
                                         },
                                         isSelected = isSelected,
                                         onSelect = {
@@ -138,6 +143,7 @@ fun BuildingScreen(
                             )
                         }
                     }
+                    Spacer(Modifier.height(20.dp))
                 }
             }
         }
