@@ -169,6 +169,7 @@ private fun CustomTextField(
             textAlign = TextAlign.Start,
             color = MaterialTheme.colors.onSurface,
         ),
+        singleLine = true,
         cursorBrush = SolidColor(Point),
         modifier = modifier.onFocusChanged {
             focused = it.isFocused
