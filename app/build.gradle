@@ -51,6 +51,7 @@ android {
 
 dependencies {
 
+    // Clean Architecture
     implementation project(':domain')
     implementation project(':data')
 
