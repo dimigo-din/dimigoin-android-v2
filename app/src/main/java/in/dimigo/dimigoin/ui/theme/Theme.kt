@@ -1,5 +1,6 @@
 package `in`.dimigo.dimigoin.ui.theme
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -81,7 +82,7 @@ fun BorderTextField(
             .padding(vertical = 15.dp, horizontal = 25.dp),
         value = value,
         onValueChange = onValueChange,
-        textStyle = TextStyle.Default.copy(fontSize = 16.sp),
+        textStyle = if (isSystemInDarkTheme()) TextStyle.Default.copy(fontSize = 16.sp, color = C2) else TextStyle.Default.copy(fontSize = 16.sp),
         singleLine = true,
         maxLines = 1,
         keyboardOptions = keyboardOptions,
@@ -96,8 +97,13 @@ fun BorderTextField(
     )
 }
 
-@Preview(backgroundColor = 0x000000)
+@Preview(backgroundColor = 0x000000, showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
-fun BorderTextFieldPrev() {
-    BorderTextField(modifier = Modifier.padding(50.dp), value = TextFieldValue(), onValueChange = {}, label = "아이디를 입력하세요")
+fun DarkBorderTextFieldPrev() {
+    BorderTextField(modifier = Modifier.padding(50.dp), value = TextFieldValue(text = "itsDaTestMessage"), onValueChange = {}, label = "아이디를 입력하세요")
+}
+@Preview(backgroundColor = 0xE5E5E5, showBackground = true )
+@Composable
+fun LightBorderTextFieldPrev() {
+    BorderTextField(modifier = Modifier.padding(50.dp), value = TextFieldValue(text = "itsDaTestMessage"), onValueChange = {}, label = "아이디를 입력하세요")
 }
