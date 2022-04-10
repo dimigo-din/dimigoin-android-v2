@@ -1,8 +1,8 @@
 package `in`.dimigo.dimigoin.data.datasource
 
-import `in`.dimigo.dimigoin.data.model.meal.MealResponseModel
 import `in`.dimigo.dimigoin.data.model.meal.MealSequenceResponseModel
 import `in`.dimigo.dimigoin.data.model.meal.MealTimeResponseModel
+import `in`.dimigo.dimigoin.data.model.meal.TodayMealResponseModel
 import `in`.dimigo.dimigoin.data.model.meal.WeeklyMealResponseModel
 import `in`.dimigo.dimigoin.data.model.place.GetAttendanceResponseModel
 import `in`.dimigo.dimigoin.data.model.place.GetPlacesResponseModel
@@ -13,11 +13,7 @@ import `in`.dimigo.dimigoin.data.model.user.GetUserMeResponseModel
 import `in`.dimigo.dimigoin.data.model.user.LoginRequestModel
 import `in`.dimigo.dimigoin.data.model.user.LoginResponseModel
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface DimigoinApiService {
 
@@ -40,7 +36,7 @@ interface DimigoinApiService {
     fun addAttendanceLog(@Body attendanceLogRequestModel: PostAttendanceRequestModel): Call<PostAttendanceResponseModel>
 
     @GET("/meal/today")
-    fun getTodayMeal(): Call<MealResponseModel>
+    fun getTodayMeal(): Call<TodayMealResponseModel>
 
     @GET("/meal/weekly")
     fun getWeeklyMeal(): Call<WeeklyMealResponseModel>

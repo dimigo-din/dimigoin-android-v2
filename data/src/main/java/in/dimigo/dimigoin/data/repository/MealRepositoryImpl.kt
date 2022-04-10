@@ -5,6 +5,7 @@ import `in`.dimigo.dimigoin.data.mapper.toEntity
 import `in`.dimigo.dimigoin.data.model.meal.MealResponseModel
 import `in`.dimigo.dimigoin.data.model.meal.MealSequenceResponseModel
 import `in`.dimigo.dimigoin.data.model.meal.MealTimeResponseModel
+import `in`.dimigo.dimigoin.data.model.meal.TodayMealResponseModel
 import `in`.dimigo.dimigoin.data.util.resultFromCall
 import `in`.dimigo.dimigoin.domain.entity.meal.Meal
 import `in`.dimigo.dimigoin.domain.entity.meal.MealTime
@@ -27,7 +28,7 @@ class MealRepositoryImpl(
         service.getTodayMeal(),
         cached = todayMeal
     ) { response ->
-        response.toEntity().also {
+        response.meal.toEntity().also {
             todayMeal = it
         }
     }
