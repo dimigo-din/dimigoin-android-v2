@@ -27,7 +27,7 @@ class MealRepositoryImpl(
         service.getTodayMeal(),
         cached = todayMeal
     ) { response ->
-        response.toEntity().also {
+        response.meal.toEntity().also {
             todayMeal = it
         }
     }
