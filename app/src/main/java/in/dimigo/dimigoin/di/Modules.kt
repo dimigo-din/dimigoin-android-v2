@@ -1,6 +1,7 @@
 package `in`.dimigo.dimigoin.di
 
 import `in`.dimigo.dimigoin.data.datasource.DimigoinApiService
+import `in`.dimigo.dimigoin.data.datasource.FirebaseCloudMessagingService
 import `in`.dimigo.dimigoin.data.datasource.LocalSharedPreferenceManager
 import `in`.dimigo.dimigoin.data.datasource.SchoolScheduleDataSource
 import `in`.dimigo.dimigoin.data.repository.MealRepositoryImpl
@@ -17,12 +18,25 @@ import `in`.dimigo.dimigoin.domain.usecase.meal.GetGradeMealTimeUseCase
 import `in`.dimigo.dimigoin.domain.usecase.meal.GetMyMealTimeUseCase
 import `in`.dimigo.dimigoin.domain.usecase.meal.GetTodayMealUseCase
 import `in`.dimigo.dimigoin.domain.usecase.meal.GetWeeklyMealUseCase
-import `in`.dimigo.dimigoin.domain.usecase.place.*
+import `in`.dimigo.dimigoin.domain.usecase.place.AddFavoriteAttendanceLogUseCase
+import `in`.dimigo.dimigoin.domain.usecase.place.GetAllPlacesUseCase
+import `in`.dimigo.dimigoin.domain.usecase.place.GetCurrentPlaceUseCase
+import `in`.dimigo.dimigoin.domain.usecase.place.GetFavoriteAttendanceLogsUseCase
+import `in`.dimigo.dimigoin.domain.usecase.place.GetRecommendedBuildingsUseCase
+import `in`.dimigo.dimigoin.domain.usecase.place.RemoveFavoriteAttendanceLogUseCase
+import `in`.dimigo.dimigoin.domain.usecase.place.SetCurrentPlaceUseCase
 import `in`.dimigo.dimigoin.domain.usecase.schedule.GetScheduleUseCase
 import `in`.dimigo.dimigoin.domain.usecase.schedule.GetTimetableUseCase
 import `in`.dimigo.dimigoin.domain.usecase.user.GetMyIdentityUseCase
 import `in`.dimigo.dimigoin.domain.usecase.user.UserLoginUseCase
-import `in`.dimigo.dimigoin.viewmodel.*
+import `in`.dimigo.dimigoin.viewmodel.LoginViewModel
+import `in`.dimigo.dimigoin.viewmodel.MainViewModel
+import `in`.dimigo.dimigoin.viewmodel.MealTimeViewModel
+import `in`.dimigo.dimigoin.viewmodel.MealViewModel
+import `in`.dimigo.dimigoin.viewmodel.MyInfoViewModel
+import `in`.dimigo.dimigoin.viewmodel.PlaceSelectorViewModel
+import `in`.dimigo.dimigoin.viewmodel.ScheduleViewModel
+import `in`.dimigo.dimigoin.viewmodel.SplashViewModel
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -51,6 +65,7 @@ val dataModules = module {
             OkHttpClient.Builder().build() // existing client holds security information
         SchoolScheduleDataSource(okHttpClient)
     }
+    single { FirebaseCloudMessagingService() }
 
     single<UserRepository> { UserRepositoryImpl(get(), get()) }
     single<PlaceRepository> { PlaceRepositoryImpl(get(), get()) }
