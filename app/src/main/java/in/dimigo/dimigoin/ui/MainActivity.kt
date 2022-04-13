@@ -8,7 +8,18 @@ import `in`.dimigo.dimigoin.ui.composables.BottomNavigationItem
 import `in`.dimigo.dimigoin.ui.composables.CustomSnackbarHost
 import `in`.dimigo.dimigoin.ui.composables.CustomSnackbarHostState
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
-import `in`.dimigo.dimigoin.ui.screen.*
+import `in`.dimigo.dimigoin.ui.screen.ApplicationScreen
+import `in`.dimigo.dimigoin.ui.screen.DevelopingScreen
+import `in`.dimigo.dimigoin.ui.screen.LoginScreen
+import `in`.dimigo.dimigoin.ui.screen.MainScreen
+import `in`.dimigo.dimigoin.ui.screen.MyInfoScreen
+import `in`.dimigo.dimigoin.ui.screen.NavScreen
+import `in`.dimigo.dimigoin.ui.screen.NoNavScreen
+import `in`.dimigo.dimigoin.ui.screen.NotificationScreen
+import `in`.dimigo.dimigoin.ui.screen.PlaceSelectorScreen
+import `in`.dimigo.dimigoin.ui.screen.ScheduleScreen
+import `in`.dimigo.dimigoin.ui.screen.Screen
+import `in`.dimigo.dimigoin.ui.screen.SplashScreen
 import `in`.dimigo.dimigoin.ui.screen.meal.MealScreen
 import `in`.dimigo.dimigoin.ui.screen.meal.MealTimeScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.BuildingScreen
@@ -26,12 +37,29 @@ import android.util.Log
 import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,9 +70,18 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import androidx.navigation.*
+import androidx.navigation.NavController
+import androidx.navigation.NavControllerVisibleEntries
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.compose.*
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.ComposeNavigator
+import androidx.navigation.compose.DialogNavigator
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navDeepLink
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsWithImePadding
@@ -450,10 +487,13 @@ fun NavGraphBuilder.placeSelectorNavGraph(
             navDeepLink { uriPattern = "dimigoin://set-place/{placeId}" }
         )
     ) {
+        val act = (it.arguments?.get("android-support-nav:controller:deepLinkIntent") as Intent).action ?: ""
+        val isFromIntent = act.isNotEmpty()
         val placeId = it.arguments?.getString("placeId") ?: ""
         val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
-        Log.d(TAG, "placeSelectorNavGraph: $placeId")
-        Log.d(TAG, "placeSelectorNavGraph: ${placeSelectorViewModel.placeIdToPlace(placeId)}")
+        Log.d("isFromIntent", "$act////$isFromIntent")
+        Log.d(TAG, "placeSelectorNavGraph1: $placeId")
+        Log.d(TAG, "placeSelectorNavGraph2: ${placeSelectorViewModel.placeIdToPlace(placeId)}")
 
         val isPlaceLoaded = placeSelectorViewModel.isPlaceLoaded.collectAsState().value
         if (isPlaceLoaded) {
@@ -464,13 +504,14 @@ fun NavGraphBuilder.placeSelectorNavGraph(
                     .systemBarsPadding()
                     .navigationBarsWithImePadding(),
                 place = placeSelectorViewModel.placeIdToPlace(placeId),
-                onConfirm = { place, remark ->
+                onConfirm = { place, remark, activity ->
                     placeSelectorViewModel.setCurrentPlace(place, remark, onPlaceChange)
                     navController.popBackStack()
+                    if(!isFromIntent) navController.popBackStack() else activity?.finish()
                     Unit
                 },
                 isFavoriteRegister = false,
-                onBackNavigation = { navController.popBackStack() },
+                onBackNavigation = if(isFromIntent) {null} else {{navController.popBackStack()}},
             )
         }
     }
@@ -488,7 +529,7 @@ fun NavGraphBuilder.placeSelectorNavGraph(
                 .systemBarsPadding()
                 .navigationBarsWithImePadding(),
             place = placeSelectorViewModel.placeIdToPlace(placeId),
-            onConfirm = { place, remark ->
+            onConfirm = { place, remark, _ ->
                 placeSelectorViewModel.addFavoriteAttendanceLog(place, remark, onFavoriteAdd)
                 navController.popBackStack()
                 Unit

@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="in.dimigo.dimigoin">
 
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.NFC" />
+	<uses-feature android:name="android.hardware.nfc" android:required="true" />
+
 	<application
 		android:name=".DimigoinApplication"
 		android:allowBackup="true"
@@ -26,13 +30,12 @@
 			</intent-filter>
 
 			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
+				<action android:name="android.nfc.action.NDEF_DISCOVERED" />
 				<category android:name="android.intent.category.DEFAULT" />
 				<data android:scheme="dimigoin" android:host="set-place" />
 			</intent-filter>
 		</activity>
 	</application>
 
-	<uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
