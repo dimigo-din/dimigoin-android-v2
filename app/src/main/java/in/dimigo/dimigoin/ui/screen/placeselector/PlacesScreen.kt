@@ -54,7 +54,6 @@ fun PlacesScreen(
             Divider(color = C4)
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(40.dp),
-                modifier = Modifier.padding(horizontal = 20.dp)
             ) {
                 item { Spacer(Modifier) }
                 items(places.sortedBy { it.name }) { place ->
@@ -62,6 +61,7 @@ fun PlacesScreen(
                     val isFavorite = favoriteAttLog != null
                     val isSelected = place._id == currentPlace.data?._id
                     PlaceItem(
+                        modifier = Modifier.padding(horizontal = 20.dp),
                         place = place,
                         isFavorite = isFavorite,
                         onFavoriteChange = onFavoriteChange@{ favorite ->
