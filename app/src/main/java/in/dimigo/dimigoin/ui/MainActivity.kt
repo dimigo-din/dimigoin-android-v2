@@ -325,7 +325,7 @@ fun NavGraphBuilder.preMainNavGraph(
 fun NavGraphBuilder.mainNavGraph(
     navController: NavHostController,
     onPlaceChange: (Place, String?) -> Unit,
-    lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel>
+    lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel>,
 ) {
     composable(NavScreen.Main.route) {
         val placeSelectorViewModel by lazyPlaceSelectorViewModel
@@ -487,7 +487,9 @@ fun NavGraphBuilder.placeSelectorNavGraph(
             navDeepLink { uriPattern = "dimigoin://set-place/{placeId}" }
         )
     ) {
-        val act = (it.arguments?.get("android-support-nav:controller:deepLinkIntent") as Intent).action ?: ""
+        val act =
+            (it.arguments?.get("android-support-nav:controller:deepLinkIntent") as Intent).action
+                ?: ""
         val isFromIntent = act.isNotEmpty()
         val placeId = it.arguments?.getString("placeId") ?: ""
         val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
@@ -507,11 +509,15 @@ fun NavGraphBuilder.placeSelectorNavGraph(
                 onConfirm = { place, remark, activity ->
                     placeSelectorViewModel.setCurrentPlace(place, remark, onPlaceChange)
                     navController.popBackStack()
-                    if(!isFromIntent) navController.popBackStack() else activity?.finish()
+                    if (!isFromIntent) navController.popBackStack() else activity?.finish()
                     Unit
                 },
                 isFavoriteRegister = false,
-                onBackNavigation = if(isFromIntent) {null} else {{navController.popBackStack()}},
+                onBackNavigation = if (isFromIntent) {
+                    null
+                } else {
+                    { navController.popBackStack() }
+                },
             )
         }
     }
