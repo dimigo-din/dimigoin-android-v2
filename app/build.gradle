@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -53,6 +54,7 @@ dependencies {
 
     implementation project(':domain')
     implementation project(':data')
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.0.2'
 
     // Desugaring
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'

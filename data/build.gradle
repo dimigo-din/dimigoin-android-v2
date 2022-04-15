@@ -2,6 +2,7 @@ plugins {
     id 'kotlin-android'
     id 'com.android.library'
     id "de.mannodermaus.android-junit5"
+    id 'com.google.gms.google-services'
 }
 
 java {
@@ -75,6 +76,7 @@ android {
 
 dependencies {
     implementation project(':domain')
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.0.2'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
@@ -90,4 +92,8 @@ dependencies {
     testImplementation "com.winterbe:expekt:0.5.0"
     testImplementation "org.jetbrains.kotlin:kotlin-reflect:1.6.10"
     testRuntimeOnly "org.spekframework.spek2:spek-runner-junit5:$spek_version"
+
+    // Data injection
+    implementation "io.insert-koin:koin-core:3.1.4"
+    implementation "io.insert-koin:koin-android:3.1.4"
 }
