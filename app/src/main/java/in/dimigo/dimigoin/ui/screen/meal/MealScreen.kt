@@ -45,7 +45,7 @@ fun MealScreen(
             Modifier
                 .fillMaxHeight()
                 .statusBarsPadding()
-                .padding(top = 36.dp)
+                .padding(top = 36.dp, bottom = 76.dp)
         ) {
             Column(Modifier.padding(horizontal = 20.dp)) {
                 Text(
