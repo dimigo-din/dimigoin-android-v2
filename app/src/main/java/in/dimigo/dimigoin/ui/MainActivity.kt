@@ -28,6 +28,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -35,6 +36,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -197,10 +199,27 @@ fun CustomBottomBar(
 
 @Composable
 fun PlaceBottomBar(currentPlace: Future<Place>) {
+    if (!isSystemInDarkTheme()) {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(30.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color.Transparent,
+                            Color(0f, 0f, 0f, 0.05f)
+                        )
+                    )
+                )
+        )
+    }
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .navigationBarsHeight(60.dp)
+            .navigationBarsHeight(80.dp)
+            .padding(top = 20.dp)
             .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
     ) {
         Column(
@@ -242,11 +261,13 @@ fun BottomNavBar(navController: NavHostController, currentDestination: NavDestin
         NavScreen.MyInfo,
     )
     Column {
-        BottomNavBarImpl(
-            navController,
-            navScreens,
-            currentDestination
-        )
+        Box {
+            BottomNavBarImpl(
+                navController,
+                navScreens,
+                currentDestination
+            )
+        }
         Spacer(
             modifier = Modifier
                 .background(Color.White)
