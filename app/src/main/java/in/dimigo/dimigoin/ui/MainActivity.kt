@@ -184,11 +184,17 @@ fun CustomBottomBar(
             enter = slideInVertically(initialOffsetY = { it }),
             exit = slideOutVertically(targetOffsetY = { it })
         ) {
-            Crossfade(targetState = currentScreen) {
-                if (it is NavScreen) {
-                    BottomNavBar(navController, currentDestination)
-                } else {
-                    PlaceBottomBar(placeSelectorViewModel.currentPlace.collectAsState().value)
+            Crossfade(
+                targetState = currentScreen?.bottomBarType ?: BottomBarType.NONE
+            ) {
+                when (it) {
+                    BottomBarType.PLACE_SELECTOR -> {
+                        PlaceBottomBar(placeSelectorViewModel.currentPlace.collectAsState().value)
+                    }
+                    BottomBarType.MAIN -> {
+                        BottomNavBar(navController, currentDestination)
+                    }
+                    else -> {}
                 }
             }
         }
