@@ -79,14 +79,28 @@ fun ReasonScreen(
                 ChangePlaceItem(place = place, reason = reason, onReasonChange = setReason)
             }
             Spacer(Modifier.height(60.dp))
+
+            val background = if (reason.isBlank()) {
+                Point.copy(alpha = 0.5f)
+            } else {
+                Point
+            }
+
+            val clickableModifier = if (reason.isBlank()) {
+                Modifier
+            } else {
+                Modifier.clickable { onConfirm(place, reason) }
+            }
+
             Box(
                 modifier = Modifier
-                    .clickable { onConfirm(place, reason, activity) }
                     .height(58.dp)
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp)
                     .clip(RoundedCornerShape(15.dp))
-                    .background(Point),
+                    .background(background)
+                    .then(clickableModifier)
+                ,
                 contentAlignment = Alignment.Center
             ) {
                 Text(text = "등록", style = DTypography.t3, color = MaterialTheme.colors.onPrimary)

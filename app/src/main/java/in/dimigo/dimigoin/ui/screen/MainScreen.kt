@@ -64,7 +64,7 @@ fun MainScreen(
 ) = Column(modifier) {
     val currentPlace = mainViewModel.currentPlace.collectAsState().value
     val mealTime = mainViewModel.mealTime.collectAsState().value
-    val todayMeal = mainViewModel.todayMeal.collectAsState().value.data
+    val todayMeal = mainViewModel.todayMeal.collectAsState().value
     val pagerState = remember { mutableStateOf(mainViewModel.getCurrentMealType()) }
     val currentMealTypeByPage = when (pagerState.value) {
         0 -> MealTimeType.BREAKFAST.value
@@ -218,12 +218,12 @@ fun MainScreen(
             modifier = Modifier
                 .fillMaxWidth(),
             text = buildAnnotatedString {
-                when (mealTime) {
+                when (todayMeal) {
                     is Future.Success -> append(
                         when (currentMealTypeByPage) {
-                            "아침" -> todayMeal?.breakfast
-                            "점심" -> todayMeal?.lunch
-                            "저녁" -> todayMeal?.dinner
+                            "아침" -> todayMeal.data?.breakfast
+                            "점심" -> todayMeal.data?.lunch
+                            "저녁" -> todayMeal.data?.dinner
                             else -> ""
                         } ?: ""
                     )
@@ -233,7 +233,7 @@ fun MainScreen(
             },
             style = DTypography.mealMenu,
             color = C2,
-            textAlign = if (mealTime !is Future.Success) TextAlign.Center else null
+            textAlign = if (todayMeal !is Future.Success) TextAlign.Center else null
         )
 
     }

@@ -1,6 +1,7 @@
 package `in`.dimigo.dimigoin.ui.screen
 
 import `in`.dimigo.dimigoin.R
+import `in`.dimigo.dimigoin.data.util.ExceptionWithStatusCode
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
 import `in`.dimigo.dimigoin.ui.theme.BorderTextField
 import `in`.dimigo.dimigoin.ui.theme.C2
@@ -122,16 +123,21 @@ fun LoginScreen(
             color = color
         )
         when (val v = loginViewModel.loginResult.collectAsState().value) {
-            is Future.Nothing<*> -> {
+            is Future.Nothing -> {
                 Spacer(modifier = Modifier.height(50.dp))
             }
-            is Future.Success<*> -> {
+            is Future.Success -> {
                 LaunchedEffect(v) {
                     onLoginSuccess()
                 }
                 Spacer(modifier = Modifier.height(50.dp))
             }
-            is Future.Failure<*> -> {
+            is Future.Failure -> {
+                val errorMessage = if (v.throwable is ExceptionWithStatusCode) {
+                    "존재하지 않는 아이디거나 잘못된 패스워드입니다."
+                } else {
+                    "네트워크 연결을 확인해주세요."
+                }
                 color = Red
                 isLoading = false
                 Spacer(modifier = Modifier.height(18.dp))
@@ -144,13 +150,13 @@ fun LoginScreen(
                                 Toast.LENGTH_SHORT
                             ).show()
                         },
-                    text = "존재하지 않는 아이디거나 잘못된 패스워드입니다.",
+                    text = errorMessage,
                     style = DTypography.t6,
                     color = Red
                 )
                 Spacer(modifier = Modifier.height(17.dp))
             }
-            is Future.Loading<*> -> {
+            is Future.Loading -> {
                 isLoading = true
                 Spacer(modifier = Modifier.height(50.dp))
             }
