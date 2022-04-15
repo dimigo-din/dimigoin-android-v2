@@ -7,6 +7,7 @@ import `in`.dimigo.dimigoin.ui.theme.C2
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.util.asKoreanWeekString
 import `in`.dimigo.dimigoin.viewmodel.MealViewModel
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -81,6 +82,7 @@ fun MealScreen(
                         .fillMaxHeight()
                         .verticalScroll(scrollState)
                 ) {
+                    val isToday = dayOfWeek == page + 1
                     MealItem(
                         modifier = Modifier.fillMaxWidth(),
                         type = MealTimeType.BREAKFAST,
@@ -88,7 +90,8 @@ fun MealScreen(
                         meal = weeklyMeal.data?.get(page)?.breakfast,
                         onMealTimeClick = onMealTimeClick,
                         highlight = timeNow.isAfter(LocalTime.of(6, 30)) &&
-                                timeNow.isBefore(LocalTime.of(8, 20)),
+                                timeNow.isBefore(LocalTime.of(8, 20)) &&
+                                isToday,
                     )
                     MealItem(
                         modifier = Modifier.fillMaxWidth(),
@@ -97,7 +100,8 @@ fun MealScreen(
                         meal = weeklyMeal.data?.get(page)?.lunch,
                         onMealTimeClick = onMealTimeClick,
                         highlight = timeNow.isAfter(LocalTime.of(8, 20)) &&
-                                timeNow.isBefore(LocalTime.of(13, 50)),
+                                timeNow.isBefore(LocalTime.of(13, 50)) &&
+                                isToday,
                     )
                     MealItem(
                         modifier = Modifier.fillMaxWidth(),
@@ -106,7 +110,8 @@ fun MealScreen(
                         meal = weeklyMeal.data?.get(page)?.dinner,
                         onMealTimeClick = onMealTimeClick,
                         highlight = timeNow.isAfter(LocalTime.of(13, 50)) &&
-                                timeNow.isBefore(LocalTime.of(19, 50)),
+                                timeNow.isBefore(LocalTime.of(19, 50)) &&
+                                isToday,
                     )
                 }
             }
