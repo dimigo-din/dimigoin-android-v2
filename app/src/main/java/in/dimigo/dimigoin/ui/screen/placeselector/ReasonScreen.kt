@@ -52,7 +52,7 @@ fun ReasonScreen(
                 onBackNavigation = onBackNavigation,
                 showSearchIcon = false,
                 onSearch = { },
-                color = Color.Black
+                color = MaterialTheme.colors.onSurface,
             )
             Spacer(Modifier.weight(.5f))
             if (isFavoriteRegister) {
