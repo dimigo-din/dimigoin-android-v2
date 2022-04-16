@@ -76,6 +76,6 @@ class DTypography {
         fontWeight = FontWeight.W500,
         fontSize = 14.sp,
         lineHeight = 25.sp,
-        color = C2,
+        color = C1,
     )
 }
