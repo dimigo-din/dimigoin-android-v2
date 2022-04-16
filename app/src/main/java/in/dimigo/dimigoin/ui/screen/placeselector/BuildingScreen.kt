@@ -66,8 +66,11 @@ fun BuildingScreen(
                     Column(verticalArrangement = Arrangement.spacedBy(25.dp)) {
                         if (title == "즐겨찾기") {
                             favorites.data?.let {
-                                if (it.isEmpty()) Text(text = "등록된 즐겨찾기가 없습니다",
-                                    style = DTheme.typography.explainText)
+                                if (it.isEmpty()) Text(
+                                    text = "등록된 즐겨찾기가 없습니다",
+                                    style = DTheme.typography.explainText,
+                                    color = DTheme.colors.c2,
+                                )
 
                                 it.forEach { attLog ->
                                     val isSelected = currentPlace.data?._id == attLog.placeId

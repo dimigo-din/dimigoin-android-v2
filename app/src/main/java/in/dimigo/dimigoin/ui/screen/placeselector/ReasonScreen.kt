@@ -114,6 +114,7 @@ private fun ChangePlaceItem(
     Text(
         text = "위치 이동 사유를 등록해주세요",
         style = DTheme.typography.pageSubtitle,
+        color = DTheme.colors.c2,
     )
     Spacer(Modifier.height(60.dp))
 
@@ -153,6 +154,7 @@ private fun AddFavoriteItem(
     Text(
         text = "별을 다시 누르면 즐겨찾기가 삭제됩니다",
         style = DTheme.typography.pageSubtitle,
+        color = DTheme.colors.c2,
     )
     Spacer(Modifier.height(60.dp))
 

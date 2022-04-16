@@ -80,7 +80,7 @@ fun MealItem(
         Text(
             text = meal ?: "급식 정보가 없습니다.",
             style = DTheme.typography.mealMenu,
-            color = if (highlight) Color.White else if (isSystemInDarkTheme()) DTheme.colors.c3 else DTheme.colors.c1,
+            color = if (highlight) Color.White else DTheme.colors.c1,
             modifier = Modifier.constrainAs(mealText) {
                 top.linkTo(typeText.bottom, 15.dp)
                 start.linkTo(startPad.end, 20.dp)

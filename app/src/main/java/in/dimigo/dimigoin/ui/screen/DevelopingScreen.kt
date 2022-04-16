@@ -48,6 +48,7 @@ fun DevelopingScreen(
             Text(
                 text = "추후 업데이트 될 예정입니다",
                 style = DTheme.typography.explainText,
+                color = DTheme.colors.c2,
             )
             Spacer(Modifier.weight(1f))
             Button(

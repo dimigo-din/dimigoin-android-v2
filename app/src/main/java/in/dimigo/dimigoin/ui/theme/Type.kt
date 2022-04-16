@@ -62,20 +62,17 @@ class DTypography {
         fontWeight = FontWeight.W500,
         fontSize = 16.sp,
         lineHeight = 19.2.sp,
-        color = C2,
     )
     val pageSubtitle = TextStyle(
         fontFamily = AppleSDGothicNeoFontFamily,
         fontWeight = FontWeight.W500,
         fontSize = 14.sp,
         lineHeight = 16.8.sp,
-        color = C2,
     )
     val mealMenu = TextStyle(
         fontFamily = AppleSDGothicNeoFontFamily,
         fontWeight = FontWeight.W500,
         fontSize = 14.sp,
         lineHeight = 25.sp,
-        color = C1,
     )
 }
