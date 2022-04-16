@@ -4,10 +4,7 @@ import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +39,7 @@ fun DevelopingScreen(
                 style = DTheme.typography.t2.copy(fontSize = 20.sp),
                 textAlign = TextAlign.Center,
                 fontWeight = Bold,
-                color = Color.Black
+                color = MaterialTheme.colors.onSurface
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
