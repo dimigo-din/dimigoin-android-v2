@@ -1,8 +1,7 @@
 package `in`.dimigo.dimigoin.ui.screen
 
 import `in`.dimigo.dimigoin.R
-import `in`.dimigo.dimigoin.ui.theme.C2
-import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.theme.Shapes
 import `in`.dimigo.dimigoin.viewmodel.MyInfoViewModel
@@ -12,29 +11,13 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -79,12 +62,12 @@ fun MyInfoScreen(
             ) {
                 Text(
                     modifier = Modifier.padding(start = 15.dp),
-                    text = "", style = DTypography.t5, color = C2
+                    text = "", style = DTheme.typography.t5, color = DTheme.colors.c2
                 )
                 Spacer(Modifier.height(5.dp))
                 Text(
                     modifier = Modifier.padding(start = 15.dp),
-                    text = NavScreen.MyInfo.name, style = DTypography.t0
+                    text = NavScreen.MyInfo.name, style = DTheme.typography.t0
                 )
             }
             Column(
@@ -147,7 +130,7 @@ fun MyInfoScreen(
                                 },
                             textAlign = TextAlign.Center,
                             text = "터치하여 모바일 학생증 열기",
-                            style = DTypography.pageSubtitle.copy(fontSize = 11.sp),
+                            style = DTheme.typography.pageSubtitle.copy(fontSize = 11.sp),
                             fontWeight = Bold,
                             color = Point,
                         )
@@ -164,7 +147,7 @@ fun MyInfoScreen(
 //                    ConstraintLayout(
 //                        Modifier
 //                            .fillMaxWidth()
-//                            .background(C3)
+//                            .background(DTheme.colors.c3)
 //                            .padding(horizontal = 19.dp, vertical = 15.dp)
 //                    ) {
 //                        val (text, arrowButton) = createRefs()
@@ -186,7 +169,7 @@ fun MyInfoScreen(
 //                            Text(
 //                                textAlign = TextAlign.Center,
 //                                text = "사용 전 다음 내용을 반드시 읽어주세요",
-//                                style = DTypography.pageSubtitle.copy(fontSize = 11.sp),
+//                                style = DTheme.typography.pageSubtitle.copy(fontSize = 11.sp),
 //                                fontWeight = Bold,
 //                                color = Color.White,
 //                            )
@@ -289,7 +272,7 @@ fun StudentCard(
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
                             text = "모바일 학생증",
-                            style = DTypography.pageSubtitle,
+                            style = DTheme.typography.pageSubtitle,
                             fontWeight = Bold,
                             color = Color.White,
                         )
@@ -312,28 +295,28 @@ fun StudentCard(
                         Column {
                             Text(
                                 text = name,
-                                style = DTypography.pageSubtitle.copy(fontSize = 22.sp),
+                                style = DTheme.typography.pageSubtitle.copy(fontSize = 22.sp),
                                 fontWeight = Bold,
                                 color = Color.White,
                             )
                             Spacer(modifier = Modifier.height(5.dp))
                             Text(
                                 text = birth,
-                                style = DTypography.pageSubtitle.copy(fontSize = 16.sp),
+                                style = DTheme.typography.pageSubtitle.copy(fontSize = 16.sp),
                                 fontWeight = Bold,
                                 color = Color.White,
                             )
                             Spacer(modifier = Modifier.height(15.dp))
                             Text(
                                 text = gwa,
-                                style = DTypography.pageSubtitle,
+                                style = DTheme.typography.pageSubtitle,
                                 fontWeight = Bold,
                                 color = Color.White,
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
                                 text = "${grade}학년 ${`class`}반 ${number}번",
-                                style = DTypography.pageSubtitle,
+                                style = DTheme.typography.pageSubtitle,
                                 fontWeight = Bold,
                                 color = Color.White,
                             )

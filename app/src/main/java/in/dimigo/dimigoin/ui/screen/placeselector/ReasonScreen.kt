@@ -4,30 +4,17 @@ import `in`.dimigo.dimigoin.domain.entity.place.Place
 import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
 import `in`.dimigo.dimigoin.domain.util.josa
 import `in`.dimigo.dimigoin.ui.composables.PlaceSelectorTopBar
-import `in`.dimigo.dimigoin.ui.theme.C3
-import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -98,7 +85,7 @@ fun ReasonScreen(
                 ,
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "등록", style = DTypography.t3, color = MaterialTheme.colors.onPrimary)
+                Text(text = "등록", style = DTheme.typography.t3, color = MaterialTheme.colors.onPrimary)
             }
             Spacer(Modifier.weight(.5f))
         }
@@ -121,12 +108,12 @@ private fun ChangePlaceItem(
             append(" 이동합니다")
         },
         color = MaterialTheme.colors.onSurface,
-        style = DTypography.t4,
+        style = DTheme.typography.t4,
     )
     Spacer(Modifier.height(15.dp))
     Text(
         text = "위치 이동 사유를 등록해주세요",
-        style = DTypography.pageSubtitle,
+        style = DTheme.typography.pageSubtitle,
     )
     Spacer(Modifier.height(60.dp))
 
@@ -137,7 +124,7 @@ private fun ChangePlaceItem(
             .focusRequester(focusRequester),
         value = reason, onValueChange = onReasonChange,
         placeholder = {
-            Text("10글자 이하로 입력해주세요", style = DTypography.t4, color = C3)
+            Text("10글자 이하로 입력해주세요", style = DTheme.typography.t4, color = DTheme.colors.c3)
         }
     )
     LaunchedEffect(Unit) {
@@ -160,12 +147,12 @@ private fun AddFavoriteItem(
             append(" 즐겨찾기에 추가합니다")
         },
         color = MaterialTheme.colors.onSurface,
-        style = DTypography.t4,
+        style = DTheme.typography.t4,
     )
     Spacer(Modifier.height(15.dp))
     Text(
         text = "별을 다시 누르면 즐겨찾기가 삭제됩니다",
-        style = DTypography.pageSubtitle,
+        style = DTheme.typography.pageSubtitle,
     )
     Spacer(Modifier.height(60.dp))
 
@@ -176,7 +163,7 @@ private fun AddFavoriteItem(
             .focusRequester(focusRequester),
         value = reason, onValueChange = onReasonChange,
         placeholder = {
-            Text("10글자 이하로 이동 사유를 입력해주세요", style = DTypography.t4, color = C3)
+            Text("10글자 이하로 이동 사유를 입력해주세요", style = DTheme.typography.t4, color = DTheme.colors.c3)
         }
     )
     LaunchedEffect(Unit) {
@@ -194,7 +181,7 @@ private fun CustomTextField(
     var focused by remember { mutableStateOf(false) }
     BasicTextField(
         value = value, onValueChange = onValueChange,
-        textStyle = DTypography.t4.copy(
+        textStyle = DTheme.typography.t4.copy(
             textAlign = if (value.isEmpty()) TextAlign.Start else TextAlign.Center,
             color = MaterialTheme.colors.onSurface,
         ),
@@ -214,7 +201,7 @@ private fun CustomTextField(
             }
             Divider(
                 modifier = Modifier.align(Alignment.BottomCenter),
-                color = if (focused) Point else C3, thickness = 2.dp
+                color = if (focused) Point else DTheme.colors.c3, thickness = 2.dp
             )
         }
     }

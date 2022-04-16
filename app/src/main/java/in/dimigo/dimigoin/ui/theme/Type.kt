@@ -1,7 +1,6 @@
 package `in`.dimigo.dimigoin.ui.theme
 
 import `in`.dimigo.dimigoin.R
-import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -14,7 +13,7 @@ val AppleSDGothicNeoFontFamily = FontFamily(
     Font(R.font.eb, weight = FontWeight.ExtraBold),
 )
 
-object DTypography {
+class DTypography {
     val t0 = TextStyle(
         fontFamily = AppleSDGothicNeoFontFamily,
         fontWeight = FontWeight.W700,
@@ -77,6 +76,6 @@ object DTypography {
         fontWeight = FontWeight.W500,
         fontSize = 14.sp,
         lineHeight = 25.sp,
-        color = C1,
+        color = C2,
     )
 }

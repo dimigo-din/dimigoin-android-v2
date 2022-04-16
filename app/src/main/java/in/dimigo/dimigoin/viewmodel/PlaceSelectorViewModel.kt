@@ -8,9 +8,7 @@ import `in`.dimigo.dimigoin.domain.entity.user.User
 import `in`.dimigo.dimigoin.domain.usecase.place.*
 import `in`.dimigo.dimigoin.domain.usecase.user.GetMyIdentityUseCase
 import `in`.dimigo.dimigoin.ui.util.Future
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow

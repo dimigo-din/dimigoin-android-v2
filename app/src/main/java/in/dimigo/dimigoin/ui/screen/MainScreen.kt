@@ -7,36 +7,21 @@ import `in`.dimigo.dimigoin.ui.composables.ContentBox
 import `in`.dimigo.dimigoin.ui.composables.MealTimeType
 import `in`.dimigo.dimigoin.ui.composables.OnLifecycleEvent
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
-import `in`.dimigo.dimigoin.ui.theme.C2
-import `in`.dimigo.dimigoin.ui.theme.C3
-import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.util.Future
 import `in`.dimigo.dimigoin.ui.util.asKorean12HoursString
 import `in`.dimigo.dimigoin.ui.util.icon
 import `in`.dimigo.dimigoin.viewmodel.MainViewModel
-import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -161,8 +146,8 @@ fun MainScreen(
                         pagerState.value = 0
                     },
                     text = "아침",
-                    style = DTypography.t3,
-                    color = animateColorAsState(if (pagerState.value == 0) Point else C3).value,
+                    style = DTheme.typography.t3,
+                    color = animateColorAsState(if (pagerState.value == 0) Point else DTheme.colors.c3).value,
                     textAlign = TextAlign.Center
                 )
                 Spacer(Modifier.height(5.dp))
@@ -181,8 +166,8 @@ fun MainScreen(
                         pagerState.value = 1
                     },
                     text = "점심",
-                    style = DTypography.t3,
-                    color = animateColorAsState(if (pagerState.value == 1) Point else C3).value,
+                    style = DTheme.typography.t3,
+                    color = animateColorAsState(if (pagerState.value == 1) Point else DTheme.colors.c3).value,
                     textAlign = TextAlign.Center
                 )
                 Spacer(Modifier.height(5.dp))
@@ -201,8 +186,8 @@ fun MainScreen(
                         pagerState.value = 2
                     },
                     text = "저녁",
-                    style = DTypography.t3,
-                    color = animateColorAsState(if (pagerState.value == 2) Point else C3).value,
+                    style = DTheme.typography.t3,
+                    color = animateColorAsState(if (pagerState.value == 2) Point else DTheme.colors.c3).value,
                     textAlign = TextAlign.Center
                 )
                 Spacer(Modifier.height(5.dp))
@@ -231,8 +216,8 @@ fun MainScreen(
                     is Future.Loading, is Future.Nothing<*> -> append("급식 정보를 가져오는 중입니다")
                 }
             },
-            style = DTypography.mealMenu,
-            color = C2,
+            style = DTheme.typography.mealMenu,
+            color = DTheme.colors.c2,
             textAlign = if (todayMeal !is Future.Success) TextAlign.Center else null
         )
 
@@ -289,7 +274,7 @@ private fun SimplePlaceItem(
     onClick: () -> Unit,
     selected: Boolean,
 ) {
-    val color = animateColorAsState(if (selected) Point else C3)
+    val color = animateColorAsState(if (selected) Point else DTheme.colors.c3)
 
     CompositionLocalProvider(LocalContentColor provides color.value) {
         Column(
@@ -302,7 +287,7 @@ private fun SimplePlaceItem(
                 painter = painter, contentDescription = null,
             )
             Spacer(Modifier.height(4.dp))
-            Text(text = name, style = DTypography.t6)
+            Text(text = name, style = DTheme.typography.t6)
         }
     }
 }

@@ -8,7 +8,8 @@ import `in`.dimigo.dimigoin.domain.entity.schedule.WeeklyTimetable
 import `in`.dimigo.dimigoin.domain.entity.user.User
 import `in`.dimigo.dimigoin.ui.composables.PageSelector
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
-import `in`.dimigo.dimigoin.ui.theme.*
+import `in`.dimigo.dimigoin.ui.theme.DTheme
+import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.viewmodel.ScheduleViewModel
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -36,13 +37,13 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
-import java.util.Locale
-import java.time.DayOfWeek
+import java.util.*
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -125,12 +126,12 @@ fun TimetableHeader(user: User) {
                     in 3..7 -> "1학기"
                     else -> "2학기"
                 } + " ${user.grade}학년 ${user.`class`}반",
-        style = DTypography.t5, color = C2
+        style = DTheme.typography.t5, color = DTheme.colors.c2
     )
     Spacer(Modifier.height(5.dp))
     Text(
         modifier = Modifier.padding(start = 15.dp),
-        text = "학급시간표", style = DTypography.t0
+        text = "학급시간표", style = DTheme.typography.t0
     )
 }
 
@@ -153,7 +154,7 @@ fun Timetable(weeklyTimetable: WeeklyTimetable) {
                 .height(20.dp)
                 .background(MaterialTheme.colors.surface)
         )
-        Divider(color = C4)
+        Divider(color = DTheme.colors.c4)
         CompositionLocalProvider(LocalOverScrollConfiguration provides null) {
             Column(
                 Modifier.verticalScroll(rememberScrollState())
@@ -212,8 +213,8 @@ fun TimetableDayHeader(today: DayOfWeek) {
         "월화수목금".forEachIndexed { index, day ->
             Text(
                 text = day.toString(),
-                style = DTypography.t3,
-                color = if (index + 1 == today.value) MaterialTheme.colors.onSurface else C2,
+                style = DTheme.typography.t3,
+                color = if (index + 1 == today.value) MaterialTheme.colors.onSurface else DTheme.colors.c2,
             )
         }
     }
@@ -234,7 +235,7 @@ fun isPeriodInTime(period: Int, time: LocalTime): Boolean =
 @Composable
 fun TimetableContentEmpty() {
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-        Text(text = "시간표 정보가 없습니다", style = DTypography.t4, color = C1)
+        Text(text = "시간표 정보가 없습니다", style = DTheme.typography.t4, color = DTheme.colors.c1)
     }
 }
 
@@ -264,8 +265,8 @@ fun ClassItem(
         Text(
             text = name,
             textAlign = TextAlign.Center,
-            color = if (highlight) Color.White else if (today) MaterialTheme.colors.onSurface else C2,
-            style = DTypography.t4
+            color = if (highlight) Color.White else if (today) MaterialTheme.colors.onSurface else DTheme.colors.c2,
+            style = DTheme.typography.t4
         )
     }
 }
@@ -278,33 +279,33 @@ fun SchoolScheduleHeader(
     Text(
         modifier = Modifier.padding(start = 15.dp),
         text = "${selectedDate.minusMonths(2).year}학년도",
-        style = DTypography.t5, color = C2
+        style = DTheme.typography.t5, color = DTheme.colors.c2
     )
     Spacer(Modifier.height(5.dp))
     Row(
         modifier = Modifier.padding(start = 15.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = "학사일정", style = DTypography.t0)
+        Text(text = "학사일정", style = DTheme.typography.t0)
         Spacer(modifier = Modifier.weight(1f))
         Icon(
             painter = painterResource(id = R.drawable.ic_round_arrow_left),
             contentDescription = null,
-            tint = C2,
+            tint = DTheme.colors.c2,
             modifier = Modifier
                 .padding(vertical = 10.dp, horizontal = 15.dp)
                 .noRippleClickable { onDateChange(selectedDate.minusMonths(1)) }
         )
         Text(
             text = "${selectedDate.monthValue}월",
-            style = DTypography.t2, color = C2,
+            style = DTheme.typography.t2, color = DTheme.colors.c2,
             textAlign = TextAlign.Center,
             modifier = Modifier.widthIn(min = 50.dp)
         )
         Icon(
             painter = painterResource(id = R.drawable.ic_round_arrow_right),
             contentDescription = null,
-            tint = C2,
+            tint = DTheme.colors.c2,
             modifier = Modifier
                 .padding(vertical = 10.dp, horizontal = 15.dp)
                 .noRippleClickable { onDateChange(selectedDate.plusMonths(1)) }
@@ -346,8 +347,8 @@ fun SchoolSchedule(
                     "일월화수목금토".forEach { day ->
                         Text(
                             text = day.toString(),
-                            style = DTypography.t5,
-                            color = C2,
+                            style = DTheme.typography.t5,
+                            color = DTheme.colors.c2,
                         )
                     }
                 }
@@ -357,7 +358,7 @@ fun SchoolSchedule(
                         .fillMaxWidth()
                         .background(MaterialTheme.colors.surface)
                 )
-                Divider(color = C4)
+                Divider(color = DTheme.colors.c4)
                 Spacer(Modifier.height(7.dp))
             }
 
@@ -386,7 +387,7 @@ fun SchoolSchedule(
                 }
             }
 
-            item { Divider(modifier = Modifier.padding(vertical = 7.dp), color = C4) }
+            item { Divider(modifier = Modifier.padding(vertical = 7.dp), color = DTheme.colors.c4) }
 
             if (dailyScheduleMap.containsKey(selectedDate)) {
                 items(dailyScheduleMap.getOrDefault(selectedDate, emptyList())) {
@@ -411,14 +412,14 @@ fun DateItem(
         modifier = Modifier
             .width(32.dp)
             .clip(RoundedCornerShape(10.dp))
-            .background(if (today) Point else if (selected) C3 else Color.Transparent)
+            .background(if (today) Point else if (selected) DTheme.colors.c3 else Color.Transparent)
             .noRippleClickable { onSelect() },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = date.dayOfMonth.toString(),
-            style = DTypography.t5,
-            color = if (today) Color.White else if (selected) C1 else if (month == date.monthValue) C2 else C3,
+            style = DTheme.typography.t5,
+            color = if (today) Color.White else if (selected) DTheme.colors.c1 else if (month == date.monthValue) DTheme.colors.c2 else DTheme.colors.c3,
             modifier = Modifier.padding(vertical = 8.dp)
         )
         if (scheduleColors.isNotEmpty()) {
@@ -459,16 +460,16 @@ fun ScheduleItem(
         ) {
             Text(
                 text = schedule.date.dayOfMonth.toString().padStart(2, '0'),
-                color = C1, style = DTypography.t3
+                color = DTheme.colors.c1, style = DTheme.typography.t3
             )
             Text(
                 text = schedule.date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN),
-                color = C1, style = DTypography.t5
+                color = DTheme.colors.c1, style = DTheme.typography.t5
             )
         }
         Text(
             text = schedule.name,
-            color = MaterialTheme.colors.onSurface, style = DTypography.t4
+            color = MaterialTheme.colors.onSurface, style = DTheme.typography.t4
         )
     }
 }
