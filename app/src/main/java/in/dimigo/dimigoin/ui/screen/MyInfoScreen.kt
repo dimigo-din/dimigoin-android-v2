@@ -136,57 +136,6 @@ fun MyInfoScreen(
                         )
                     }
                 }
-//                Spacer(modifier = Modifier.height(10.dp))
-//                Card(
-//                    Modifier
-//                        .fillMaxWidth()
-//                        .padding(horizontal = 35.dp)
-//                        .align(Alignment.CenterHorizontally),
-//                    shape = RoundedCornerShape(10.dp),
-//                ) {
-//                    ConstraintLayout(
-//                        Modifier
-//                            .fillMaxWidth()
-//                            .background(DTheme.colors.c3)
-//                            .padding(horizontal = 19.dp, vertical = 15.dp)
-//                    ) {
-//                        val (text, arrowButton) = createRefs()
-//                        Row(
-//                            Modifier.constrainAs(text) {
-//                                top.linkTo(parent.top)
-//                                bottom.linkTo(parent.bottom)
-//                                start.linkTo(parent.start)
-//                                end.linkTo(parent.end)
-//                            },
-//                            verticalAlignment = Alignment.CenterVertically
-//                        ) {
-//                            Icon(
-//                                painter = painterResource(id = R.drawable.ic_information),
-//                                contentDescription = null,
-//                                tint = Color.White
-//                            )
-//                            Spacer(modifier = Modifier.width(10.dp))
-//                            Text(
-//                                textAlign = TextAlign.Center,
-//                                text = "사용 전 다음 내용을 반드시 읽어주세요",
-//                                style = DTheme.typography.pageSubtitle.copy(fontSize = 11.sp),
-//                                fontWeight = Bold,
-//                                color = Color.White,
-//                            )
-//                        }
-//                        Icon(
-//                            modifier = Modifier
-//                                .constrainAs(arrowButton) {
-//                                    top.linkTo(text.top)
-//                                    bottom.linkTo(text.bottom)
-//                                    end.linkTo(parent.end)
-//                                },
-//                            painter = painterResource(id = R.drawable.ic_arrow_right),
-//                            contentDescription = null,
-//                            tint = Color.White
-//                        )
-//                    }
-//                }
             }
         }
         AnimatedVisibility(
@@ -214,9 +163,7 @@ fun MyInfoScreen(
 @Preview(widthDp = 320, heightDp = 500)
 @Composable
 fun MyInfoPrev() {
-//    MyInfoScreen()
     StudentCard(
-        modifier = Modifier,
         name = "이준호",
         birth = "2004-04-21",
         grade = 3,
@@ -243,12 +190,12 @@ fun StudentCard(
     },
 ) {
     Card(
-        Modifier
-            .fillMaxWidth(),
+        modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
     ) {
         Column(
-            Modifier
+            Modifier.fillMaxWidth()
+                .background(Color.White)
         ) {
             Box(
                 Modifier
