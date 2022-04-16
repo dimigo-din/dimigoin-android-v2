@@ -38,7 +38,6 @@ fun MealScreen(
     val dayOfWeek = LocalDate.now().dayOfWeek.value
     val timeNow = LocalTime.now()
     val pagerState = rememberPagerState(dayOfWeek - 1)
-    val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
 
     Surface(Modifier.fillMaxHeight()) {
@@ -81,6 +80,8 @@ fun MealScreen(
                 state = pagerState,
                 itemSpacing = 20.dp,
             ) { page ->
+                val scrollState = rememberScrollState()
+
                 Column(
                     Modifier
                         .fillMaxHeight()
