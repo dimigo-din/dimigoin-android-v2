@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 sealed interface Screen {
     val route: String
     val navArguments: List<NamedNavArgument>
+    val bottomBarType: BottomBarType
 
     fun matchesRoute(route: String): Boolean = this.route == route
 
@@ -42,7 +43,8 @@ sealed interface Screen {
 sealed class NavScreen(
     override val route: String,
     val name: String,
-    @DrawableRes val icon: Int
+    @DrawableRes val icon: Int,
+    override val bottomBarType: BottomBarType = BottomBarType.MAIN,
 ) : Screen {
     override val navArguments: List<NamedNavArgument> = emptyList()
 
@@ -55,7 +57,8 @@ sealed class NavScreen(
 
 sealed class NoNavScreen(
     override val route: String,
-    override val navArguments: List<NamedNavArgument>
+    override val navArguments: List<NamedNavArgument>,
+    override val bottomBarType: BottomBarType = BottomBarType.NONE,
 ) : Screen {
     object Splash : NoNavScreen("splash", emptyList())
     object Login : NoNavScreen("login", emptyList())
@@ -79,6 +82,7 @@ sealed class PlaceSelectorScreen(
     override val route: String,
     override val navArguments: List<NamedNavArgument>,
     val showCurrentPlace: Boolean,
+    override val bottomBarType: BottomBarType = BottomBarType.PLACE_SELECTOR,
 ) : Screen {
     object Building : PlaceSelectorScreen("ps_building", emptyList(), true)
     object Category : PlaceSelectorScreen(
@@ -123,4 +127,10 @@ sealed class PlaceSelectorScreen(
         fun place(place: Place) = route.replace("{placeId}", place._id)
         fun place(placeId: String) = route.replace("{placeId}", placeId)
     }
+}
+
+enum class BottomBarType {
+    PLACE_SELECTOR,
+    MAIN,
+    NONE,
 }

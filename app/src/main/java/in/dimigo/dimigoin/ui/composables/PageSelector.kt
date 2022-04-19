@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -77,7 +78,7 @@ fun PageSelector(
         ) {
             elements.forEachIndexed { index, element ->
                 val color = animateColorAsState(
-                    if (pagerState.targetPage == index && !pagerState.isScrollInProgress) {
+                    if ((pagerState.currentPage + pagerState.currentPageOffset).roundToInt() == index) {
                         DTheme.colors.c0
                     } else {
                         DTheme.colors.c2

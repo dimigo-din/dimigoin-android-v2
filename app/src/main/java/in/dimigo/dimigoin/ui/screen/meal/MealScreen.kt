@@ -16,6 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -36,7 +37,6 @@ fun MealScreen(
     val dayOfWeek = LocalDate.now().dayOfWeek.value
     val timeNow = LocalTime.now()
     val pagerState = rememberPagerState(dayOfWeek - 1)
-    val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
 
     Surface(Modifier.fillMaxHeight()) {
@@ -46,7 +46,11 @@ fun MealScreen(
                 .statusBarsPadding()
                 .padding(top = 36.dp)
         ) {
-            Column(Modifier.padding(horizontal = 20.dp)) {
+            Column(
+                Modifier
+                    .padding(horizontal = 20.dp)
+                    .wrapContentHeight()
+            ) {
                 Text(
                     modifier = Modifier.padding(start = 15.dp),
                     text = LocalDate.now().asKoreanWeekString(), style = DTheme.typography.t5, color = DTheme.colors.c2
@@ -70,18 +74,22 @@ fun MealScreen(
             }
 
             HorizontalPager(
+                modifier = Modifier.weight(1f),
                 count = 7,
                 state = pagerState,
-                contentPadding = PaddingValues(horizontal = 20.dp),
                 itemSpacing = 20.dp,
             ) { page ->
+                val scrollState = rememberScrollState()
+
                 Column(
                     Modifier
                         .fillMaxHeight()
                         .verticalScroll(scrollState)
                 ) {
                     MealItem(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp)
+                            .fillMaxWidth(),
                         type = MealTimeType.BREAKFAST,
                         time = mealTime.data?.breakfastTime,
                         meal = weeklyMeal.data?.get(page)?.breakfast,
@@ -90,7 +98,9 @@ fun MealScreen(
                                 timeNow.isBefore(LocalTime.of(8, 20)),
                     )
                     MealItem(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp)
+                            .fillMaxWidth(),
                         type = MealTimeType.LUNCH,
                         time = mealTime.data?.lunchTime,
                         meal = weeklyMeal.data?.get(page)?.lunch,
@@ -99,7 +109,9 @@ fun MealScreen(
                                 timeNow.isBefore(LocalTime.of(13, 50)),
                     )
                     MealItem(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp)
+                            .fillMaxWidth(),
                         type = MealTimeType.DINNER,
                         time = mealTime.data?.dinnerTime,
                         meal = weeklyMeal.data?.get(page)?.dinner,
@@ -107,8 +119,11 @@ fun MealScreen(
                         highlight = timeNow.isAfter(LocalTime.of(13, 50)) &&
                                 timeNow.isBefore(LocalTime.of(19, 50)),
                     )
+                    Spacer(Modifier.height(10.dp))
                 }
             }
+
+            Spacer(modifier = Modifier.navigationBarsHeight(60.dp))
         }
     }
 }

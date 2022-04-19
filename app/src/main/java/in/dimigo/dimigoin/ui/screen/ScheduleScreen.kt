@@ -179,9 +179,11 @@ fun TimetableContent(weeklyTimetable: WeeklyTimetable) {
 }
 
 @Composable
-fun DailyTimetableContent(dailyTimetable: DailyTimetable) {
+fun RowScope.DailyTimetableContent(dailyTimetable: DailyTimetable) {
     Column(
-        modifier = Modifier.padding(bottom = 15.dp),
+        modifier = Modifier
+            .padding(bottom = 15.dp)
+            .weight(1f),
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
         val date = dailyTimetable.date
@@ -239,16 +241,6 @@ fun TimetableContentEmpty() {
     }
 }
 
-@Preview
-@Composable
-fun TimetablePreview() {
-    Timetable(
-        weeklyTimetable = List(5) {
-            DailyTimetable(List(20) { "데프" }, LocalDate.of(1970, 1, 1))
-        }
-    )
-}
-
 @Composable
 fun ClassItem(
     name: String,
@@ -268,6 +260,32 @@ fun ClassItem(
             color = if (highlight) Color.White else if (today) MaterialTheme.colors.onSurface else DTheme.colors.c2,
             style = DTheme.typography.t4
         )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
+@Composable
+fun TimetablePreview_LongClassName() {
+    Timetable(
+        weeklyTimetable = List(5) {
+            DailyTimetable(List(7) { "긴 과목 이름 아주 긴 과목 이름" }, LocalDate.of(1970, 1, 1))
+        }
+    )
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFf, widthDp = 250)
+@Composable
+fun TimetablePreview_SmallDp() {
+    Box(modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
+        val dailyTimetables = listOf(
+            listOf("고전", "공수", "* 네트워크 유지보수", "네프", "공일", "동아리", "asdf"),
+            listOf("고전", "공수", "동아리", "네프", "공일", "동아리", "asdf"),
+            listOf("고전", "공수", "동아리", "네프", "공일", "동아리"),
+            listOf("고전", "공수", "동아리", "네프", "공일", "동아리", "sdfadf"),
+            listOf("고전", "공수", "* 네트워크 유지보수", "네프", "공일", "동아리", "qwehfquow"),
+        )
+        val timetable = dailyTimetables.mapIndexed { i, e -> DailyTimetable(e, LocalDate.of(2022, 4, 11).plusDays(i.toLong())) }
+        Timetable(timetable)
     }
 }
 
