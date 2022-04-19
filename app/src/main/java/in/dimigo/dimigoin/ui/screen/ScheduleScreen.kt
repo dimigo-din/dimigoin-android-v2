@@ -311,8 +311,8 @@ fun SchoolScheduleHeader(
             contentDescription = null,
             tint = DTheme.colors.c2,
             modifier = Modifier
-                .padding(vertical = 10.dp, horizontal = 15.dp)
                 .noRippleClickable { onDateChange(selectedDate.minusMonths(1)) }
+                .padding(vertical = 10.dp, horizontal = 15.dp)
         )
         Text(
             text = "${selectedDate.monthValue}월",
@@ -325,8 +325,8 @@ fun SchoolScheduleHeader(
             contentDescription = null,
             tint = DTheme.colors.c2,
             modifier = Modifier
-                .padding(vertical = 10.dp, horizontal = 15.dp)
                 .noRippleClickable { onDateChange(selectedDate.plusMonths(1)) }
+                .padding(vertical = 10.dp, horizontal = 15.dp)
         )
     }
 }

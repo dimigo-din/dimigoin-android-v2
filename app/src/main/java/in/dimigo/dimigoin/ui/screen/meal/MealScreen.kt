@@ -86,6 +86,7 @@ fun MealScreen(
                         .fillMaxHeight()
                         .verticalScroll(scrollState)
                 ) {
+                    val isToday = dayOfWeek == page + 1
                     MealItem(
                         modifier = Modifier
                             .padding(horizontal = 20.dp)
@@ -95,7 +96,8 @@ fun MealScreen(
                         meal = weeklyMeal.data?.get(page)?.breakfast,
                         onMealTimeClick = onMealTimeClick,
                         highlight = timeNow.isAfter(LocalTime.of(6, 30)) &&
-                                timeNow.isBefore(LocalTime.of(8, 20)),
+                                timeNow.isBefore(LocalTime.of(8, 20)) &&
+                                isToday,
                     )
                     MealItem(
                         modifier = Modifier
@@ -106,7 +108,8 @@ fun MealScreen(
                         meal = weeklyMeal.data?.get(page)?.lunch,
                         onMealTimeClick = onMealTimeClick,
                         highlight = timeNow.isAfter(LocalTime.of(8, 20)) &&
-                                timeNow.isBefore(LocalTime.of(13, 50)),
+                                timeNow.isBefore(LocalTime.of(13, 50)) &&
+                                isToday,
                     )
                     MealItem(
                         modifier = Modifier
@@ -117,7 +120,8 @@ fun MealScreen(
                         meal = weeklyMeal.data?.get(page)?.dinner,
                         onMealTimeClick = onMealTimeClick,
                         highlight = timeNow.isAfter(LocalTime.of(13, 50)) &&
-                                timeNow.isBefore(LocalTime.of(19, 50)),
+                                timeNow.isBefore(LocalTime.of(19, 50)) &&
+                                isToday,
                     )
                     Spacer(Modifier.height(10.dp))
                 }
