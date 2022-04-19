@@ -10,7 +10,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
@@ -28,6 +30,7 @@ fun BorderTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    cursorBrush: Brush = SolidColor(DTheme.colors.point),
 ) {
     BasicTextField(
         modifier = modifier
@@ -36,7 +39,7 @@ fun BorderTextField(
             .padding(vertical = 15.dp, horizontal = 25.dp),
         value = value,
         onValueChange = onValueChange,
-        textStyle = TextStyle.Default.copy(fontSize = 16.sp),
+        textStyle = TextStyle.Default.copy(fontSize = 16.sp, color = color),
         singleLine = true,
         maxLines = 1,
         keyboardOptions = keyboardOptions,
@@ -47,7 +50,8 @@ fun BorderTextField(
             it()
         },
         keyboardActions = keyboardActions,
-        visualTransformation = visualTransformation
+        visualTransformation = visualTransformation,
+        cursorBrush = cursorBrush,
     )
 }
 
