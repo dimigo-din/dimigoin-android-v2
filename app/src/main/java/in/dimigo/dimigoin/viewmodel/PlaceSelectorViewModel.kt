@@ -111,7 +111,7 @@ class PlaceSelectorViewModel(
                         _currentPlace.emit(Future.Success(place))
                         LocalNotification(context).sendNotification(
                             "위치 변경 성공",
-                            "위치를 ${place.name+place.name.josa("으로", true)} 변경했습니다.",
+                            "위치를 ${place.name.josa("으로")} 변경했습니다.",
                         )
                         callback(place, remark)
                     }
