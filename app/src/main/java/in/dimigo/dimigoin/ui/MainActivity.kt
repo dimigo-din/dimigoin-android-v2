@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -294,7 +295,7 @@ fun NavGraphBuilder.preMainNavGraph(
 fun NavGraphBuilder.mainNavGraph(
     navController: NavHostController,
     onPlaceChange: (Place, String?) -> Unit,
-    lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel>
+    lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel>,
 ) {
     composable(NavScreen.Main.route) {
         val placeSelectorViewModel by lazyPlaceSelectorViewModel
@@ -456,7 +457,10 @@ fun NavGraphBuilder.placeSelectorNavGraph(
             navDeepLink { uriPattern = "dimigoin://set-place/{placeId}" }
         )
     ) {
-        val act = (it.arguments?.get("android-support-nav:controller:deepLinkIntent") as Intent).action ?: ""
+        val context = LocalContext.current
+        val act =
+            (it.arguments?.get("android-support-nav:controller:deepLinkIntent") as Intent).action
+                ?: ""
         val isFromIntent = act.isNotEmpty()
         val placeId = it.arguments?.getString("placeId") ?: ""
         val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
@@ -474,13 +478,23 @@ fun NavGraphBuilder.placeSelectorNavGraph(
                     .navigationBarsWithImePadding(),
                 place = placeSelectorViewModel.placeIdToPlace(placeId),
                 onConfirm = { place, remark, activity ->
-                    placeSelectorViewModel.setCurrentPlace(place, remark, onPlaceChange)
+                    placeSelectorViewModel.setCurrentPlace(
+                        place,
+                        remark,
+                        onPlaceChange,
+                        isFromIntent,
+                        context
+                    )
                     navController.popBackStack()
-                    if(!isFromIntent) navController.popBackStack() else activity?.finish()
+                    if (!isFromIntent) navController.popBackStack() else activity?.finish()
                     Unit
                 },
                 isFavoriteRegister = false,
-                onBackNavigation = if(isFromIntent) {null} else {{navController.popBackStack()}},
+                onBackNavigation = if (isFromIntent) {
+                    null
+                } else {
+                    { navController.popBackStack() }
+                },
             )
         }
     }
