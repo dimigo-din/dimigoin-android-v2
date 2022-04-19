@@ -155,7 +155,7 @@ fun MainScreen(
                     modifier = Modifier
                         .size(4.dp)
                         .clip(RoundedCornerShape(100))
-                        .background(animateColorAsState(if (pagerState.value == 0) Point else DTheme.colors.c3).value)
+                        .background(animateColorAsState(if (pagerState.value == 0) Point else Color.Transparent).value)
                 )
             }
             Column(
@@ -175,7 +175,7 @@ fun MainScreen(
                     modifier = Modifier
                         .size(4.dp)
                         .clip(RoundedCornerShape(100))
-                        .background(animateColorAsState(if (pagerState.value == 1) Point else DTheme.colors.c3).value)
+                        .background(animateColorAsState(if (pagerState.value == 1) Point else Color.Transparent).value)
                 )
             }
             Column(
@@ -195,7 +195,7 @@ fun MainScreen(
                     modifier = Modifier
                         .size(4.dp)
                         .clip(RoundedCornerShape(100))
-                        .background(animateColorAsState(if (pagerState.value == 2) Point else DTheme.colors.c3).value)
+                        .background(animateColorAsState(if (pagerState.value == 2) Point else Color.Transparent).value)
                 )
             }
         }
