@@ -109,7 +109,7 @@ fun ScheduleScreen(
 
 fun getNearSchedules(
     schedule: Map<YearMonth, List<Schedule>>,
-    yearMonth: YearMonth
+    yearMonth: YearMonth,
 ): List<Schedule> =
     schedule.getOrDefault(yearMonth.minusMonths(1), emptyList()) +
             schedule.getOrDefault(yearMonth, emptyList()) +
@@ -275,7 +275,9 @@ fun TimetablePreview_LongClassName() {
 @Preview(showBackground = true, backgroundColor = 0xFFFFFf, widthDp = 250)
 @Composable
 fun TimetablePreview_SmallDp() {
-    Box(modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(horizontal = 20.dp)) {
         val dailyTimetables = listOf(
             listOf("고전", "공수", "* 네트워크 유지보수", "네프", "공일", "동아리", "asdf"),
             listOf("고전", "공수", "동아리", "네프", "공일", "동아리", "asdf"),
@@ -283,7 +285,10 @@ fun TimetablePreview_SmallDp() {
             listOf("고전", "공수", "동아리", "네프", "공일", "동아리", "sdfadf"),
             listOf("고전", "공수", "* 네트워크 유지보수", "네프", "공일", "동아리", "qwehfquow"),
         )
-        val timetable = dailyTimetables.mapIndexed { i, e -> DailyTimetable(e, LocalDate.of(2022, 4, 11).plusDays(i.toLong())) }
+        val timetable = dailyTimetables.mapIndexed { i, e ->
+            DailyTimetable(e,
+                LocalDate.of(2022, 4, 11).plusDays(i.toLong()))
+        }
         Timetable(timetable)
     }
 }
@@ -293,6 +298,7 @@ fun SchoolScheduleHeader(
     selectedDate: LocalDate,
     onDateChange: (LocalDate) -> Unit,
 ) {
+    val nowMonth = LocalDate.now().monthValue
     Text(
         modifier = Modifier.padding(start = 15.dp),
         text = "${selectedDate.minusMonths(2).year}학년도",
@@ -315,7 +321,11 @@ fun SchoolScheduleHeader(
         )
         Text(
             text = "${selectedDate.monthValue}월",
-            style = DTypography.t2, color = C2,
+            style = DTypography.t2,
+            color = when (selectedDate.monthValue) {
+                nowMonth -> Color.Black
+                else -> C2
+            },
             textAlign = TextAlign.Center,
             modifier = Modifier.widthIn(min = 50.dp)
         )
