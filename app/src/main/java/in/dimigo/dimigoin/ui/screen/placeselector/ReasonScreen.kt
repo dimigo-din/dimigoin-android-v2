@@ -89,7 +89,7 @@ fun ReasonScreen(
             val clickableModifier = if (reason.isBlank()) {
                 Modifier
             } else {
-                Modifier.clickable { onConfirm(place, reason) }
+                Modifier.clickable { onConfirm(place, reason, activity) }
             }
 
             Box(
