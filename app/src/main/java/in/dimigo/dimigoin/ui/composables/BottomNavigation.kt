@@ -38,7 +38,7 @@ fun BottomNavigation(
             Modifier
                 .fillMaxWidth()
                 .height(30.dp)
-                .clip(RoundedCornerShape(10.dp))
+                .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
                 .background(
                     Brush.verticalGradient(
                         listOf(
