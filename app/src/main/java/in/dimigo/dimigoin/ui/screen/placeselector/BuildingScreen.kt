@@ -26,6 +26,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.getViewModel
 
@@ -43,6 +44,7 @@ fun BuildingScreen(
     onTryFavoriteAdd: (Place) -> Unit,
     onFavoriteRemove: (Place) -> Unit,
 ) {
+    val context = LocalContext.current
     val currentPlace = placeSelectorViewModel.currentPlace.collectAsState().value
     val buildings = placeSelectorViewModel.recommendedBuildings.collectAsState().value
     val favorites = placeSelectorViewModel.favoriteAttendanceLog.collectAsState().value
@@ -101,7 +103,9 @@ fun BuildingScreen(
                                             if (!isSelected) placeSelectorViewModel.setCurrentPlace(
                                                 place,
                                                 attLog.remark,
-                                                onPlaceChange
+                                                onPlaceChange,
+                                                false,
+                                                context
                                             )
                                         }
                                     )
