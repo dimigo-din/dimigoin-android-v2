@@ -456,10 +456,13 @@ fun NavGraphBuilder.placeSelectorNavGraph(
             navDeepLink { uriPattern = "dimigoin://set-place/{placeId}" }
         )
     ) {
+        val act = (it.arguments?.get("android-support-nav:controller:deepLinkIntent") as Intent).action ?: ""
+        val isFromIntent = act.isNotEmpty()
         val placeId = it.arguments?.getString("placeId") ?: ""
         val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
-        Log.d(TAG, "placeSelectorNavGraph: $placeId")
-        Log.d(TAG, "placeSelectorNavGraph: ${placeSelectorViewModel.placeIdToPlace(placeId)}")
+        Log.d("isFromIntent", "$act////$isFromIntent")
+        Log.d(TAG, "placeSelectorNavGraph1: $placeId")
+        Log.d(TAG, "placeSelectorNavGraph2: ${placeSelectorViewModel.placeIdToPlace(placeId)}")
 
         val isPlaceLoaded = placeSelectorViewModel.isPlaceLoaded.collectAsState().value
         if (isPlaceLoaded) {
@@ -470,13 +473,14 @@ fun NavGraphBuilder.placeSelectorNavGraph(
                     .systemBarsPadding()
                     .navigationBarsWithImePadding(),
                 place = placeSelectorViewModel.placeIdToPlace(placeId),
-                onConfirm = { place, remark ->
+                onConfirm = { place, remark, activity ->
                     placeSelectorViewModel.setCurrentPlace(place, remark, onPlaceChange)
                     navController.popBackStack()
+                    if(!isFromIntent) navController.popBackStack() else activity?.finish()
                     Unit
                 },
                 isFavoriteRegister = false,
-                onBackNavigation = { navController.popBackStack() },
+                onBackNavigation = if(isFromIntent) {null} else {{navController.popBackStack()}},
             )
         }
     }
@@ -494,7 +498,7 @@ fun NavGraphBuilder.placeSelectorNavGraph(
                 .systemBarsPadding()
                 .navigationBarsWithImePadding(),
             place = placeSelectorViewModel.placeIdToPlace(placeId),
-            onConfirm = { place, remark ->
+            onConfirm = { place, remark, _ ->
                 placeSelectorViewModel.addFavoriteAttendanceLog(place, remark, onFavoriteAdd)
                 navController.popBackStack()
                 Unit

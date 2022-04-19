@@ -7,6 +7,7 @@ import `in`.dimigo.dimigoin.ui.composables.PlaceSelectorTopBar
 import `in`.dimigo.dimigoin.ui.theme.C3
 import `in`.dimigo.dimigoin.ui.theme.DTypography
 import `in`.dimigo.dimigoin.ui.theme.Point
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +37,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -47,9 +49,10 @@ import androidx.compose.ui.unit.dp
 fun ReasonScreen(
     modifier: Modifier = Modifier,
     place: Place,
-    onConfirm: (place: Place, remark: String) -> Unit,
+    onConfirm: (place: Place, remark: String, context: Activity?) -> Unit,
     isFavoriteRegister: Boolean,
-    onBackNavigation: () -> Unit,
+    onBackNavigation: (() -> Unit)?,
+    activity: Activity? = LocalContext.current as Activity?
 ) {
     Box(modifier.padding(top = 26.dp)) {
         val (reason, setReason) = remember { mutableStateOf("") }
@@ -59,14 +62,16 @@ fun ReasonScreen(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxHeight(),
         ) {
-            PlaceSelectorTopBar(
-                modifier = Modifier.padding(horizontal = 20.dp),
-                title = "",
-                onBackNavigation = onBackNavigation,
-                showSearchIcon = false,
-                onSearch = { },
-                color = Color.Black
-            )
+            if (onBackNavigation != null) {
+                PlaceSelectorTopBar(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    title = "",
+                    onBackNavigation = onBackNavigation,
+                    showSearchIcon = false,
+                    onSearch = { },
+                    color = Color.Black
+                )
+            }
             Spacer(Modifier.weight(.5f))
             if (isFavoriteRegister) {
                 AddFavoriteItem(place = place, reason = reason, onReasonChange = setReason)
@@ -84,7 +89,7 @@ fun ReasonScreen(
             val clickableModifier = if (reason.isBlank()) {
                 Modifier
             } else {
-                Modifier.clickable { onConfirm(place, reason) }
+                Modifier.clickable { onConfirm(place, reason, activity) }
             }
 
             Box(
@@ -225,7 +230,7 @@ private fun CustomTextField(
 fun ReasonScreenPreview1() {
     ReasonScreen(
         place = Place("", "집", "", "", "", "", PlaceType.ETC),
-        onConfirm = { _, _ -> },
+        onConfirm = { _, _, _ -> },
         isFavoriteRegister = false,
         onBackNavigation = { }
     )
@@ -236,7 +241,7 @@ fun ReasonScreenPreview1() {
 fun ReasonScreenPreview2() {
     ReasonScreen(
         place = Place("", "집", "", "", "", "", PlaceType.ETC),
-        onConfirm = { _, _ -> },
+        onConfirm = { _, _, _-> },
         isFavoriteRegister = true,
         onBackNavigation = { }
     )
