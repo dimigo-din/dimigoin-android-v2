@@ -437,7 +437,7 @@ fun DateItem(
         Text(
             text = date.dayOfMonth.toString(),
             style = DTheme.typography.t5,
-            color = if (today) Color.White else if (selected) DTheme.colors.c1 else if (month == date.monthValue) DTheme.colors.c2 else DTheme.colors.c3,
+            color = if (today) Color.White else if (selected) DTheme.colors.onSurface else if (month == date.monthValue) DTheme.colors.c1 else DTheme.colors.c3,
             modifier = Modifier.padding(vertical = 8.dp)
         )
         if (scheduleColors.isNotEmpty()) {
