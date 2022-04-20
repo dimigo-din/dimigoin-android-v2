@@ -300,7 +300,7 @@ fun SchoolScheduleHeader(
     selectedDate: LocalDate,
     onDateChange: (LocalDate) -> Unit,
 ) {
-    val thisMonth = YearMonth.from(LocalDate.now().minusMonths(2))
+    val thisMonth = YearMonth.from(LocalDate.now())
     Text(
         modifier = Modifier.padding(start = 15.dp),
         text = "${selectedDate.minusMonths(2).year}학년도",
@@ -324,7 +324,7 @@ fun SchoolScheduleHeader(
         Text(
             text = "${selectedDate.monthValue}월",
             style = DTheme.typography.t2,
-            color = when (YearMonth.from(selectedDate.minusMonths(2))) {
+            color = when (YearMonth.from(selectedDate)) {
                 thisMonth -> DTheme.colors.c0
                 else -> DTheme.colors.c2
             },
