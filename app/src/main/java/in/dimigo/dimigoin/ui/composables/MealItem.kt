@@ -1,18 +1,12 @@
 package `in`.dimigo.dimigoin.ui.composables
 
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
-import `in`.dimigo.dimigoin.ui.theme.C1
-import `in`.dimigo.dimigoin.ui.theme.C3
-import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.util.asKorean12HoursString
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
@@ -67,7 +61,7 @@ fun MealItem(
         )
         Text(
             text = type.value,
-            style = DTypography.t2,
+            style = DTheme.typography.t2,
             modifier = Modifier.constrainAs(typeText) {
                 top.linkTo(parent.top)
                 start.linkTo(startPad.end, 20.dp)
@@ -75,7 +69,7 @@ fun MealItem(
         )
         Text(
             text = (time?.asKorean12HoursString() ?: "시간 정보 없음") + "  >",
-            style = DTypography.t6,
+            style = DTheme.typography.t6,
             color = if (highlight) Color.White else Point,
             modifier = Modifier.constrainAs(timeText) {
                 top.linkTo(typeText.top)
@@ -85,8 +79,8 @@ fun MealItem(
         )
         Text(
             text = meal ?: "급식 정보가 없습니다.",
-            style = DTypography.mealMenu,
-            color = if (highlight) Color.White else if (isSystemInDarkTheme()) C3 else C1,
+            style = DTheme.typography.mealMenu,
+            color = if (highlight) Color.White else DTheme.colors.c1,
             modifier = Modifier.constrainAs(mealText) {
                 top.linkTo(typeText.bottom, 15.dp)
                 start.linkTo(startPad.end, 20.dp)

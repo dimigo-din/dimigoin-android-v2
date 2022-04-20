@@ -4,27 +4,11 @@ import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.domain.entity.place.Place
 import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
-import `in`.dimigo.dimigoin.ui.theme.C1
-import `in`.dimigo.dimigoin.ui.theme.C2
-import `in`.dimigo.dimigoin.ui.theme.C3
-import `in`.dimigo.dimigoin.ui.theme.C4
-import `in`.dimigo.dimigoin.ui.theme.DTypography
-import `in`.dimigo.dimigoin.ui.theme.LightPoint
-import `in`.dimigo.dimigoin.ui.theme.Point
-import `in`.dimigo.dimigoin.ui.theme.Shapes
-import `in`.dimigo.dimigoin.ui.theme.YellowLight
+import `in`.dimigo.dimigoin.ui.theme.*
 import `in`.dimigo.dimigoin.ui.util.icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -53,7 +37,7 @@ fun PlaceItem(
     Icon(
         modifier = Modifier.size(24.dp),
         painter = painterResource(id = place.type.icon), contentDescription = null,
-        tint = if (isSelected) Point else C3,
+        tint = if (isSelected) Point else DTheme.colors.c3,
     )
     Spacer(modifier = Modifier.width(20.dp))
     Column(
@@ -61,10 +45,10 @@ fun PlaceItem(
         verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         Text(
-            text = place.description, style = DTypography.t5, color = if (isSelected) LightPoint else C2,
+            text = place.description, style = DTheme.typography.t5, color = if (isSelected) LightPoint else DTheme.colors.c2,
         )
         Text(
-            text = place.name, style = DTypography.t4, color = if (isSelected) Point else C1,
+            text = place.name, style = DTheme.typography.t4, color = if (isSelected) Point else DTheme.colors.c1,
         )
     }
     Spacer(modifier = Modifier.width(15.dp))
@@ -73,20 +57,20 @@ fun PlaceItem(
             .size(24.dp)
             .noRippleClickable { onFavoriteChange(!isFavorite) },
         painter = painterResource(id = R.drawable.ic_favorite), contentDescription = null,
-        tint = if (isFavorite) YellowLight else C3.copy(alpha = 0.65f),
+        tint = if (isFavorite) YellowLight else DTheme.colors.c3.copy(alpha = 0.65f),
     )
     Spacer(modifier = Modifier.width(15.dp))
     Box(
         modifier = Modifier
             .size(55.dp, 33.dp)
             .clip(Shapes.small)
-            .background(if (isSelected) Point else C4)
+            .background(if (isSelected) Point else DTheme.colors.c4)
             .then(if (isSelected) Modifier else Modifier.clickable { onSelect() }),
     ) {
         Text(
             text = if (isSelected) "선택됨" else "선택",
-            style = if (isSelected) DTypography.t6 else DTypography.t5,
-            color = if (isSelected) Color.White else C1,
+            style = if (isSelected) DTheme.typography.t6 else DTheme.typography.t5,
+            color = if (isSelected) Color.White else DTheme.colors.c1,
             modifier = Modifier.align(Alignment.Center),
         )
     }

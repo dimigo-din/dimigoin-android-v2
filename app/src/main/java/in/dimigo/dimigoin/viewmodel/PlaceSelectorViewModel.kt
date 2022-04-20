@@ -1,5 +1,6 @@
 package `in`.dimigo.dimigoin.viewmodel
 
+import `in`.dimigo.dimigoin.data.datasource.LocalNotification
 import `in`.dimigo.dimigoin.domain.entity.place.AttendanceLog
 import `in`.dimigo.dimigoin.domain.entity.place.Building
 import `in`.dimigo.dimigoin.domain.entity.place.Place
@@ -7,10 +8,10 @@ import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
 import `in`.dimigo.dimigoin.domain.entity.user.User
 import `in`.dimigo.dimigoin.domain.usecase.place.*
 import `in`.dimigo.dimigoin.domain.usecase.user.GetMyIdentityUseCase
+import `in`.dimigo.dimigoin.domain.util.josa
 import `in`.dimigo.dimigoin.ui.util.Future
-import android.util.Log
+import android.content.Context
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -100,12 +101,35 @@ class PlaceSelectorViewModel(
         place: Place,
         remark: String?,
         callback: (Place, String?) -> Unit,
+        isFromIntent: Boolean,
+        context: Context,
     ) = viewModelScope.launch {
-        setCurrentPlaceUseCase(place._id, remark).onSuccess {
-            if (it) {
-                _currentPlace.emit(Future.Success(place))
-                callback(place, remark)
-            }
+        if (isFromIntent) {
+            setCurrentPlaceUseCase(place._id, remark)
+                .onSuccess {
+                    if (it) {
+                        _currentPlace.emit(Future.Success(place))
+                        LocalNotification(context).sendNotification(
+                            "위치 변경 성공",
+                            "위치를 ${place.name.josa("으로")} 변경했습니다.",
+                        )
+                        callback(place, remark)
+                    }
+                }
+                .onFailure {
+                    LocalNotification(context).sendNotification(
+                        "위치 변경 실패",
+                        "위치 변경에 실패했습니다. 인터넷 연결을 확인해주세요.",
+                    )
+                }
+        } else {
+            setCurrentPlaceUseCase(place._id, remark)
+                .onSuccess {
+                    if (it) {
+                        _currentPlace.emit(Future.Success(place))
+                        callback(place, remark)
+                    }
+                }
         }
     }
 

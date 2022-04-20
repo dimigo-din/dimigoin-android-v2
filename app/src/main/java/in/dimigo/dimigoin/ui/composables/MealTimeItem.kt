@@ -1,15 +1,10 @@
 package `in`.dimigo.dimigoin.ui.composables
 
-import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.util.asKorean12HoursString
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
@@ -45,17 +40,17 @@ fun MealTimeItem(
     val textColor = if (highlight) Color.White else MaterialTheme.colors.onSurface
     CompositionLocalProvider(LocalContentColor provides textColor) {
         Box {
-            Text(text = "${order}순위", style = DTypography.t6)
+            Text(text = "${order}순위", style = DTheme.typography.t6)
             // for fixed-width
-            Text(text = "0순위", style = DTypography.t6, color = Color.Transparent)
+            Text(text = "0순위", style = DTheme.typography.t6, color = Color.Transparent)
         }
         Spacer(Modifier.width(20.dp))
-        Text(text = "${grade}학년 $`class`반", style = DTypography.t4)
+        Text(text = "${grade}학년 $`class`반", style = DTheme.typography.t4)
         Spacer(Modifier.weight(1f))
         if (highlight) {
-            Text(text = time.asKorean12HoursString(), style = DTypography.t5)
+            Text(text = time.asKorean12HoursString(), style = DTheme.typography.t5)
         } else {
-            Text(text = time.asKorean12HoursString(), style = DTypography.t5.copy(fontWeight = FontWeight.Medium))
+            Text(text = time.asKorean12HoursString(), style = DTheme.typography.t5.copy(fontWeight = FontWeight.Medium))
         }
     }
 }

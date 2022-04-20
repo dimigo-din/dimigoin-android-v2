@@ -4,8 +4,7 @@ import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.data.util.ExceptionWithStatusCode
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
 import `in`.dimigo.dimigoin.ui.theme.BorderTextField
-import `in`.dimigo.dimigoin.ui.theme.C2
-import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.theme.Red
 import `in`.dimigo.dimigoin.ui.util.Future
@@ -13,14 +12,7 @@ import `in`.dimigo.dimigoin.viewmodel.LoginViewModel
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -59,7 +51,7 @@ fun LoginScreen(
     val focusManager = LocalFocusManager.current
     var username by remember { mutableStateOf(TextFieldValue()) }
     var password by remember { mutableStateOf(TextFieldValue()) }
-    var color by remember { mutableStateOf(C2) }
+    var color = DTheme.colors.c2
     var isLoading by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
@@ -151,7 +143,7 @@ fun LoginScreen(
                             ).show()
                         },
                     text = errorMessage,
-                    style = DTypography.t6,
+                    style = DTheme.typography.t6,
                     color = Red
                 )
                 Spacer(modifier = Modifier.height(17.dp))
@@ -177,7 +169,7 @@ fun LoginScreen(
                     modifier = Modifier.padding(vertical = 8.dp),
                     textAlign = TextAlign.Center,
                     text = "로그인",
-                    style = DTypography.t5,
+                    style = DTheme.typography.t5,
                     color = Color.White,
                 )
             } else {

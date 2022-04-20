@@ -1,8 +1,7 @@
 package `in`.dimigo.dimigoin.ui.screen
 
 import `in`.dimigo.dimigoin.R
-import `in`.dimigo.dimigoin.ui.theme.C2
-import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.theme.Shapes
 import `in`.dimigo.dimigoin.viewmodel.MyInfoViewModel
@@ -12,29 +11,13 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -79,12 +62,12 @@ fun MyInfoScreen(
             ) {
                 Text(
                     modifier = Modifier.padding(start = 15.dp),
-                    text = "", style = DTypography.t5, color = C2
+                    text = "", style = DTheme.typography.t5, color = DTheme.colors.c2
                 )
                 Spacer(Modifier.height(5.dp))
                 Text(
                     modifier = Modifier.padding(start = 15.dp),
-                    text = NavScreen.MyInfo.name, style = DTypography.t0
+                    text = NavScreen.MyInfo.name, style = DTheme.typography.t0
                 )
             }
             Column(
@@ -147,63 +130,12 @@ fun MyInfoScreen(
                                 },
                             textAlign = TextAlign.Center,
                             text = "터치하여 모바일 학생증 열기",
-                            style = DTypography.pageSubtitle.copy(fontSize = 11.sp),
+                            style = DTheme.typography.pageSubtitle.copy(fontSize = 11.sp),
                             fontWeight = Bold,
                             color = Point,
                         )
                     }
                 }
-//                Spacer(modifier = Modifier.height(10.dp))
-//                Card(
-//                    Modifier
-//                        .fillMaxWidth()
-//                        .padding(horizontal = 35.dp)
-//                        .align(Alignment.CenterHorizontally),
-//                    shape = RoundedCornerShape(10.dp),
-//                ) {
-//                    ConstraintLayout(
-//                        Modifier
-//                            .fillMaxWidth()
-//                            .background(C3)
-//                            .padding(horizontal = 19.dp, vertical = 15.dp)
-//                    ) {
-//                        val (text, arrowButton) = createRefs()
-//                        Row(
-//                            Modifier.constrainAs(text) {
-//                                top.linkTo(parent.top)
-//                                bottom.linkTo(parent.bottom)
-//                                start.linkTo(parent.start)
-//                                end.linkTo(parent.end)
-//                            },
-//                            verticalAlignment = Alignment.CenterVertically
-//                        ) {
-//                            Icon(
-//                                painter = painterResource(id = R.drawable.ic_information),
-//                                contentDescription = null,
-//                                tint = Color.White
-//                            )
-//                            Spacer(modifier = Modifier.width(10.dp))
-//                            Text(
-//                                textAlign = TextAlign.Center,
-//                                text = "사용 전 다음 내용을 반드시 읽어주세요",
-//                                style = DTypography.pageSubtitle.copy(fontSize = 11.sp),
-//                                fontWeight = Bold,
-//                                color = Color.White,
-//                            )
-//                        }
-//                        Icon(
-//                            modifier = Modifier
-//                                .constrainAs(arrowButton) {
-//                                    top.linkTo(text.top)
-//                                    bottom.linkTo(text.bottom)
-//                                    end.linkTo(parent.end)
-//                                },
-//                            painter = painterResource(id = R.drawable.ic_arrow_right),
-//                            contentDescription = null,
-//                            tint = Color.White
-//                        )
-//                    }
-//                }
             }
         }
         AnimatedVisibility(
@@ -231,9 +163,7 @@ fun MyInfoScreen(
 @Preview(widthDp = 320, heightDp = 500)
 @Composable
 fun MyInfoPrev() {
-//    MyInfoScreen()
     StudentCard(
-        modifier = Modifier,
         name = "이준호",
         birth = "2004-04-21",
         grade = 3,
@@ -260,12 +190,12 @@ fun StudentCard(
     },
 ) {
     Card(
-        Modifier
-            .fillMaxWidth(),
+        modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
     ) {
         Column(
-            Modifier
+            Modifier.fillMaxWidth()
+                .background(Color.White)
         ) {
             Box(
                 Modifier
@@ -289,7 +219,7 @@ fun StudentCard(
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
                             text = "모바일 학생증",
-                            style = DTypography.pageSubtitle,
+                            style = DTheme.typography.pageSubtitle,
                             fontWeight = Bold,
                             color = Color.White,
                         )
@@ -312,28 +242,28 @@ fun StudentCard(
                         Column {
                             Text(
                                 text = name,
-                                style = DTypography.pageSubtitle.copy(fontSize = 22.sp),
+                                style = DTheme.typography.pageSubtitle.copy(fontSize = 22.sp),
                                 fontWeight = Bold,
                                 color = Color.White,
                             )
                             Spacer(modifier = Modifier.height(5.dp))
                             Text(
                                 text = birth,
-                                style = DTypography.pageSubtitle.copy(fontSize = 16.sp),
+                                style = DTheme.typography.pageSubtitle.copy(fontSize = 16.sp),
                                 fontWeight = Bold,
                                 color = Color.White,
                             )
                             Spacer(modifier = Modifier.height(15.dp))
                             Text(
                                 text = gwa,
-                                style = DTypography.pageSubtitle,
+                                style = DTheme.typography.pageSubtitle,
                                 fontWeight = Bold,
                                 color = Color.White,
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
                                 text = "${grade}학년 ${`class`}반 ${number}번",
-                                style = DTypography.pageSubtitle,
+                                style = DTheme.typography.pageSubtitle,
                                 fontWeight = Bold,
                                 color = Color.White,
                             )
