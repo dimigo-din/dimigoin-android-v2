@@ -2,7 +2,7 @@ package `in`.dimigo.dimigoin.ui.composables
 
 import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
-import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.DTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 
@@ -41,7 +40,7 @@ fun PlaceSelectorTopBar(
             )
             Text(
                 text = title,
-                style = DTypography.t1,
+                style = DTheme.typography.t1,
                 modifier = Modifier.noRippleClickable { onBackNavigation() }
             )
             Spacer(Modifier.weight(1f))

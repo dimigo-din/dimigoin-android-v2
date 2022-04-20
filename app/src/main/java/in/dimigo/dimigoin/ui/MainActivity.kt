@@ -15,7 +15,7 @@ import `in`.dimigo.dimigoin.ui.screen.placeselector.BuildingScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.PlaceSearchScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.PlacesScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.ReasonScreen
-import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.util.Future
@@ -245,7 +245,7 @@ fun PlaceBottomBar(currentPlace: Future<Place>) {
                         is Future.Loading, is Future.Nothing<*> -> append("위치 정보를 가져오는 중입니다")
                     }
                 },
-                style = DTypography.t4,
+                style = DTheme.typography.t4,
             )
             Spacer(Modifier.weight(1f))
             Spacer(
@@ -559,7 +559,7 @@ fun BottomNavBarImpl(
                         contentDescription = null
                     )
                 },
-                label = { Text(screen.name, style = DTypography.t6) },
+                label = { Text(screen.name, style = DTheme.typography.t6) },
                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                 onClick = {
                     navController.navigate(screen.route) {

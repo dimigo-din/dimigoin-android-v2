@@ -2,9 +2,7 @@ package `in`.dimigo.dimigoin.ui.composables
 
 import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.domain.entity.place.Building
-import `in`.dimigo.dimigoin.ui.theme.C1
-import `in`.dimigo.dimigoin.ui.theme.C2
-import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.DTheme
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -37,14 +35,14 @@ fun BuildingItem(
         val (typeText, nameText, imageRef) = createRefs()
 
         Text(
-            text = building.type, style = DTypography.t5, color = C2,
+            text = building.type, style = DTheme.typography.t5, color = DTheme.colors.c2,
             modifier = Modifier.constrainAs(typeText) {
                 top.linkTo(parent.top, 25.dp)
                 start.linkTo(parent.start, 25.dp)
             }
         )
         Text(
-            text = building.name, style = DTypography.t4, color = C1,
+            text = building.name, style = DTheme.typography.t4, color = DTheme.colors.c1,
             modifier = Modifier.constrainAs(nameText) {
                 top.linkTo(typeText.bottom, 5.dp)
                 start.linkTo(typeText.start)
