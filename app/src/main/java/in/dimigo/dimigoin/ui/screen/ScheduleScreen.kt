@@ -31,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -411,7 +412,9 @@ fun SchoolSchedule(
                 items(dailyScheduleMap.getOrDefault(selectedDate, emptyList())) {
                     ScheduleItem(modifier = Modifier.fillMaxWidth(), schedule = it)
                 }
-                item { /* Empty space */ }
+                item {
+                    Spacer(Modifier.navigationBarsHeight())
+                }
             }
         }
     }
