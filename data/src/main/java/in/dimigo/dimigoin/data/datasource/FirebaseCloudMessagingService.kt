@@ -3,6 +3,8 @@ package `in`.dimigo.dimigoin.data.datasource
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
+import android.content.ContextWrapper
 import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
@@ -35,22 +37,22 @@ class FirebaseCloudMessagingService : FirebaseMessagingService() {
 
             Log.d("fcm", "$notiTitle / $notiBody")
 
-            sendNotification(
+            LocalNotification(baseContext).sendNotification(
                 notiTitle,
                 notiBody
             )
         }
     }
+}
 
-    @RequiresApi(Build.VERSION_CODES.N)
+class LocalNotification(base: Context): ContextWrapper(base)  {
     @SuppressLint("UnspecifiedImmutableFlag")
-    private fun sendNotification(title: String, body: String) {
+    fun sendNotification(title: String, body: String) {
         Log.d("func", "sendNotification func start")
 
-        getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        getSystemService(FirebaseMessagingService.NOTIFICATION_SERVICE) as NotificationManager
 
-        val channelId = "id"
-        Log.d("channelId", channelId)
+        val channelId = "Dimigoin"
         val notificationBuilder: NotificationCompat.Builder =
             NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(applicationContext.applicationInfo.icon)
@@ -58,12 +60,10 @@ class FirebaseCloudMessagingService : FirebaseMessagingService() {
                 .setContentText(body)
                 .setAutoCancel(true)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setPriority(NotificationManager.IMPORTANCE_MAX)
                 .setTicker(title)
                 .setShowWhen(true)
                 .setVibrate(longArrayOf(1, 1000))
-                .setGroup("Dimigoin")
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(FirebaseMessagingService.NOTIFICATION_SERVICE) as NotificationManager
 
         // Since android Oreo notification channel is needed.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -76,4 +76,5 @@ class FirebaseCloudMessagingService : FirebaseMessagingService() {
             notify(System.currentTimeMillis().toInt(), notificationBuilder.build())
         }
     }
+
 }

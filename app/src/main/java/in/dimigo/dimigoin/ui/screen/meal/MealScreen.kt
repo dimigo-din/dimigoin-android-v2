@@ -3,8 +3,7 @@ package `in`.dimigo.dimigoin.ui.screen.meal
 import `in`.dimigo.dimigoin.ui.composables.MealItem
 import `in`.dimigo.dimigoin.ui.composables.MealTimeType
 import `in`.dimigo.dimigoin.ui.composables.PageSelector
-import `in`.dimigo.dimigoin.ui.theme.C2
-import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.ui.util.asKoreanWeekString
 import `in`.dimigo.dimigoin.viewmodel.MealViewModel
 import androidx.compose.foundation.layout.*
@@ -54,12 +53,12 @@ fun MealScreen(
             ) {
                 Text(
                     modifier = Modifier.padding(start = 15.dp),
-                    text = LocalDate.now().asKoreanWeekString(), style = DTypography.t5, color = C2
+                    text = LocalDate.now().asKoreanWeekString(), style = DTheme.typography.t5, color = DTheme.colors.c2
                 )
                 Spacer(Modifier.height(5.dp))
                 Text(
                     modifier = Modifier.padding(start = 15.dp),
-                    text = "주간 급식표", style = DTypography.t0
+                    text = "주간 급식표", style = DTheme.typography.t0
                 )
                 Spacer(Modifier.height(24.dp))
                 PageSelector(

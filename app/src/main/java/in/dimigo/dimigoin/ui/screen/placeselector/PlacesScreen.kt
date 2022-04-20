@@ -3,14 +3,9 @@ package `in`.dimigo.dimigoin.ui.screen.placeselector
 import `in`.dimigo.dimigoin.domain.entity.place.Place
 import `in`.dimigo.dimigoin.ui.composables.PlaceItem
 import `in`.dimigo.dimigoin.ui.composables.PlaceSelectorTopBar
-import `in`.dimigo.dimigoin.ui.theme.C4
+import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.viewmodel.PlaceSelectorViewModel
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
@@ -51,7 +46,7 @@ fun PlacesScreen(
                 color = MaterialTheme.colors.onSurface,
             )
             Spacer(Modifier.height(26.dp))
-            Divider(color = C4)
+            Divider(color = DTheme.colors.c4)
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(40.dp),
             ) {

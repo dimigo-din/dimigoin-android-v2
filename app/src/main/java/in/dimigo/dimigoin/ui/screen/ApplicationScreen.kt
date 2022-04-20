@@ -2,8 +2,7 @@ package `in`.dimigo.dimigoin.ui.screen
 
 import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.ui.composables.ApplicationBox
-import `in`.dimigo.dimigoin.ui.theme.C2
-import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.DTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -36,12 +35,12 @@ fun ApplicationScreen(
             ) {
                 Text(
                     modifier = Modifier.padding(start = 15.dp),
-                    text = "", style = DTypography.t5, color = C2
+                    text = "", style = DTheme.typography.t5, color = DTheme.colors.c2
                 )
                 Spacer(Modifier.height(5.dp))
                 Text(
                     modifier = Modifier.padding(start = 15.dp),
-                    text = "신청하기", style = DTypography.t0
+                    text = "신청하기", style = DTheme.typography.t0
                 )
                 Spacer(Modifier.height(24.dp))
                 Column(

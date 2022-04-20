@@ -1,6 +1,6 @@
 package `in`.dimigo.dimigoin.ui.composables
 
-import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.ui.theme.Shapes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -52,7 +52,7 @@ fun ApplicationBox(
                 tint = iconTint
             )
             Text(text = label,
-                style = DTypography.pageSubtitle.copy(
+                style = DTheme.typography.pageSubtitle.copy(
                     color = Color.Black,
                     fontWeight = FontWeight.Bold
                 )

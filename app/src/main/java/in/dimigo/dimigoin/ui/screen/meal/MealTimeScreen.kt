@@ -5,17 +5,9 @@ import `in`.dimigo.dimigoin.domain.entity.meal.MealTime
 import `in`.dimigo.dimigoin.ui.composables.MealTimeItem
 import `in`.dimigo.dimigoin.ui.composables.PageSelector
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
-import `in`.dimigo.dimigoin.ui.theme.C2
-import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.viewmodel.MealTimeViewModel
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
@@ -32,9 +24,9 @@ import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import java.time.LocalTime
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
+import java.time.LocalTime
 
 private const val BREAKFAST = 0
 private const val LUNCH = 1
@@ -67,18 +59,18 @@ fun MealTimeScreen(
             Column(Modifier.padding(horizontal = 20.dp)) {
                 Text(
                     modifier = Modifier.padding(start = 15.dp),
-                    text = "급식시간 제공: 달그락", style = DTypography.t5, color = C2
+                    text = "급식시간 제공: 달그락", style = DTheme.typography.t5, color = DTheme.colors.c2
                 )
                 Spacer(Modifier.height(5.dp))
                 Row(
                     modifier = Modifier.padding(start = 15.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "학급별 급식시간", style = DTypography.t0)
+                    Text(text = "학급별 급식시간", style = DTheme.typography.t0)
                     Spacer(modifier = Modifier.weight(1f))
                     Icon(
                         painter = painterResource(id = R.drawable.ic_close), contentDescription = null,
-                        tint = C2,
+                        tint = DTheme.colors.c2,
                         modifier = Modifier
                             .padding(vertical = 10.dp, horizontal = 15.dp)
                             .noRippleClickable { onBackPress() }

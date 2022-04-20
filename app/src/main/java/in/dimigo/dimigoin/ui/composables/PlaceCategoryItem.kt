@@ -3,17 +3,9 @@ package `in`.dimigo.dimigoin.ui.composables
 import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.domain.entity.place.PlaceCategory
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
-import `in`.dimigo.dimigoin.ui.theme.C1
-import `in`.dimigo.dimigoin.ui.theme.C2
-import `in`.dimigo.dimigoin.ui.theme.C3
-import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.DTheme
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -40,7 +32,7 @@ fun PlaceCategoryItem(
     Icon(
         modifier = Modifier.size(24.dp),
         painter = painterResource(id = icon), contentDescription = null,
-        tint = C3,
+        tint = DTheme.colors.c3,
     )
 
     Column(
@@ -48,17 +40,17 @@ fun PlaceCategoryItem(
         verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         Text(
-            text = category.description, style = DTypography.t5, color = C2,
+            text = category.description, style = DTheme.typography.t5, color = DTheme.colors.c2,
         )
         Text(
-            text = category.name, style = DTypography.t4, color = C1,
+            text = category.name, style = DTheme.typography.t4, color = DTheme.colors.c1,
         )
     }
 
     Icon(
         modifier = Modifier.size(7.dp, 12.dp),
         painter = painterResource(id = R.drawable.ic_arrow_right), contentDescription = null,
-        tint = C3
+        tint = DTheme.colors.c3
     )
 }
 

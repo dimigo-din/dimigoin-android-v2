@@ -15,7 +15,7 @@ import `in`.dimigo.dimigoin.ui.screen.placeselector.BuildingScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.PlaceSearchScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.PlacesScreen
 import `in`.dimigo.dimigoin.ui.screen.placeselector.ReasonScreen
-import `in`.dimigo.dimigoin.ui.theme.DTypography
+import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.util.Future
@@ -28,6 +28,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -35,7 +36,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -203,10 +206,27 @@ fun CustomBottomBar(
 
 @Composable
 fun PlaceBottomBar(currentPlace: Future<Place>) {
+    if (!isSystemInDarkTheme()) {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(30.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color.Transparent,
+                            Color(0f, 0f, 0f, 0.05f)
+                        )
+                    )
+                )
+        )
+    }
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .navigationBarsHeight(60.dp)
+            .navigationBarsHeight(80.dp)
+            .padding(top = 20.dp)
             .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
     ) {
         Column(
@@ -225,7 +245,7 @@ fun PlaceBottomBar(currentPlace: Future<Place>) {
                         is Future.Loading, is Future.Nothing<*> -> append("위치 정보를 가져오는 중입니다")
                     }
                 },
-                style = DTypography.t4,
+                style = DTheme.typography.t4,
             )
             Spacer(Modifier.weight(1f))
             Spacer(
@@ -248,11 +268,13 @@ fun BottomNavBar(navController: NavHostController, currentDestination: NavDestin
         NavScreen.MyInfo,
     )
     Column {
-        BottomNavBarImpl(
-            navController,
-            navScreens,
-            currentDestination
-        )
+        Box {
+            BottomNavBarImpl(
+                navController,
+                navScreens,
+                currentDestination
+            )
+        }
         Spacer(
             modifier = Modifier
                 .background(Color.White)
@@ -294,7 +316,7 @@ fun NavGraphBuilder.preMainNavGraph(
 fun NavGraphBuilder.mainNavGraph(
     navController: NavHostController,
     onPlaceChange: (Place, String?) -> Unit,
-    lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel>
+    lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel>,
 ) {
     composable(NavScreen.Main.route) {
         val placeSelectorViewModel by lazyPlaceSelectorViewModel
@@ -456,7 +478,10 @@ fun NavGraphBuilder.placeSelectorNavGraph(
             navDeepLink { uriPattern = "dimigoin://set-place/{placeId}" }
         )
     ) {
-        val act = (it.arguments?.get("android-support-nav:controller:deepLinkIntent") as Intent).action ?: ""
+        val context = LocalContext.current
+        val act =
+            (it.arguments?.get("android-support-nav:controller:deepLinkIntent") as Intent).action
+                ?: ""
         val isFromIntent = act.isNotEmpty()
         val placeId = it.arguments?.getString("placeId") ?: ""
         val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
@@ -474,13 +499,23 @@ fun NavGraphBuilder.placeSelectorNavGraph(
                     .navigationBarsWithImePadding(),
                 place = placeSelectorViewModel.placeIdToPlace(placeId),
                 onConfirm = { place, remark, activity ->
-                    placeSelectorViewModel.setCurrentPlace(place, remark, onPlaceChange)
+                    placeSelectorViewModel.setCurrentPlace(
+                        place,
+                        remark,
+                        onPlaceChange,
+                        isFromIntent,
+                        context
+                    )
                     navController.popBackStack()
-                    if(!isFromIntent) navController.popBackStack() else activity?.finish()
+                    if (!isFromIntent) navController.popBackStack() else activity?.finish()
                     Unit
                 },
                 isFavoriteRegister = false,
-                onBackNavigation = if(isFromIntent) {null} else {{navController.popBackStack()}},
+                onBackNavigation = if (isFromIntent) {
+                    null
+                } else {
+                    { navController.popBackStack() }
+                },
             )
         }
     }
@@ -524,7 +559,7 @@ fun BottomNavBarImpl(
                         contentDescription = null
                     )
                 },
-                label = { Text(screen.name, style = DTypography.t6) },
+                label = { Text(screen.name, style = DTheme.typography.t6) },
                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                 onClick = {
                     navController.navigate(screen.route) {

@@ -1,7 +1,7 @@
 package `in`.dimigo.dimigoin.ui.screen
 
 import `in`.dimigo.dimigoin.ui.composables.PlaceSelectorTopBar
-import `in`.dimigo.dimigoin.ui.theme.C4
+import `in`.dimigo.dimigoin.ui.theme.DTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,7 +29,7 @@ fun NotificationScreen(
                 onSearch = { },
                 color = MaterialTheme.colors.onSurface
             )
-            Divider(color = C4)
+            Divider(color = DTheme.colors.c4)
         }
     }
 }
