@@ -320,7 +320,7 @@ fun SchoolScheduleHeader(
             text = "${selectedDate.monthValue}월",
             style = DTheme.typography.t2,
             color = when (selectedDate.monthValue) {
-                thisMonth -> DTheme.colors.onSurface
+                thisMonth -> DTheme.colors.c0
                 else -> DTheme.colors.c2
             },
             textAlign = TextAlign.Center,
