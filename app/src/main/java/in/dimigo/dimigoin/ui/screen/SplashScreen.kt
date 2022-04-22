@@ -1,5 +1,6 @@
 package `in`.dimigo.dimigoin.ui.screen
 
+import `in`.dimigo.dimigoin.ui.util.Future
 import `in`.dimigo.dimigoin.viewmodel.SplashViewModel
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,9 +16,10 @@ fun SplashScreen(
     val autoLogin = splashViewModel.autoLogin.collectAsState().value
 
     LaunchedEffect(autoLogin) {
-        when (autoLogin.data) {
-            true -> onAutoLoginSuccess()
-            false -> onAutoLoginFail()
+        when (autoLogin) {
+            is Future.Success -> onAutoLoginSuccess()
+            is Future.Failure -> onAutoLoginFail()
+            else -> {}
         }
     }
 }
