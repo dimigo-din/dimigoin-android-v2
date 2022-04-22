@@ -89,11 +89,11 @@ fun MainScreen(
             when (currentPlace) {
                 is Future.Success -> {
                     append("나의 위치는 현재 ")
-                    withStyle(SpanStyle(color = Point)) { append(currentPlace._data.name) }
+                    withStyle(SpanStyle(color = Point)) { append(currentPlace.data.name) }
                     append("입니다")
                 }
                 is Future.Failure -> append("위치 정보를 불러오지 못했습니다")
-                is Future.Loading, is Future.Nothing -> append("위치 정보를 가져오는 중입니다")
+                is Future.Loading -> append("위치 정보를 가져오는 중입니다")
             }
         },
         onNavigate = onPlaceSelectorNavigate,
@@ -101,8 +101,10 @@ fun MainScreen(
         PlaceSelectorContent(
             onPlaceTypeSelect = { mainViewModel.setCurrentPlace(it, onPlaceChange) },
             onSelectOther = onPlaceSelectorNavigate,
-            selectedPlaceType = mainViewModel.currentPlace.collectAsState().value.data?.type
-                ?: PlaceType.CLASSROOM
+            selectedPlaceType = when (val cp = currentPlace) {
+                is Future.Success -> cp.data.type
+                else -> PlaceType.CLASSROOM
+            }
         )
     }
 
@@ -118,9 +120,9 @@ fun MainScreen(
                     withStyle(SpanStyle(color = Point)) {
                         append(
                             when (currentMealTypeByPage) {
-                                "아침" -> mealTime._data.breakfastTime.asKorean12HoursString()
-                                "점심" -> mealTime._data.lunchTime.asKorean12HoursString()
-                                "저녁" -> mealTime._data.dinnerTime.asKorean12HoursString()
+                                "아침" -> mealTime.data.breakfastTime.asKorean12HoursString()
+                                "점심" -> mealTime.data.lunchTime.asKorean12HoursString()
+                                "저녁" -> mealTime.data.dinnerTime.asKorean12HoursString()
                                 else -> ""
                             }
                         )
@@ -128,7 +130,7 @@ fun MainScreen(
                     append("입니다")
                 }
                 is Future.Failure -> append("급식시간 정보를 불러오지 못했습니다")
-                is Future.Loading, is Future.Nothing<*> -> append("급식시간 정보를 가져오는 중입니다")
+                is Future.Loading -> append("급식시간 정보를 가져오는 중입니다")
             }
         }
     ) {
@@ -206,14 +208,14 @@ fun MainScreen(
                 when (todayMeal) {
                     is Future.Success -> append(
                         when (currentMealTypeByPage) {
-                            "아침" -> todayMeal.data?.breakfast
-                            "점심" -> todayMeal.data?.lunch
-                            "저녁" -> todayMeal.data?.dinner
+                            "아침" -> todayMeal.data.breakfast
+                            "점심" -> todayMeal.data.lunch
+                            "저녁" -> todayMeal.data.dinner
                             else -> ""
-                        } ?: ""
+                        }
                     )
                     is Future.Failure -> append("급식 정보를 불러오지 못했습니다")
-                    is Future.Loading, is Future.Nothing<*> -> append("급식 정보를 가져오는 중입니다")
+                    is Future.Loading -> append("급식 정보를 가져오는 중입니다")
                 }
             },
             style = DTheme.typography.mealMenu,

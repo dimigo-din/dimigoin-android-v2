@@ -33,8 +33,8 @@ fun PlacesScreen(
         Modifier.padding(top = 26.dp)
     ) {
         val places = placeSelectorViewModel.getFilteredPlaceByCategory(title)
-        val currentPlace = placeSelectorViewModel.currentPlace.collectAsState().value
-        val favorites = placeSelectorViewModel.favoriteAttendanceLog.collectAsState().value
+        val currentPlace = placeSelectorViewModel.currentPlace.collectAsState().value.asOptional()
+        val favorites = placeSelectorViewModel.favoriteAttendanceLog.collectAsState().value.asOptional()
 
         Column {
             PlaceSelectorTopBar(
@@ -52,9 +52,9 @@ fun PlacesScreen(
             ) {
                 item { Spacer(Modifier) }
                 items(places.sortedBy { it.name }) { place ->
-                    val favoriteAttLog = favorites.data?.find { it.placeId == place._id }
+                    val favoriteAttLog = favorites.map { it.find { it.placeId == place._id } }.orElse(null)
                     val isFavorite = favoriteAttLog != null
-                    val isSelected = place._id == currentPlace.data?._id
+                    val isSelected = place._id == currentPlace.map { it._id }.orElse(null)
                     PlaceItem(
                         modifier = Modifier.padding(horizontal = 20.dp),
                         place = place,
@@ -64,7 +64,7 @@ fun PlacesScreen(
                                 onTryFavoriteAdd(place)
                             } else {
                                 placeSelectorViewModel.removeFavoriteAttendanceLog(
-                                    favorites.data?.find { it.placeId == place._id }
+                                    favorites.map { it.find { it.placeId == place._id } }.orElse(null)
                                         ?: return@onFavoriteChange,
                                     onFavoriteRemove
                                 )

@@ -115,9 +115,6 @@ fun LoginScreen(
             color = color
         )
         when (val v = loginViewModel.loginResult.collectAsState().value) {
-            is Future.Nothing -> {
-                Spacer(modifier = Modifier.height(50.dp))
-            }
             is Future.Success -> {
                 LaunchedEffect(v) {
                     onLoginSuccess()

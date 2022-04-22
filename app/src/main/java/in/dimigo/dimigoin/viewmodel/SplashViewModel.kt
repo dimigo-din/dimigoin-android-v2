@@ -13,7 +13,7 @@ class SplashViewModel(
     private val getMyIdentityUseCase: GetMyIdentityUseCase,
 ) : ViewModel() {
 
-    private val _autoLogin = MutableStateFlow<Future<Boolean>>(Future.Nothing())
+    private val _autoLogin = MutableStateFlow<Future<Boolean>>(Future.loading())
     val autoLogin = _autoLogin.asStateFlow()
 
     init {
@@ -21,12 +21,12 @@ class SplashViewModel(
     }
 
     private fun getMyIdentity() = viewModelScope.launch {
-        _autoLogin.emit(Future.Loading())
+        _autoLogin.emit(Future.loading())
         getMyIdentityUseCase().onSuccess {
-            _autoLogin.emit(Future.Success(true))
+            _autoLogin.emit(Future.success(true))
             Log.d(TAG, "getMyIdentity: $it")
         }.onFailure {
-            _autoLogin.emit(Future.Success(false))
+            _autoLogin.emit(Future.success(false))
             Log.d(TAG, "getMyIdentity: $it")
         }
     }

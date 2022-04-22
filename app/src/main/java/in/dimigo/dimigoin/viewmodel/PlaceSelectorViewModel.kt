@@ -41,14 +41,14 @@ class PlaceSelectorViewModel(
 
     private var myIdentity: User? = null
 
-    private val _currentPlace = MutableStateFlow<Future<Place>>(Future.Nothing())
+    private val _currentPlace = MutableStateFlow<Future<Place>>(Future.loading())
     val currentPlace = _currentPlace.asStateFlow()
 
     private val _favoriteAttendanceLogs =
-        MutableStateFlow<Future<List<AttendanceLog>>>(Future.Nothing())
+        MutableStateFlow<Future<List<AttendanceLog>>>(Future.loading())
     val favoriteAttendanceLog = _favoriteAttendanceLogs.asStateFlow()
 
-    private val _recommendedBuildings = MutableStateFlow<Future<List<Building>>>(Future.Nothing())
+    private val _recommendedBuildings = MutableStateFlow<Future<List<Building>>>(Future.loading())
     val recommendedBuildings = _recommendedBuildings.asStateFlow()
 
     private val _isPlaceLoaded = MutableStateFlow(false)
@@ -87,9 +87,9 @@ class PlaceSelectorViewModel(
                     null,
                     PlaceType.CLASSROOM
                 )
-            _currentPlace.emit(Future.Success(cp))
+            _currentPlace.emit(Future.success(cp))
         }.onFailure {
-            _currentPlace.emit(Future.Failure(it))
+            _currentPlace.emit(Future.failure(it))
         }
     }
 
@@ -108,7 +108,7 @@ class PlaceSelectorViewModel(
             setCurrentPlaceUseCase(place._id, remark)
                 .onSuccess {
                     if (it) {
-                        _currentPlace.emit(Future.Success(place))
+                        _currentPlace.emit(Future.success(place))
                         LocalNotification(context).sendNotification(
                             "위치 변경 성공",
                             "위치를 ${place.name.josa("으로")} 변경했습니다.",
@@ -126,7 +126,7 @@ class PlaceSelectorViewModel(
             setCurrentPlaceUseCase(place._id, remark)
                 .onSuccess {
                     if (it) {
-                        _currentPlace.emit(Future.Success(place))
+                        _currentPlace.emit(Future.success(place))
                         callback(place, remark)
                     }
                 }
@@ -148,7 +148,7 @@ class PlaceSelectorViewModel(
 
     private fun getFavoriteAttendanceLogs() = viewModelScope.launch {
         getFavoriteAttendanceLogsUseCase().onSuccess {
-            _favoriteAttendanceLogs.emit(Future.Success(it))
+            _favoriteAttendanceLogs.emit(Future.success(it))
         }
     }
 
@@ -166,7 +166,7 @@ class PlaceSelectorViewModel(
 
     private fun getRecommendedBuildings() = viewModelScope.launch {
         getRecommendedBuildingsUseCase().onSuccess {
-            _recommendedBuildings.emit(Future.Success(it))
+            _recommendedBuildings.emit(Future.success(it))
         }
     }
 
