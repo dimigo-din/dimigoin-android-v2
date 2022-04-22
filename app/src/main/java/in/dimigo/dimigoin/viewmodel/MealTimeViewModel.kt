@@ -15,10 +15,10 @@ class MealTimeViewModel(
     private val getGradeMealTimeUseCase: GetGradeMealTimeUseCase,
     private val getMyIdentityUseCase: GetMyIdentityUseCase,
 ) : ViewModel() {
-    private val _mealTimes = MutableStateFlow<Future<MealTimes>>(Future.loading())
+    private val _mealTimes = MutableStateFlow<Future<MealTimes>>(Future.Loading())
     val mealTimes = _mealTimes.asStateFlow()
 
-    private val _me = MutableStateFlow<Future<User>>(Future.loading())
+    private val _me = MutableStateFlow<Future<User>>(Future.Loading())
     val me = _me.asStateFlow()
 
     init {
@@ -27,13 +27,13 @@ class MealTimeViewModel(
 
     private fun fetch() = viewModelScope.launch {
         getMyIdentityUseCase().onSuccess {
-            _me.emit(Future.success(it))
+            _me.emit(Future.Success(it))
         }
 
         getGradeMealTimeUseCase().onSuccess {
-            _mealTimes.emit(Future.success(it))
+            _mealTimes.emit(Future.Success(it))
         }.onFailure {
-            _mealTimes.emit(Future.failure(it))
+            _mealTimes.emit(Future.Failure(it))
         }
     }
 }

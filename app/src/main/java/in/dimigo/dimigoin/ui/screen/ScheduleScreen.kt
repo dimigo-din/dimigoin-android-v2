@@ -8,9 +8,9 @@ import `in`.dimigo.dimigoin.domain.entity.schedule.WeeklyTimetable
 import `in`.dimigo.dimigoin.domain.entity.user.User
 import `in`.dimigo.dimigoin.ui.composables.PageSelector
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
+import `in`.dimigo.dimigoin.ui.theme.C2
 import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
-import `in`.dimigo.dimigoin.ui.util.Future
 import `in`.dimigo.dimigoin.viewmodel.ScheduleViewModel
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -52,25 +52,16 @@ import java.util.*
 fun ScheduleScreen(
     viewModel: ScheduleViewModel = getViewModel(),
 ) {
+
     val timetable =
-        when (val t = viewModel.timetable.collectAsState().value) {
-            is Future.Success -> t.data
-            else -> List(5) {
-                DailyTimetable(emptyList(), LocalDate.now())
-            }
+        viewModel.timetable.collectAsState().value.data ?: List(5) {
+            DailyTimetable(
+                emptyList(),
+                LocalDate.now()
+            )
         }
-
-    val annualSchedule =
-        when (val s = viewModel.schedule.collectAsState().value) {
-            is Future.Success -> s.data
-            else -> emptyMap()
-        }
-
-    val user =
-        when (val u = viewModel.me.collectAsState().value) {
-            is Future.Success -> u.data
-            else -> throw IllegalStateException("Failed to load user.")
-        }
+    val annualSchedule = viewModel.schedule.collectAsState().value.data ?: mapOf()
+    val user = viewModel.me.collectAsState().value.data ?: return
 
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     val pagerState = rememberPagerState()
@@ -89,7 +80,7 @@ fun ScheduleScreen(
                 .padding(horizontal = 20.dp)
         ) {
             when (pagerState.currentPage) {
-                0 -> TimetableHeader(user.grade, user.`class`)
+                0 -> TimetableHeader(user)
                 1 -> SchoolScheduleHeader(
                     selectedDate,
                     onDateChange = { selectedDate = it }
@@ -128,7 +119,7 @@ fun getNearSchedules(
             schedule.getOrDefault(yearMonth.plusMonths(1), emptyList())
 
 @Composable
-fun TimetableHeader(grade: Int, `class`: Int) {
+fun TimetableHeader(user: User) {
     val date = LocalDate.now()
     Text(
         modifier = Modifier.padding(start = 15.dp),
@@ -136,7 +127,7 @@ fun TimetableHeader(grade: Int, `class`: Int) {
                 when (date.monthValue) {
                     in 3..7 -> "1학기"
                     else -> "2학기"
-                } + " ${grade}학년 ${`class`}반",
+                } + " ${user.grade}학년 ${user.`class`}반",
         style = DTheme.typography.t5, color = DTheme.colors.c2
     )
     Spacer(Modifier.height(5.dp))
@@ -287,11 +278,9 @@ fun TimetablePreview_LongClassName() {
 @Preview(showBackground = true, backgroundColor = 0xFFFFFf, widthDp = 250)
 @Composable
 fun TimetablePreview_SmallDp() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp)
-    ) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(horizontal = 20.dp)) {
         val dailyTimetables = listOf(
             listOf("고전", "공수", "* 네트워크 유지보수", "네프", "공일", "동아리", "asdf"),
             listOf("고전", "공수", "동아리", "네프", "공일", "동아리", "asdf"),
@@ -300,10 +289,8 @@ fun TimetablePreview_SmallDp() {
             listOf("고전", "공수", "* 네트워크 유지보수", "네프", "공일", "동아리", "qwehfquow"),
         )
         val timetable = dailyTimetables.mapIndexed { i, e ->
-            DailyTimetable(
-                e,
-                LocalDate.of(2022, 4, 11).plusDays(i.toLong())
-            )
+            DailyTimetable(e,
+                LocalDate.of(2022, 4, 11).plusDays(i.toLong()))
         }
         Timetable(timetable)
     }

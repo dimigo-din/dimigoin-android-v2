@@ -6,7 +6,6 @@ import `in`.dimigo.dimigoin.ui.composables.MealTimeItem
 import `in`.dimigo.dimigoin.ui.composables.PageSelector
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
 import `in`.dimigo.dimigoin.ui.theme.DTheme
-import `in`.dimigo.dimigoin.ui.util.Future
 import `in`.dimigo.dimigoin.viewmodel.MealTimeViewModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -27,7 +26,6 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
-import java.lang.IllegalStateException
 import java.time.LocalTime
 
 private const val BREAKFAST = 0
@@ -42,10 +40,8 @@ fun MealTimeScreen(
     onBackPress: () -> Unit,
 ) {
     val mealTimes = viewModel.mealTimes.collectAsState().value
-    val user = when (val u = viewModel.me.collectAsState().value) {
-        is Future.Success -> u.data
-        else -> throw IllegalStateException("Failed to load user.")
-    }
+    val user = viewModel.me.collectAsState().value.data ?: return
+
     val pagerState = rememberPagerState(startPage)
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
@@ -105,18 +101,16 @@ fun MealTimeScreen(
                         .verticalScroll(scrollState),
                     verticalArrangement = Arrangement.spacedBy(11.dp)
                 ) {
-                    if (mealTimes is Future.Success) {
-                        mealTimes.data.sortedBy {
-                            getRankByPage(it, page)
-                        }.forEach {
-                            MealTimeItem(
-                                order = getRankByPage(it, page),
-                                grade = it.grade,
-                                `class` = it.`class`,
-                                time = getTimeByPage(it, page),
-                                highlight = it.`class` == user.`class`
-                            )
-                        }
+                    mealTimes.data?.sortedBy {
+                        getRankByPage(it, page)
+                    }?.forEach {
+                        MealTimeItem(
+                            order = getRankByPage(it, page),
+                            grade = it.grade,
+                            `class` = it.`class`,
+                            time = getTimeByPage(it, page),
+                            highlight = it.`class` == user.`class`
+                        )
                     }
                 }
             }

@@ -31,11 +31,11 @@ class MainViewModel(
 
     private var allPlaces: List<Place> = emptyList()
     private var myIdentity: User? = null
-    private val _currentPlace = MutableStateFlow<Future<Place>>(Future.loading())
+    private val _currentPlace = MutableStateFlow<Future<Place>>(Future.Nothing())
     val currentPlace = _currentPlace.asStateFlow()
-    private val _todayMeal = MutableStateFlow<Future<Meal>>(Future.loading())
+    private val _todayMeal = MutableStateFlow<Future<Meal>>(Future.Loading())
     val todayMeal = _todayMeal.asStateFlow()
-    private val _mealTime = MutableStateFlow<Future<MealTime>>(Future.loading())
+    private val _mealTime = MutableStateFlow<Future<MealTime>>(Future.Loading())
     val mealTime = _mealTime.asStateFlow()
 
     init {
@@ -68,9 +68,9 @@ class MainViewModel(
                     null,
                     PlaceType.CLASSROOM
                 )
-            _currentPlace.emit(Future.success(cp))
+            _currentPlace.emit(Future.Success(cp))
         }.onFailure {
-            _currentPlace.emit(Future.failure(it))
+            _currentPlace.emit(Future.Failure(it))
         }
     }
 
@@ -79,7 +79,7 @@ class MainViewModel(
         viewModelScope.launch {
             setCurrentPlaceUseCase(place._id).onSuccess {
                 if (it) {
-                    _currentPlace.emit(Future.success(place))
+                    _currentPlace.emit(Future.Success(place))
                     callback(place)
                 }
             }
@@ -112,15 +112,15 @@ class MainViewModel(
 
     private fun fetch() = viewModelScope.launch {
         getTodayMealUseCase().onSuccess {
-            _todayMeal.emit(Future.success(it))
+            _todayMeal.emit(Future.Success(it))
         }.onFailure {
-            _todayMeal.emit(Future.failure(it))
+            _todayMeal.emit(Future.Failure(it))
         }
 
         getMyMealTimeUseCase().onSuccess {
-            _mealTime.emit(Future.success(it))
+            _mealTime.emit(Future.Success(it))
         }.onFailure {
-            _mealTime.emit(Future.failure(it))
+            _mealTime.emit(Future.Failure(it))
         }
     }
 

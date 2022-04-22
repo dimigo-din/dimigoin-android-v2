@@ -47,8 +47,8 @@ fun PlaceSearchScreen(
     ) {
         val (search, setSearch) = remember { mutableStateOf("") }
         val places = placeSelectorViewModel.getFilteredPlaceByName(search)
-        val currentPlace = placeSelectorViewModel.currentPlace.collectAsState().value.asOptional()
-        val favorites = placeSelectorViewModel.favoriteAttendanceLog.collectAsState().value.asOptional()
+        val currentPlace = placeSelectorViewModel.currentPlace.collectAsState().value
+        val favorites = placeSelectorViewModel.favoriteAttendanceLog.collectAsState().value
         Column {
             Spacer(Modifier.height(4.dp))
             Row(
@@ -106,9 +106,9 @@ fun PlaceSearchScreen(
                 ) {
                     item { Spacer(Modifier) }
                     items(places) { place ->
-                        val favoriteAttLog = favorites.map { it.find { it.placeId == place._id } }.orElse(null)
+                        val favoriteAttLog = favorites.data?.find { it.placeId == place._id }
                         val isFavorite = favoriteAttLog != null
-                        val isSelected = place._id == currentPlace.map { it._id }.orElse(null)
+                        val isSelected = place._id == currentPlace.data?._id
                         PlaceItem(
                             place = place,
                             isFavorite = isFavorite,
@@ -117,7 +117,7 @@ fun PlaceSearchScreen(
                                     onTryFavoriteAdd(place)
                                 } else {
                                     placeSelectorViewModel.removeFavoriteAttendanceLog(
-                                        favorites.map { it.find { it.placeId == place._id } }.orElse(null)
+                                        favorites.data?.find { it.placeId == place._id }
                                             ?: return@onFavoriteChange,
                                         onFavoriteRemove
                                     )

@@ -15,10 +15,10 @@ class MealViewModel(
     private val getWeeklyMealUseCase: GetWeeklyMealUseCase,
     private val getMyMealTimeUseCase: GetMyMealTimeUseCase,
 ) : ViewModel() {
-    private val _weeklyMeal = MutableStateFlow<Future<List<Meal>>>(Future.loading())
+    private val _weeklyMeal = MutableStateFlow<Future<List<Meal>>>(Future.Loading())
     val weeklyMeal = _weeklyMeal.asStateFlow()
 
-    private val _mealTime = MutableStateFlow<Future<MealTime>>(Future.loading())
+    private val _mealTime = MutableStateFlow<Future<MealTime>>(Future.Loading())
     val mealTime = _mealTime.asStateFlow()
 
     init {
@@ -27,15 +27,15 @@ class MealViewModel(
 
     private fun fetch() = viewModelScope.launch {
         getWeeklyMealUseCase().onSuccess {
-            _weeklyMeal.emit(Future.success(it))
+            _weeklyMeal.emit(Future.Success(it))
         }.onFailure {
-            _weeklyMeal.emit(Future.failure(it))
+            _weeklyMeal.emit(Future.Failure(it))
         }
 
         getMyMealTimeUseCase().onSuccess {
-            _mealTime.emit(Future.success(it))
+            _mealTime.emit(Future.Success(it))
         }.onFailure {
-            _mealTime.emit(Future.failure(it))
+            _mealTime.emit(Future.Failure(it))
         }
     }
 

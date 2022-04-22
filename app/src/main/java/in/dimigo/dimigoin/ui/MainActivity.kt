@@ -238,11 +238,11 @@ fun PlaceBottomBar(currentPlace: Future<Place>) {
                     when (val v = currentPlace) {
                         is Future.Success -> {
                             append("나의 위치는 현재 ")
-                            withStyle(SpanStyle(color = Point)) { append(v.data.name) }
+                            withStyle(SpanStyle(color = Point)) { append(v._data.name) }
                             append("입니다")
                         }
                         is Future.Failure -> append("위치 정보를 불러오지 못했습니다")
-                        is Future.Loading -> append("위치 정보를 가져오는 중입니다")
+                        is Future.Loading, is Future.Nothing<*> -> append("위치 정보를 가져오는 중입니다")
                     }
                 },
                 style = DTheme.typography.t4,

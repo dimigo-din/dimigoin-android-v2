@@ -5,6 +5,7 @@ import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.util.asKorean12HoursString
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.LocalContentColor
@@ -20,14 +21,13 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import java.time.LocalTime
-import java.util.*
 
 @Composable
 fun MealItem(
     modifier: Modifier = Modifier,
     type: MealTimeType,
-    time: Optional<LocalTime>,
-    meal: Optional<String>,
+    time: LocalTime?,
+    meal: String?,
     onMealTimeClick: (MealTimeType) -> Unit,
     highlight: Boolean,
 ) = ConstraintLayout(
@@ -68,7 +68,7 @@ fun MealItem(
             }
         )
         Text(
-            text = time.map { it.asKorean12HoursString() }.orElse("시간 정보 없음") + "  >",
+            text = (time?.asKorean12HoursString() ?: "시간 정보 없음") + "  >",
             style = DTheme.typography.t6,
             color = if (highlight) Color.White else Point,
             modifier = Modifier.constrainAs(timeText) {
@@ -78,7 +78,7 @@ fun MealItem(
             }
         )
         Text(
-            text = meal.orElse("급식 정보가 없습니다."),
+            text = meal ?: "급식 정보가 없습니다.",
             style = DTheme.typography.mealMenu,
             color = if (highlight) Color.White else DTheme.colors.c1,
             modifier = Modifier.constrainAs(mealText) {
@@ -91,11 +91,7 @@ fun MealItem(
     }
 }
 
-enum class MealTimeType(
-    val value: String,
-    val integerValue: Int,
-    val timeRange: ClosedRange<LocalTime>
-) {
+enum class MealTimeType(val value: String, val integerValue: Int, val timeRange: ClosedRange<LocalTime>) {
     BREAKFAST("아침", 0, LocalTime.of(6, 30)..LocalTime.of(8, 20)),
     LUNCH("점심", 1, LocalTime.of(8, 20)..LocalTime.of(13, 50)),
     DINNER("저녁", 2, LocalTime.of(13, 50)..LocalTime.of(19, 50))
@@ -107,8 +103,8 @@ fun MealItemPreview1() {
     MealItem(
         modifier = Modifier.fillMaxWidth(),
         type = MealTimeType.BREAKFAST,
-        time = Optional.of(LocalTime.of(12, 0)),
-        meal = Optional.of("현미밥 | 얼큰김칫국 | 토마토달걀볶음 | 호박버섯볶음 | 깍두기 | 베이컨 | 완제김 | 스트링치즈 | 모닝빵미니버거"),
+        time = LocalTime.of(12, 0),
+        meal = "현미밥 | 얼큰김칫국 | 토마토달걀볶음 | 호박버섯볶음 | 깍두기 | 베이컨 | 완제김 | 스트링치즈 | 모닝빵미니버거",
         highlight = false,
         onMealTimeClick = {}
     )
@@ -120,8 +116,8 @@ fun MealItemPreview2() {
     MealItem(
         modifier = Modifier.fillMaxWidth(),
         type = MealTimeType.BREAKFAST,
-        time = Optional.of(LocalTime.of(7, 20)),
-        meal = Optional.of("현미밥 | 얼큰김칫국 | 토마토달걀볶음 | 호박버섯볶음 | 깍두기 | 베이컨 | 완제김 | 스트링치즈 | 모닝빵미니버거"),
+        time = LocalTime.of(7, 20),
+        meal = "현미밥 | 얼큰김칫국 | 토마토달걀볶음 | 호박버섯볶음 | 깍두기 | 베이컨 | 완제김 | 스트링치즈 | 모닝빵미니버거",
         highlight = true,
         onMealTimeClick = {}
     )
@@ -136,24 +132,24 @@ fun MealItemPreview3() {
         MealItem(
             modifier = Modifier.fillMaxWidth(),
             type = MealTimeType.BREAKFAST,
-            time = Optional.of(LocalTime.of(7, 10)),
-            meal = Optional.of("현미밥 | 얼큰김칫국 | 토마토달걀볶음 | \n호박버섯볶음 | 깍두기 | 베이컨 | 완제김 | \n스트링치즈 | 모닝빵미니버거"),
+            time = LocalTime.of(7, 10),
+            meal = "현미밥 | 얼큰김칫국 | 토마토달걀볶음 | \n호박버섯볶음 | 깍두기 | 베이컨 | 완제김 | \n스트링치즈 | 모닝빵미니버거",
             highlight = false,
             onMealTimeClick = {}
         )
         MealItem(
             modifier = Modifier.fillMaxWidth(),
             type = MealTimeType.LUNCH,
-            time = Optional.of(LocalTime.of(12, 50)),
-            meal = Optional.of("현미밥 | 얼큰김칫국 | 토마토달걀볶음 | \n호박버섯볶음 | 깍두기 | 베이컨 | 완제김 | \n스트링치즈 | 모닝빵미니버거"),
+            time = LocalTime.of(12, 50),
+            meal = "현미밥 | 얼큰김칫국 | 토마토달걀볶음 | \n호박버섯볶음 | 깍두기 | 베이컨 | 완제김 | \n스트링치즈 | 모닝빵미니버거",
             highlight = true,
             onMealTimeClick = {}
         )
         MealItem(
             modifier = Modifier.fillMaxWidth(),
             type = MealTimeType.DINNER,
-            time = Optional.of(LocalTime.of(18, 40)),
-            meal = Optional.of("현미밥 | 얼큰김칫국 | 토마토달걀볶음 | \n호박버섯볶음 | 깍두기 | 베이컨 | 완제김 | \n스트링치즈 | 모닝빵미니버거"),
+            time = LocalTime.of(18, 40),
+            meal = "현미밥 | 얼큰김칫국 | 토마토달걀볶음 | \n호박버섯볶음 | 깍두기 | 베이컨 | 완제김 | \n스트링치즈 | 모닝빵미니버거",
             highlight = false,
             onMealTimeClick = {}
         )

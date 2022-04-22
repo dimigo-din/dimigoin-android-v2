@@ -18,13 +18,13 @@ class ScheduleViewModel(
     private val getTimetableUseCase: GetTimetableUseCase,
     private val getMyIdentityUseCase: GetMyIdentityUseCase,
 ) : ViewModel() {
-    private val _schedule = MutableStateFlow<Future<AnnualSchedule>>(Future.loading())
+    private val _schedule = MutableStateFlow<Future<AnnualSchedule>>(Future.Loading())
     val schedule = _schedule.asStateFlow()
 
-    private val _timetable = MutableStateFlow<Future<WeeklyTimetable>>(Future.loading())
+    private val _timetable = MutableStateFlow<Future<WeeklyTimetable>>(Future.Loading())
     val timetable = _timetable.asStateFlow()
 
-    private val _me = MutableStateFlow<Future<User>>(Future.loading())
+    private val _me = MutableStateFlow<Future<User>>(Future.Loading())
     val me = _me.asStateFlow()
 
     init {
@@ -33,19 +33,19 @@ class ScheduleViewModel(
 
     private fun fetch() = viewModelScope.launch {
         getMyIdentityUseCase().onSuccess {
-            _me.emit(Future.success(it))
+            _me.emit(Future.Success(it))
         }
 
         getTimetableUseCase().onSuccess {
-            _timetable.emit(Future.success(it))
+            _timetable.emit(Future.Success(it))
         }.onFailure {
-            _timetable.emit(Future.failure(it))
+            _timetable.emit(Future.Failure(it))
         }
 
         getScheduleUseCase().onSuccess {
-            _schedule.emit(Future.success(it))
+            _schedule.emit(Future.Success(it))
         }.onFailure {
-            _schedule.emit(Future.failure(it))
+            _schedule.emit(Future.Failure(it))
         }
     }
 }

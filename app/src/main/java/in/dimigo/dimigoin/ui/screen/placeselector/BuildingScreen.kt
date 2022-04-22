@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.getViewModel
-import java.util.*
 
 @Composable
 fun BuildingScreen(
@@ -32,11 +31,10 @@ fun BuildingScreen(
     onFavoriteRemove: (Place) -> Unit,
 ) {
     val context = LocalContext.current
-    val currentPlace = placeSelectorViewModel.currentPlace.collectAsState().value.asOptional()
+    val currentPlace = placeSelectorViewModel.currentPlace.collectAsState().value
     val buildings = placeSelectorViewModel.recommendedBuildings.collectAsState().value
     val favorites = placeSelectorViewModel.favoriteAttendanceLog.collectAsState().value
-    val building = buildings.asOptional()
-        .map { it.find { it.name == title } }
+    val building = buildings.data?.find { it.name == title }
 
     Column(
         modifier = modifier
@@ -57,7 +55,7 @@ fun BuildingScreen(
                 when (buildings) {
                     is Future.Success -> BuildingList(
                         modifier = Modifier.fillMaxWidth(),
-                        buildings = buildings.data,
+                        buildings = buildings._data,
                         onBuildingClick = onBuildingClick,
                     )
                     else -> Spacer(Modifier.height(160.dp))
@@ -69,75 +67,67 @@ fun BuildingScreen(
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(25.dp)) {
                         if (title == "즐겨찾기") {
-                            if (favorites is Future.Success) {
-                                favorites.data.let {
-                                    if (it.isEmpty()) Text(
-                                        text = "등록된 즐겨찾기가 없습니다",
-                                        style = DTheme.typography.explainText,
-                                        color = DTheme.colors.c2,
-                                    )
+                            favorites.data?.let {
+                                if (it.isEmpty()) Text(
+                                    text = "등록된 즐겨찾기가 없습니다",
+                                    style = DTheme.typography.explainText,
+                                    color = DTheme.colors.c2,
+                                )
 
-                                    it.forEach { attLog ->
-                                        val isSelected = currentPlace.map { it._id }.orElse(null) == attLog.placeId
-                                        val place =
-                                            placeSelectorViewModel.placeIdToPlace(attLog.placeId)
-                                        PlaceItem(
-                                            place = place.copy(
-                                                description = attLog.remark
-                                                    ?: "사유가 등록되지 않음"
-                                            ),
-                                            isFavorite = true,
-                                            onFavoriteChange = {
-                                                placeSelectorViewModel.removeFavoriteAttendanceLog(
-                                                    attLog,
-                                                    onFavoriteRemove
-                                                )
-                                            },
-                                            isSelected = isSelected,
-                                            onSelect = {
-                                                if (!isSelected) placeSelectorViewModel.setCurrentPlace(
-                                                    place,
-                                                    attLog.remark,
-                                                    onPlaceChange,
-                                                    false,
-                                                    context
-                                                )
-                                            }
-                                        )
-                                    }
+                                it.forEach { attLog ->
+                                    val isSelected = currentPlace.data?._id == attLog.placeId
+                                    val place =
+                                        placeSelectorViewModel.placeIdToPlace(attLog.placeId)
+                                    PlaceItem(
+                                        place = place.copy(description = attLog.remark
+                                            ?: "사유가 등록되지 않음"),
+                                        isFavorite = true,
+                                        onFavoriteChange = {
+                                            placeSelectorViewModel.removeFavoriteAttendanceLog(
+                                                attLog,
+                                                onFavoriteRemove)
+                                        },
+                                        isSelected = isSelected,
+                                        onSelect = {
+                                            if (!isSelected) placeSelectorViewModel.setCurrentPlace(
+                                                place,
+                                                attLog.remark,
+                                                onPlaceChange,
+                                                false,
+                                                context
+                                            )
+                                        }
+                                    )
                                 }
                             }
                         } else {
-                            building.map { it?.children }.orElse(emptyList())
-                                ?.forEach { displayable ->
-                                    PlaceSelectorDisplayableItem(
-                                        placeSelectorViewModel = placeSelectorViewModel,
-                                        displayable = displayable,
-                                        favorites = favorites.asOptional(),
-                                        currentPlace = currentPlace,
-                                        onCategoryClick = onCategoryClick,
-                                        onTryPlaceChange = onTryPlaceChange,
-                                        onTryFavoriteAdd = onTryFavoriteAdd,
-                                        onFavoriteRemove = onFavoriteRemove
-                                    )
-                                }
+                            building?.children?.forEach { displayable ->
+                                PlaceSelectorDisplayableItem(
+                                    placeSelectorViewModel = placeSelectorViewModel,
+                                    displayable = displayable,
+                                    favorites = favorites,
+                                    currentPlace = currentPlace,
+                                    onCategoryClick = onCategoryClick,
+                                    onTryPlaceChange = onTryPlaceChange,
+                                    onTryFavoriteAdd = onTryFavoriteAdd,
+                                    onFavoriteRemove = onFavoriteRemove
+                                )
+                            }
                         }
                     }
                 }
 
                 Spacer(Modifier.height(11.dp))
 
-                val extraChildren =
-                    building.map { it?.extraChildren ?: emptyList() }.orElse(emptyList())
-                if (extraChildren.isNotEmpty()) {
+                if (building?.extraChildren?.isNotEmpty() == true) {
                     ContentBox(
                         modifier = Modifier.padding(horizontal = 20.dp),
                     ) {
-                        extraChildren.forEach { displayable ->
+                        building.extraChildren?.forEach { displayable ->
                             PlaceSelectorDisplayableItem(
                                 placeSelectorViewModel = placeSelectorViewModel,
                                 displayable = displayable,
-                                favorites = favorites.asOptional(),
+                                favorites = favorites,
                                 currentPlace = currentPlace,
                                 onCategoryClick = onCategoryClick,
                                 onTryPlaceChange = onTryPlaceChange,
@@ -157,8 +147,8 @@ fun BuildingScreen(
 fun PlaceSelectorDisplayableItem(
     placeSelectorViewModel: PlaceSelectorViewModel,
     displayable: PlaceSelectorDisplayable,
-    favorites: Optional<List<AttendanceLog>>,
-    currentPlace: Optional<Place>,
+    favorites: Future<List<AttendanceLog>>,
+    currentPlace: Future<Place>,
     onCategoryClick: (PlaceCategory) -> Unit,
     onTryPlaceChange: (Place) -> Unit,
     onTryFavoriteAdd: (Place) -> Unit,
@@ -166,9 +156,9 @@ fun PlaceSelectorDisplayableItem(
 ) {
     when (displayable) {
         is Place -> {
-            val favoriteAttLog = favorites.map { it.find { it.placeId == displayable._id } }
+            val favoriteAttLog = favorites.data?.find { it.placeId == displayable._id }
             val isFavorite = favoriteAttLog != null
-            val isSelected = displayable._id == currentPlace.map { it._id }.orElse(null)
+            val isSelected = displayable._id == currentPlace.data?._id
             PlaceItem(
                 place = displayable,
                 isFavorite = isFavorite,
@@ -177,7 +167,7 @@ fun PlaceSelectorDisplayableItem(
                         onTryFavoriteAdd(displayable)
                     } else {
                         placeSelectorViewModel.removeFavoriteAttendanceLog(
-                            favorites.map { it.find { it.placeId == displayable._id } }.orElse(null)
+                            favorites.data?.find { it.placeId == displayable._id }
                                 ?: return@onFavoriteChange,
                             onFavoriteRemove
                         )

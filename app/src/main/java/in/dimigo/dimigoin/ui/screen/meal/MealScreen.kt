@@ -6,6 +6,7 @@ import `in`.dimigo.dimigoin.ui.composables.MealItem
 import `in`.dimigo.dimigoin.ui.composables.MealTimeType
 import `in`.dimigo.dimigoin.ui.composables.PageSelector
 import `in`.dimigo.dimigoin.ui.theme.DTheme
+import `in`.dimigo.dimigoin.ui.util.Future
 import `in`.dimigo.dimigoin.ui.util.asKoreanWeekString
 import `in`.dimigo.dimigoin.viewmodel.MealViewModel
 import androidx.compose.foundation.layout.*
@@ -28,7 +29,6 @@ import org.koin.androidx.compose.getViewModel
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
-import java.util.*
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -70,14 +70,7 @@ fun MealScreen(
             state = pagerState,
             itemSpacing = 20.dp,
         ) { page ->
-            Content(
-                page,
-                dayOfWeek,
-                timeNow,
-                mealTime.value.asOptional(),
-                weeklyMeal.value.asOptional(),
-                onMealTimeClick
-            )
+            Content(page, dayOfWeek, timeNow, mealTime.value, weeklyMeal.value, onMealTimeClick)
         }
 
         Spacer(modifier = Modifier.navigationBarsHeight(60.dp))
@@ -111,12 +104,11 @@ private fun Content(
     page: Int,
     dayOfWeek: DayOfWeek,
     timeNow: LocalTime,
-    mealTime: Optional<MealTime>,
-    weeklyMeal: Optional<List<Meal>>,
+    mealTime: Future<MealTime>,
+    weeklyMeal: Future<List<Meal>>,
     onMealTimeClick: (MealTimeType) -> Unit,
 ) {
     val scrollState = rememberScrollState()
-    val meal = weeklyMeal.map { it.get(page) }
 
     Column(
         Modifier
@@ -129,8 +121,8 @@ private fun Content(
                 .padding(horizontal = 20.dp)
                 .fillMaxWidth(),
             type = MealTimeType.BREAKFAST,
-            time = mealTime.map { it.breakfastTime },
-            meal = meal.map { it.breakfast },
+            time = mealTime.data?.breakfastTime,
+            meal = weeklyMeal.data?.get(page)?.breakfast,
             onMealTimeClick = onMealTimeClick,
             highlight = timeNow.isAfter(LocalTime.of(6, 30)) &&
                     timeNow.isBefore(LocalTime.of(8, 20)) &&
@@ -141,8 +133,8 @@ private fun Content(
                 .padding(horizontal = 20.dp)
                 .fillMaxWidth(),
             type = MealTimeType.LUNCH,
-            time = mealTime.map { it.lunchTime },
-            meal = meal.map { it.lunch },
+            time = mealTime.data?.lunchTime,
+            meal = weeklyMeal.data?.get(page)?.lunch,
             onMealTimeClick = onMealTimeClick,
             highlight = timeNow.isAfter(LocalTime.of(8, 20)) &&
                     timeNow.isBefore(LocalTime.of(13, 50)) &&
@@ -153,8 +145,8 @@ private fun Content(
                 .padding(horizontal = 20.dp)
                 .fillMaxWidth(),
             type = MealTimeType.DINNER,
-            time = mealTime.map { it.dinnerTime },
-            meal = meal.map { it.dinner },
+            time = mealTime.data?.dinnerTime,
+            meal = weeklyMeal.data?.get(page)?.dinner,
             onMealTimeClick = onMealTimeClick,
             highlight = timeNow.isAfter(LocalTime.of(13, 50)) &&
                     timeNow.isBefore(LocalTime.of(19, 50)) &&
