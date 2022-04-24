@@ -12,8 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.getViewModel
@@ -33,7 +32,9 @@ fun PlacesScreen(
     Surface(
         Modifier.padding(top = 26.dp)
     ) {
-        val places = placeSelectorViewModel.getFilteredPlaceByCategory(category)
+        val places by remember {
+            mutableStateOf(placeSelectorViewModel.getFilteredPlaceByCategory(category))
+        }
         val currentPlace = placeSelectorViewModel.currentPlace.collectAsState().value.asOptional()
         val favorites =
             placeSelectorViewModel.favoriteAttendanceLog.collectAsState().value.asOptional()

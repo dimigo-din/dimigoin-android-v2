@@ -417,12 +417,12 @@ fun NavGraphBuilder.placeSelectorNavGraph(
         val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
         val selectedBuilding = placeSelectorViewModel.selectedBuilding.value
 
-        placeSelectorViewModel.getCurrentPlace()
+        remember { mutableStateOf(placeSelectorViewModel.getCurrentPlace()) }
 
         BuildingScreen(
             modifier = Modifier.systemBarsPadding(),
             placeSelectorViewModel = placeSelectorViewModel, // TODO do not pass this
-            buildingDisplayable = selectedBuilding, // TODO fix this
+            buildingDisplayable = selectedBuilding,
             onBackNavigation = { navController.popBackStack() },
             onSearch = { navController.navigate(PlaceSelectorScreen.Search.route) },
             onBuildingClick = { placeSelectorViewModel.selectedBuilding.value = it },
