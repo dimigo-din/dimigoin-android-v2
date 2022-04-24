@@ -13,18 +13,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.getViewModel
 import java.util.*
-
-class PlaceSelectorCallbacks(
-    val onCategoryClick: (PlaceCategory) -> Unit,
-    val onTryPlaceChange: (Place) -> Unit,
-    val onPlaceChange: (Place, String?) -> Unit,
-    val onTryFavoriteAdd: (Place) -> Unit,
-    val onFavoriteRemove: (Place) -> Unit,
-)
 
 @Composable
 fun BuildingScreen(
@@ -34,7 +25,8 @@ fun BuildingScreen(
     onBackNavigation: () -> Unit,
     onSearch: () -> Unit,
     onBuildingClick: (Building) -> Unit,
-    callbacks: PlaceSelectorCallbacks,
+    placeSelectorCallbacks: PlaceSelectorCallbacks,
+    reasonCallbacks: PlaceSelectorViewModel.Callbacks,
 ) {
     val currentPlace = placeSelectorViewModel.currentPlace.collectAsState().value
     val buildings = placeSelectorViewModel.recommendedBuildings.collectAsState().value
@@ -78,7 +70,8 @@ fun BuildingScreen(
                     placeSelectorViewModel,
                     favorites,
                     currentPlace.asOptional(),
-                    callbacks,
+                    placeSelectorCallbacks,
+                    reasonCallbacks,
                 )
             }
 
@@ -94,7 +87,7 @@ fun BuildingScreen(
                             displayable = displayable,
                             favorites = favorites,
                             currentPlace = currentPlace.asOptional(),
-                            callbacks = callbacks,
+                            callbacks = placeSelectorCallbacks,
                         )
                     }
                 }
@@ -110,7 +103,8 @@ fun ChildrenContent(
     placeSelectorViewModel: PlaceSelectorViewModel,
     favorites: List<AttendanceLog>,
     currentPlace: Optional<Place>,
-    callbacks: PlaceSelectorCallbacks,
+    placeSelectorCallbacks: PlaceSelectorCallbacks,
+    reasonCallbacks: PlaceSelectorViewModel.Callbacks,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(25.dp)) {
         when (buildingDisplayable) {
@@ -118,7 +112,8 @@ fun ChildrenContent(
                 placeSelectorViewModel,
                 favorites,
                 currentPlace,
-                callbacks
+                placeSelectorCallbacks,
+                reasonCallbacks,
             )
             is Building.Default -> {
                 buildingDisplayable.children.forEach { placeDisplayable ->
@@ -127,7 +122,7 @@ fun ChildrenContent(
                         displayable = placeDisplayable,
                         favorites = favorites,
                         currentPlace = currentPlace,
-                        callbacks = callbacks,
+                        callbacks = placeSelectorCallbacks,
                     )
                 }
             }
@@ -140,10 +135,9 @@ fun FavoritePlaceColumn(
     placeSelectorViewModel: PlaceSelectorViewModel,
     favorites: List<AttendanceLog>,
     currentPlace: Optional<Place>,
-    callbacks: PlaceSelectorCallbacks,
+    placeSelectorCallbacks: PlaceSelectorCallbacks,
+    reasonCallbacks: PlaceSelectorViewModel.Callbacks,
 ) {
-    val context = LocalContext.current
-
     if (favorites.isEmpty()) Text(
         text = "등록된 즐겨찾기가 없습니다",
         style = DTheme.typography.explainText,
@@ -163,7 +157,7 @@ fun FavoritePlaceColumn(
             onFavoriteChange = {
                 placeSelectorViewModel.removeFavoriteAttendanceLog(
                     attLog,
-                    callbacks.onFavoriteRemove
+                    placeSelectorCallbacks.onFavoriteRemove
                 )
             },
             isSelected = isSelected,
@@ -171,9 +165,8 @@ fun FavoritePlaceColumn(
                 if (!isSelected) placeSelectorViewModel.setCurrentPlace(
                     place,
                     attLog.remark,
-                    callbacks.onPlaceChange,
+                    reasonCallbacks,
                     false,
-                    context,
                 )
             }
         )

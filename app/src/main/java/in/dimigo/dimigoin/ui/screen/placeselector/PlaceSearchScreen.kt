@@ -33,10 +33,8 @@ fun PlaceSearchScreen(
     modifier: Modifier = Modifier,
     placeSelectorViewModel: PlaceSelectorViewModel = getViewModel(),
     onBackNavigation: () -> Unit,
-    onTryPlaceChange: (Place) -> Unit,
-    onTryFavoriteAdd: (Place) -> Unit,
-    onFavoriteRemove: (Place) -> Unit,
     color: Color,
+    callbacks: PlaceSelectorCallbacks,
 ) = Box(
     modifier = modifier
 ) {
@@ -114,17 +112,17 @@ fun PlaceSearchScreen(
                             isFavorite = isFavorite,
                             onFavoriteChange = onFavoriteChange@{ favorite ->
                                 if (favorite) {
-                                    onTryFavoriteAdd(place)
+                                    callbacks.onTryFavoriteAdd(place)
                                 } else {
                                     placeSelectorViewModel.removeFavoriteAttendanceLog(
                                         favorites.map { it.find { it.placeId == place._id } }.orElse(null)
                                             ?: return@onFavoriteChange,
-                                        onFavoriteRemove
+                                        callbacks.onFavoriteRemove
                                     )
                                 }
                             },
                             isSelected = isSelected,
-                            onSelect = { onTryPlaceChange(place) },
+                            onSelect = { callbacks.onTryPlaceChange(place) },
                         )
                     }
                     item { Spacer(Modifier) }

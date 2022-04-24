@@ -7,7 +7,6 @@ import `in`.dimigo.dimigoin.domain.util.josa
 import `in`.dimigo.dimigoin.ui.composables.PlaceSelectorTopBar
 import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
-import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,7 +23,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -36,10 +34,9 @@ import androidx.compose.ui.unit.dp
 fun ReasonScreen(
     modifier: Modifier = Modifier,
     place: Place,
-    onConfirm: (place: Place, remark: String, context: Activity?) -> Unit,
+    onConfirm: (place: Place, remark: String) -> Unit,
     isFavoriteRegister: Boolean,
     onBackNavigation: (() -> Unit)?,
-    activity: Activity? = LocalContext.current as Activity?
 ) {
     Box(modifier.padding(top = 26.dp)) {
         val (reason, setReason) = remember { mutableStateOf("") }
@@ -76,7 +73,7 @@ fun ReasonScreen(
             val clickableModifier = if (reason.isBlank()) {
                 Modifier
             } else {
-                Modifier.clickable { onConfirm(place, reason, activity) }
+                Modifier.clickable { onConfirm(place, reason) }
             }
 
             Box(
@@ -222,7 +219,7 @@ private fun CustomTextField(
 fun ReasonScreenPreview1() {
     ReasonScreen(
         place = Place("", "집", "", "", PlaceCategory.None, PlaceType.ETC),
-        onConfirm = { _, _, _ -> },
+        onConfirm = { _, _ -> },
         isFavoriteRegister = false,
         onBackNavigation = { }
     )
@@ -233,7 +230,7 @@ fun ReasonScreenPreview1() {
 fun ReasonScreenPreview2() {
     ReasonScreen(
         place = Place("", "집", "", "", PlaceCategory.None, PlaceType.ETC),
-        onConfirm = { _, _, _ -> },
+        onConfirm = { _, _ -> },
         isFavoriteRegister = true,
         onBackNavigation = { }
     )

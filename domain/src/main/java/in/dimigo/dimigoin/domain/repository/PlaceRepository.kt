@@ -6,7 +6,7 @@ import `in`.dimigo.dimigoin.domain.entity.place.Place
 
 interface PlaceRepository {
     suspend fun getPlaces(): Result<List<Place>>
-    suspend fun setCurrentPlace(placeId: String, remark: String?): Result<Boolean>
+    suspend fun setCurrentPlace(placeId: String, remark: String?): Result<Unit>
     suspend fun getCurrentPlace(): Result<Place?>
     suspend fun addFavoriteAttendanceLog(attendanceLog: AttendanceLog): Result<Boolean>
     suspend fun removeFavoriteAttendanceLogById(id: String): Result<Boolean>

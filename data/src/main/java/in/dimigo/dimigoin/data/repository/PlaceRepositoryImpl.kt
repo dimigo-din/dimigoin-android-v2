@@ -44,13 +44,13 @@ class PlaceRepositoryImpl(
         } ?: Result.failure(NoSuchElementException("Places are not stored in local"))
     }
 
-    override suspend fun setCurrentPlace(placeId: String, remark: String?): Result<Boolean> =
+    override suspend fun setCurrentPlace(placeId: String, remark: String?): Result<Unit> =
         resultFromCall(
             service.addAttendanceLog(PostAttendanceRequestModel(placeId, remark))
         ) { response ->
             places?.find { it._id == response.attendanceLog.placeId }.also {
                 currentPlace = it
-            } != null
+            } ?: throw IllegalStateException("Failed to change place")
         }
 
     override suspend fun getCurrentPlace(): Result<Place?> = resultFromCall(

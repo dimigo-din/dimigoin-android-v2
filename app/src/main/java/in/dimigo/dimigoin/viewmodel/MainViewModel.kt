@@ -78,10 +78,8 @@ class MainViewModel(
         val place = placeType.toDefaultPlace() ?: return
         viewModelScope.launch {
             setCurrentPlaceUseCase(place._id).onSuccess {
-                if (it) {
-                    _currentPlace.emit(Future.success(place))
-                    callback(place)
-                }
+                _currentPlace.emit(Future.success(place))
+                callback(place)
             }
         }
     }

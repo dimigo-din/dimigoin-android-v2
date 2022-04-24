@@ -1,6 +1,7 @@
 package `in`.dimigo.dimigoin.ui
 
 import `in`.dimigo.dimigoin.R
+import `in`.dimigo.dimigoin.data.datasource.LocalNotification
 import `in`.dimigo.dimigoin.data.util.gson
 import `in`.dimigo.dimigoin.domain.entity.place.FavoritePlaces
 import `in`.dimigo.dimigoin.domain.entity.place.Place
@@ -20,9 +21,10 @@ import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.util.Future
 import `in`.dimigo.dimigoin.viewmodel.PlaceSelectorViewModel
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -407,12 +409,48 @@ fun NavGraphBuilder.placeSelectorNavGraph(
     onFavoriteRemove: (Place) -> Unit,
     lazyPlaceSelectorViewModel: Lazy<PlaceSelectorViewModel>,
 ) {
-    val navigateToRemark = { place: Place ->
-        navController.navigate(PlaceSelectorScreen.SetRemark.place(place))
+    val placeSelectorCallbacks = object : PlaceSelectorCallbacks {
+        override val onCategoryClick: (PlaceCategory) -> Unit
+            get() = { navController.navigate(PlaceSelectorScreen.Category.category(it)) }
+        override val onTryPlaceChange: (Place) -> Unit
+            get() = {
+                navController.navigate(PlaceSelectorScreen.SetRemark.place(it))
+            }
+        override val onPlaceChange: (Place, String?) -> Unit
+            get() = onPlaceChange
+        override val onTryFavoriteAdd: (Place) -> Unit
+            get() = {
+                navController.navigate(PlaceSelectorScreen.AddFavorite.place(it))
+            }
+        override val onFavoriteRemove: (Place) -> Unit
+            get() = onFavoriteRemove
     }
-    val navigateToRemarkFavorite = { place: Place ->
-        navController.navigate(PlaceSelectorScreen.AddFavorite.place(place))
+
+    val reasonCallbacksProvider = { context: Context ->
+        object : PlaceSelectorViewModel.Callbacks {
+            override fun onSuccessWithApp(place: Place, remark: String?) {
+                onPlaceChange(place, remark)
+            }
+
+            override fun onFailureWithApp(throwable: Throwable) {
+            }
+
+            override fun onSuccessWithIntent(place: Place, remark: String?) {
+                LocalNotification(context).sendNotification(
+                    "위치 변경 성공",
+                    "위치를 ${place.name.josa("으로")} 변경했습니다.",
+                )
+            }
+
+            override fun onFailureWithIntent(throwable: Throwable) {
+                LocalNotification(context).sendNotification(
+                    "위치 변경 실패",
+                    "위치 변경에 실패했습니다. 인터넷 연결을 확인해주세요.",
+                )
+            }
+        }
     }
+
     composable(PlaceSelectorScreen.Building.route) {
         val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
         val selectedBuilding = placeSelectorViewModel.selectedBuilding.value
@@ -426,15 +464,8 @@ fun NavGraphBuilder.placeSelectorNavGraph(
             onBackNavigation = { navController.popBackStack() },
             onSearch = { navController.navigate(PlaceSelectorScreen.Search.route) },
             onBuildingClick = { placeSelectorViewModel.selectedBuilding.value = it },
-            callbacks = PlaceSelectorCallbacks(
-                onTryPlaceChange = navigateToRemark,
-                onPlaceChange = onPlaceChange,
-                onCategoryClick = {
-                    navController.navigate(PlaceSelectorScreen.Category.category(it))
-                },
-                onTryFavoriteAdd = navigateToRemarkFavorite,
-                onFavoriteRemove = onFavoriteRemove,
-            )
+            placeSelectorCallbacks = placeSelectorCallbacks,
+            reasonCallbacks = reasonCallbacksProvider(LocalContext.current)
         )
     }
     composable(
@@ -453,9 +484,7 @@ fun NavGraphBuilder.placeSelectorNavGraph(
             placeSelectorViewModel = placeSelectorViewModel,
             category = category,
             onBackNavigation = { navController.popBackStack() },
-            onTryPlaceChange = navigateToRemark,
-            onTryFavoriteAdd = navigateToRemarkFavorite,
-            onFavoriteRemove = onFavoriteRemove,
+            callbacks = placeSelectorCallbacks
         )
     }
     composable(PlaceSelectorScreen.Search.route) {
@@ -468,10 +497,8 @@ fun NavGraphBuilder.placeSelectorNavGraph(
                 .systemBarsPadding(),
             placeSelectorViewModel = placeSelectorViewModel,
             onBackNavigation = { navController.popBackStack() },
-            onTryPlaceChange = navigateToRemark,
-            onTryFavoriteAdd = navigateToRemarkFavorite,
-            onFavoriteRemove = onFavoriteRemove,
-            color = Color.Black
+            color = Color.Black,
+            callbacks = placeSelectorCallbacks,
         )
     }
     composable(
@@ -488,11 +515,10 @@ fun NavGraphBuilder.placeSelectorNavGraph(
         val isFromIntent = act.isNotEmpty()
         val placeId = it.arguments?.getString("placeId") ?: ""
         val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
-        Log.d("isFromIntent", "$act////$isFromIntent")
-        Log.d(TAG, "placeSelectorNavGraph1: $placeId")
-        Log.d(TAG, "placeSelectorNavGraph2: ${placeSelectorViewModel.placeIdToPlace(placeId)}")
 
         val isPlaceLoaded = placeSelectorViewModel.isPlaceLoaded.collectAsState().value
+
+
         if (isPlaceLoaded) {
             ReasonScreen(
                 modifier = Modifier
@@ -501,16 +527,19 @@ fun NavGraphBuilder.placeSelectorNavGraph(
                     .systemBarsPadding()
                     .navigationBarsWithImePadding(),
                 place = placeSelectorViewModel.placeIdToPlace(placeId),
-                onConfirm = { place, remark, activity ->
+                onConfirm = { place, remark ->
                     placeSelectorViewModel.setCurrentPlace(
                         place,
                         remark,
-                        onPlaceChange,
+                        reasonCallbacksProvider(context),
                         isFromIntent,
-                        context
                     )
                     navController.popBackStack()
-                    if (!isFromIntent) navController.popBackStack() else activity?.finish()
+                    if (!isFromIntent) {
+                        navController.popBackStack()
+                    } else {
+                        (context as? Activity)?.finish()
+                    }
                     Unit
                 },
                 isFavoriteRegister = false,
@@ -536,7 +565,7 @@ fun NavGraphBuilder.placeSelectorNavGraph(
                 .systemBarsPadding()
                 .navigationBarsWithImePadding(),
             place = placeSelectorViewModel.placeIdToPlace(placeId),
-            onConfirm = { place, remark, _ ->
+            onConfirm = { place, remark ->
                 placeSelectorViewModel.addFavoriteAttendanceLog(place, remark, onFavoriteAdd)
                 navController.popBackStack()
                 Unit

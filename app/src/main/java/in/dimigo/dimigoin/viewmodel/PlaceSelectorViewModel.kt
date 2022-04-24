@@ -1,13 +1,10 @@
 package `in`.dimigo.dimigoin.viewmodel
 
-import `in`.dimigo.dimigoin.data.datasource.LocalNotification
 import `in`.dimigo.dimigoin.domain.entity.place.*
 import `in`.dimigo.dimigoin.domain.entity.user.User
 import `in`.dimigo.dimigoin.domain.usecase.place.*
 import `in`.dimigo.dimigoin.domain.usecase.user.GetMyIdentityUseCase
-import `in`.dimigo.dimigoin.domain.util.josa
 import `in`.dimigo.dimigoin.ui.util.Future
-import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -102,37 +99,51 @@ class PlaceSelectorViewModel(
     fun setCurrentPlace(
         place: Place,
         remark: String?,
-        callback: (Place, String?) -> Unit,
+        callbacks: Callbacks,
         isFromIntent: Boolean,
-        context: Context,
     ) = viewModelScope.launch {
-        if (isFromIntent) {
-            setCurrentPlaceUseCase(place._id, remark)
-                .onSuccess {
-                    if (it) {
-                        _currentPlace.emit(Future.success(place))
-                        LocalNotification(context).sendNotification(
-                            "위치 변경 성공",
-                            "위치를 ${place.name.josa("으로")} 변경했습니다.",
-                        )
-                        callback(place, remark)
-                    }
+        setCurrentPlaceUseCase(place._id, remark)
+            .onSuccess {
+                _currentPlace.emit(Future.success(place))
+                if (isFromIntent) {
+                    callbacks.onSuccessWithIntent(place, remark)
+                } else {
+                    callbacks.onSuccessWithApp(place, remark)
                 }
-                .onFailure {
-                    LocalNotification(context).sendNotification(
-                        "위치 변경 실패",
-                        "위치 변경에 실패했습니다. 인터넷 연결을 확인해주세요.",
-                    )
+            }
+            .onFailure {
+                if (isFromIntent) {
+                    callbacks.onFailureWithIntent(it)
+                } else {
+                    callbacks.onFailureWithApp(it)
                 }
-        } else {
-            setCurrentPlaceUseCase(place._id, remark)
-                .onSuccess {
-                    if (it) {
-                        _currentPlace.emit(Future.success(place))
-                        callback(place, remark)
-                    }
-                }
-        }
+            }
+//        if (isFromIntent) {
+//            setCurrentPlaceUseCase(place._id, remark)
+//                .onSuccess {
+//                    if (it) {
+//                        LocalNotification(context).sendNotification(
+//                            "위치 변경 성공",
+//                            "위치를 ${place.name.josa("으로")} 변경했습니다.",
+//                        )
+//                        callback(place, remark)
+//                    }
+//                }
+//                .onFailure {
+//                    LocalNotification(context).sendNotification(
+//                        "위치 변경 실패",
+//                        "위치 변경에 실패했습니다. 인터넷 연결을 확인해주세요.",
+//                    )
+//                }
+//        } else {
+//            setCurrentPlaceUseCase(place._id, remark)
+//                .onSuccess {
+//                    if (it) {
+//                        _currentPlace.emit(Future.success(place))
+//                        callback(place, remark)
+//                    }
+//                }
+//        }
     }
 
     fun addFavoriteAttendanceLog(
@@ -297,5 +308,12 @@ class PlaceSelectorViewModel(
             "ㅍ",
             "ㅎ"
         )
+    }
+
+    interface Callbacks {
+        fun onSuccessWithApp(place: Place, remark: String?)
+        fun onFailureWithApp(throwable: Throwable)
+        fun onSuccessWithIntent(place: Place, remark: String?)
+        fun onFailureWithIntent(throwable: Throwable)
     }
 }
