@@ -16,8 +16,14 @@ fun SplashScreen(
     val autoLogin = splashViewModel.autoLogin.collectAsState().value
 
     LaunchedEffect(autoLogin) {
-        when (autoLogin) {
-            is Future.Success -> onAutoLoginSuccess()
+        when (val v = autoLogin) {
+            is Future.Success -> {
+                if (v.data) {
+                    onAutoLoginSuccess()
+                } else {
+                    onAutoLoginFail()
+                }
+            }
             is Future.Failure -> onAutoLoginFail()
             else -> {}
         }
