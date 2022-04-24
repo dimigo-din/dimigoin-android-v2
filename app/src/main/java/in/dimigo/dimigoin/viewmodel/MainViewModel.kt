@@ -2,9 +2,8 @@ package `in`.dimigo.dimigoin.viewmodel
 
 import `in`.dimigo.dimigoin.domain.entity.meal.Meal
 import `in`.dimigo.dimigoin.domain.entity.meal.MealTime
-import `in`.dimigo.dimigoin.domain.entity.place.BuildingType
-import `in`.dimigo.dimigoin.domain.entity.place.Floor
 import `in`.dimigo.dimigoin.domain.entity.place.Place
+import `in`.dimigo.dimigoin.domain.entity.place.PlaceCategory
 import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
 import `in`.dimigo.dimigoin.domain.entity.user.User
 import `in`.dimigo.dimigoin.domain.usecase.meal.GetMyMealTimeUseCase
@@ -66,8 +65,7 @@ class MainViewModel(
                     "${myIdentity?.grade}학년 ${myIdentity?.`class`}반",
                     "",
                     "",
-                    BuildingType.ETC,
-                    Floor.none(),
+                    PlaceCategory.None,
                     PlaceType.CLASSROOM
                 )
             _currentPlace.emit(Future.success(cp))
@@ -94,13 +92,15 @@ class MainViewModel(
         return when (this) {
             PlaceType.CLASSROOM -> homeroom
             PlaceType.RESTROOM -> allPlaces.find {
-                it.building == homeroom.building && it.floor == homeroom.floor && it.name.contains("화장실")
+                it.placeCategory == homeroom.placeCategory && it.name.contains("화장실")
             }
             PlaceType.CORRIDOR -> allPlaces.find {
-                it.building == homeroom.building && it.floor == homeroom.floor && it.name.contains("복도")
+                it.placeCategory == homeroom.placeCategory && it.name.contains("복도")
             }
             PlaceType.TEACHER -> allPlaces.find {
-                it.building == homeroom.building && it.name.contains("교무실")
+                val pc = it.placeCategory as? PlaceCategory.FloorCategory
+                val hr = homeroom.placeCategory as? PlaceCategory.FloorCategory
+                pc?.building == hr?.building && it.name.contains("교무실")
             }
             else -> null
         }

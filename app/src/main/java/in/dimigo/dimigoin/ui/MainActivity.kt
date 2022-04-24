@@ -1,8 +1,10 @@
 package `in`.dimigo.dimigoin.ui
 
 import `in`.dimigo.dimigoin.R
+import `in`.dimigo.dimigoin.data.util.gson
 import `in`.dimigo.dimigoin.domain.entity.place.FavoritePlaces
 import `in`.dimigo.dimigoin.domain.entity.place.Place
+import `in`.dimigo.dimigoin.domain.entity.place.PlaceCategory
 import `in`.dimigo.dimigoin.domain.util.josa
 import `in`.dimigo.dimigoin.ui.composables.BottomNavigation
 import `in`.dimigo.dimigoin.ui.composables.BottomNavigationItem
@@ -328,7 +330,7 @@ fun NavGraphBuilder.mainNavGraph(
             },
             onPlaceSelectorNavigate = {
                 navController.navigate(PlaceSelectorScreen.Building.route)
-                placeSelectorViewModel.selectedBuilding.value = "즐겨찾기"
+                placeSelectorViewModel.selectedBuilding.value = FavoritePlaces
             },
             onMealPageSelectorNavigate = {
                 navController.navigate(NavScreen.Meal.route) {
@@ -413,22 +415,22 @@ fun NavGraphBuilder.placeSelectorNavGraph(
     }
     composable(PlaceSelectorScreen.Building.route) {
         val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
+        val selectedBuilding = placeSelectorViewModel.selectedBuilding.value
 
         placeSelectorViewModel.getCurrentPlace()
 
         BuildingScreen(
             modifier = Modifier.systemBarsPadding(),
-            placeSelectorViewModel = placeSelectorViewModel,
-            buildingDisplayable = FavoritePlaces, // TODO fix this
+            placeSelectorViewModel = placeSelectorViewModel, // TODO do not pass this
+            buildingDisplayable = selectedBuilding, // TODO fix this
             onBackNavigation = { navController.popBackStack() },
             onSearch = { navController.navigate(PlaceSelectorScreen.Search.route) },
-            onBuildingClick = { placeSelectorViewModel.selectedBuilding.value = it.type.value },
+            onBuildingClick = { placeSelectorViewModel.selectedBuilding.value = it },
             callbacks = PlaceSelectorCallbacks(
                 onTryPlaceChange = navigateToRemark,
                 onPlaceChange = onPlaceChange,
                 onCategoryClick = {
-                    val category = placeSelectorViewModel.selectedBuilding.value // TODO fix this
-                    navController.navigate(PlaceSelectorScreen.Category.category(category))
+                    navController.navigate(PlaceSelectorScreen.Category.category(it))
                 },
                 onTryFavoriteAdd = navigateToRemarkFavorite,
                 onFavoriteRemove = onFavoriteRemove,
@@ -439,7 +441,8 @@ fun NavGraphBuilder.placeSelectorNavGraph(
         PlaceSelectorScreen.Category.route,
         PlaceSelectorScreen.Category.navArguments,
     ) {
-        val category = it.arguments?.getString("category") ?: ""
+        val categoryJson = it.arguments?.getString("category") ?: ""
+        val category = gson.fromJson(categoryJson, PlaceCategory::class.java)
         val placeSelectorViewModel: PlaceSelectorViewModel by lazyPlaceSelectorViewModel
 
         PlacesScreen(
@@ -448,7 +451,7 @@ fun NavGraphBuilder.placeSelectorNavGraph(
                 .fillMaxSize()
                 .systemBarsPadding(),
             placeSelectorViewModel = placeSelectorViewModel,
-            title = category,
+            category = category,
             onBackNavigation = { navController.popBackStack() },
             onTryPlaceChange = navigateToRemark,
             onTryFavoriteAdd = navigateToRemarkFavorite,

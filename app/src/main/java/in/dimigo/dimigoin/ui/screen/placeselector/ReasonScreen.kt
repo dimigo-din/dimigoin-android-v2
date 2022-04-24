@@ -1,8 +1,7 @@
 package `in`.dimigo.dimigoin.ui.screen.placeselector
 
-import `in`.dimigo.dimigoin.domain.entity.place.BuildingType
-import `in`.dimigo.dimigoin.domain.entity.place.Floor
 import `in`.dimigo.dimigoin.domain.entity.place.Place
+import `in`.dimigo.dimigoin.domain.entity.place.PlaceCategory
 import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
 import `in`.dimigo.dimigoin.domain.util.josa
 import `in`.dimigo.dimigoin.ui.composables.PlaceSelectorTopBar
@@ -87,11 +86,14 @@ fun ReasonScreen(
                     .padding(horizontal = 20.dp)
                     .clip(RoundedCornerShape(15.dp))
                     .background(background)
-                    .then(clickableModifier)
-                ,
+                    .then(clickableModifier),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "등록", style = DTheme.typography.t3, color = MaterialTheme.colors.onPrimary)
+                Text(
+                    text = "등록",
+                    style = DTheme.typography.t3,
+                    color = MaterialTheme.colors.onPrimary
+                )
             }
             Spacer(Modifier.weight(.5f))
         }
@@ -219,7 +221,7 @@ private fun CustomTextField(
 @Composable
 fun ReasonScreenPreview1() {
     ReasonScreen(
-        place = Place("", "집", "", "", BuildingType.ETC, Floor.none(), PlaceType.ETC),
+        place = Place("", "집", "", "", PlaceCategory.None, PlaceType.ETC),
         onConfirm = { _, _, _ -> },
         isFavoriteRegister = false,
         onBackNavigation = { }
@@ -230,8 +232,8 @@ fun ReasonScreenPreview1() {
 @Composable
 fun ReasonScreenPreview2() {
     ReasonScreen(
-        place = Place("", "집", "", "", BuildingType.ETC, Floor.none(), PlaceType.ETC),
-        onConfirm = { _, _, _-> },
+        place = Place("", "집", "", "", PlaceCategory.None, PlaceType.ETC),
+        onConfirm = { _, _, _ -> },
         isFavoriteRegister = true,
         onBackNavigation = { }
     )

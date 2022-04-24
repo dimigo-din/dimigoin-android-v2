@@ -9,6 +9,7 @@ import `in`.dimigo.dimigoin.domain.util.josa
 import `in`.dimigo.dimigoin.ui.util.Future
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,6 +30,7 @@ class PlaceSelectorViewModel(
 
     private var allPlace: List<Place> = emptyList()
         set(value) {
+            Log.d(TAG, "allPlace set: $value")
             field = value
             placesMap = value.associateBy(Place::_id)
             viewModelScope.launch {
@@ -52,7 +54,7 @@ class PlaceSelectorViewModel(
     private val _isPlaceLoaded = MutableStateFlow(false)
     val isPlaceLoaded = _isPlaceLoaded.asStateFlow()
 
-    val selectedBuilding = mutableStateOf("즐겨찾기")
+    val selectedBuilding: MutableState<BuildingDisplayable> = mutableStateOf(FavoritePlaces)
 
     init {
         getMyIdentity()
@@ -84,8 +86,7 @@ class PlaceSelectorViewModel(
                     "${myIdentity?.grade}학년 ${myIdentity?.`class`}반",
                     "",
                     "",
-                    BuildingType.ETC,
-                    Floor.none(),
+                    PlaceCategory.None,
                     PlaceType.CLASSROOM
                 )
             _currentPlace.emit(Future.success(cp))
@@ -171,8 +172,9 @@ class PlaceSelectorViewModel(
         }
     }
 
-    fun getFilteredPlaceByCategory(category: String): List<Place> {
-        return allPlace.filter { "${it.building} ${it.floor}" == category }
+    fun getFilteredPlaceByCategory(category: PlaceCategory): List<Place> {
+        Log.d(TAG, "getFilteredPlaceByCategory: $category")
+        return allPlace.filter { it.placeCategory == category }
     }
 
     fun getFilteredPlaceByName(search: String): List<Place> =
@@ -220,7 +222,7 @@ class PlaceSelectorViewModel(
 
     companion object {
         private const val TAG = "PlaceSelectorViewModel"
-        private val fallbackPlace = Place("", "", "", "", BuildingType.ETC, Floor.none(), PlaceType.ETC)
+        private val fallbackPlace = Place("", "", "", "", PlaceCategory.None, PlaceType.ETC)
         private val FIRST = listOf(
             "ㄱ",
             "ㄲ",

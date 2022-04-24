@@ -4,7 +4,7 @@ import `in`.dimigo.dimigoin.domain.entity.place.Floor
 import com.google.gson.*
 import java.lang.reflect.Type
 
-class FloorAdapter : JsonSerializer<Floor>, JsonDeserializer<Floor> {
+object FloorAdapter : JsonSerializer<Floor>, JsonDeserializer<Floor> {
     override fun serialize(
         src: Floor,
         typeOfSrc: Type,

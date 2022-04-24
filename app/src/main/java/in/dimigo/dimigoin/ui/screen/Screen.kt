@@ -1,7 +1,9 @@
 package `in`.dimigo.dimigoin.ui.screen
 
 import `in`.dimigo.dimigoin.R
+import `in`.dimigo.dimigoin.data.util.gson
 import `in`.dimigo.dimigoin.domain.entity.place.Place
+import `in`.dimigo.dimigoin.domain.entity.place.PlaceCategory
 import `in`.dimigo.dimigoin.ui.composables.MealTimeType
 import androidx.annotation.DrawableRes
 import androidx.navigation.NamedNavArgument
@@ -72,8 +74,10 @@ sealed class NoNavScreen(
             val regex = """meal_time/\d+""".toRegex()
             return route.matches(regex)
         }
+
         fun type(type: MealTimeType) = route.replace("{type}", type.integerValue.toString())
     }
+
     object Developing : NoNavScreen("developing", emptyList())
     object Notification : NoNavScreen("notification", emptyList())
 }
@@ -96,8 +100,13 @@ sealed class PlaceSelectorScreen(
             val regex = """ps_category/.+""".toRegex()
             return route.matches(regex)
         }
-        fun category(category: String) = route.replace("{category}", category)
+
+        fun category(category: PlaceCategory): String {
+            val categoryJson = gson.toJson(category)
+            return route.replace("{category}", categoryJson)
+        }
     }
+
     object Search : PlaceSelectorScreen("ps_search", emptyList(), false)
     object SetRemark : PlaceSelectorScreen(
         "ps_set_remark/{placeId}",
@@ -110,9 +119,11 @@ sealed class PlaceSelectorScreen(
             val regex = """ps_set_remark/.+""".toRegex()
             return route.matches(regex)
         }
+
         fun place(place: Place) = route.replace("{placeId}", place._id)
         fun place(placeId: String) = route.replace("{placeId}", placeId)
     }
+
     object AddFavorite : PlaceSelectorScreen(
         "ps_add_favorite/{placeId}",
         listOf(
@@ -124,6 +135,7 @@ sealed class PlaceSelectorScreen(
             val regex = """ps_add_favorite/.+""".toRegex()
             return route.matches(regex)
         }
+
         fun place(place: Place) = route.replace("{placeId}", place._id)
         fun place(placeId: String) = route.replace("{placeId}", placeId)
     }

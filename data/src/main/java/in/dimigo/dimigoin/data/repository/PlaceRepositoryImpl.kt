@@ -131,8 +131,7 @@ class PlaceRepositoryImpl(
                             "학봉관 호실",
                             "남호실",
                             "생활관",
-                            BuildingType.HAKBONG,
-                            Floor.none(),
+                            PlaceCategory.None,
                             PlaceType.DORMITORY,
                         ),
                         Place(
@@ -140,8 +139,7 @@ class PlaceRepositoryImpl(
                             "미술실",
                             "미술실",
                             "1층",
-                            BuildingType.HAKBONG,
-                            Floor.of(1),
+                            PlaceCategory.None,
                             PlaceType.ETC,
                         ),
                         Place(
@@ -149,8 +147,7 @@ class PlaceRepositoryImpl(
                             "ATM기",
                             "ATM",
                             "1층",
-                            BuildingType.HAKBONG,
-                            Floor.of(1),
+                            PlaceCategory.None,
                             PlaceType.ETC,
                         )
                     ),
@@ -160,8 +157,7 @@ class PlaceRepositoryImpl(
                             "학봉관 세탁",
                             "세탁",
                             "세탁하러 오셨나요?",
-                            BuildingType.HAKBONG,
-                            Floor.none(),
+                            PlaceCategory.None,
                             PlaceType.LAUNDRY,
                         )
                     )
@@ -174,8 +170,7 @@ class PlaceRepositoryImpl(
                             "우정학사 호실",
                             "여호실",
                             "생활관",
-                            BuildingType.UJEONG,
-                            Floor.none(),
+                            PlaceCategory.None,
                             PlaceType.DORMITORY,
                         )
                     ),
@@ -185,8 +180,7 @@ class PlaceRepositoryImpl(
                             "우정학사 세탁",
                             "세탁",
                             "세탁하러 오셨나요?",
-                            BuildingType.UJEONG,
-                            Floor.none(),
+                            PlaceCategory.None,
                             PlaceType.DORMITORY,
                         )
                     )
@@ -199,8 +193,7 @@ class PlaceRepositoryImpl(
                             "스마트팜",
                             "농장",
                             "지상",
-                            BuildingType.ETC,
-                            Floor.ground(),
+                            PlaceCategory.None,
                             PlaceType.FARM,
                         ),
                         Place(
@@ -208,8 +201,7 @@ class PlaceRepositoryImpl(
                             "운동장",
                             "운동장",
                             "지상",
-                            BuildingType.ETC,
-                            Floor.ground(),
+                            PlaceCategory.None,
                             PlaceType.PLAYGROUND,
                         ),
                         Place(
@@ -217,8 +209,7 @@ class PlaceRepositoryImpl(
                             "체육관",
                             "체육관",
                             "지하",
-                            BuildingType.ETC,
-                            Floor.underground(),
+                            PlaceCategory.None,
                             PlaceType.GYM,
                         ),
                     ),

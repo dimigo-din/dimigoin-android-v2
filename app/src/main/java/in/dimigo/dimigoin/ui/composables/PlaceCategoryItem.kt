@@ -46,6 +46,7 @@ fun PlaceCategoryItem(
             text = when (category) {
                 is PlaceCategory.FloorCategory -> category.floor.toString()
                 is PlaceCategory.NamedCategory -> category.name
+                PlaceCategory.None -> ""
             },
             style = DTheme.typography.t4, color = DTheme.colors.c1,
         )

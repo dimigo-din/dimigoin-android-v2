@@ -4,6 +4,7 @@ import `in`.dimigo.dimigoin.data.model.place.PlaceResponseModel
 import `in`.dimigo.dimigoin.data.util.gson
 import `in`.dimigo.dimigoin.domain.entity.place.Floor
 import `in`.dimigo.dimigoin.domain.entity.place.Place
+import `in`.dimigo.dimigoin.domain.entity.place.PlaceCategory
 
 fun String.toPlace(): Place {
     return gson.fromJson(this, Place::class.java)
@@ -32,13 +33,20 @@ fun PlaceResponseModel.toEntity(): Place {
         else -> Floor.none()
     }
 
+    val placeCategory = if (this.name in etcCategoryPlaces) {
+        PlaceCategory.ETC
+    } else {
+        PlaceCategory.from(building, floor)
+    }
+
     return Place(
         _id = _id,
         name = name,
         alias = nick ?: name,
-        building = building,
         description = description,
-        floor = floor,
+        placeCategory = placeCategory,
         type = type,
     )
 }
+
+private val etcCategoryPlaces = listOf("결석", "외출", "위치 불명")

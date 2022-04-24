@@ -6,6 +6,8 @@ sealed class PlaceCategory(
     open val description: String,
 ) : PlaceDisplayable {
 
+    object None : PlaceCategory("")
+
     data class FloorCategory(
         val building: BuildingType,
         val floor: Floor,
@@ -41,6 +43,33 @@ sealed class PlaceCategory(
 
         fun named(name: String, description: String) =
             NamedCategory(name, description)
+
+        fun from(building: BuildingType, floor: Floor): PlaceCategory =
+            when (building) {
+                BuildingType.MAIN -> when (floor) {
+                    is Floor.BaseValue -> MAIN.B1
+                    Floor.Ground -> None
+                    Floor.None -> None
+                    Floor.Underground -> None
+                    is Floor.Value -> when (floor.value) {
+                        1 -> MAIN.F1
+                        2 -> MAIN.F2
+                        3 -> MAIN.F3
+                        else -> None
+                    }
+                }
+                BuildingType.NEWBUILDING -> when (floor) {
+                    is Floor.Value -> when (floor.value) {
+                        1 -> NEW.F1
+                        2 -> NEW.F2
+                        3 -> NEW.F3
+                        4 -> NEW.F4
+                        else -> None
+                    }
+                    else -> None
+                }
+                else -> None
+            }
     }
 }
 
@@ -49,8 +78,7 @@ data class Place(
     val name: String,
     val alias: String,
     val description: String,
-    val building: BuildingType,
-    val floor: Floor,
+    val placeCategory: PlaceCategory,
     val type: PlaceType,
 ) : PlaceDisplayable
 
@@ -73,15 +101,18 @@ enum class PlaceType(val value: String) {
 
 sealed class Floor {
     object None : Floor()
-    object Ground: Floor() {
+    object Ground : Floor() {
         override fun toString(): String = "지상"
     }
-    object Underground: Floor() {
+
+    object Underground : Floor() {
         override fun toString(): String = "지하"
     }
+
     class Value(val value: Int) : Floor() {
         override fun toString(): String = "${value}층"
     }
+
     class BaseValue(val value: Int) : Floor() {
         override fun toString(): String = "B${value}층"
     }

@@ -1,6 +1,7 @@
 package `in`.dimigo.dimigoin.ui.screen.placeselector
 
 import `in`.dimigo.dimigoin.domain.entity.place.Place
+import `in`.dimigo.dimigoin.domain.entity.place.PlaceCategory
 import `in`.dimigo.dimigoin.ui.composables.PlaceItem
 import `in`.dimigo.dimigoin.ui.composables.PlaceSelectorTopBar
 import `in`.dimigo.dimigoin.ui.theme.DTheme
@@ -21,7 +22,7 @@ import org.koin.androidx.compose.getViewModel
 fun PlacesScreen(
     modifier: Modifier = Modifier,
     placeSelectorViewModel: PlaceSelectorViewModel = getViewModel(),
-    title: String,
+    category: PlaceCategory,
     onBackNavigation: () -> Unit,
     onTryPlaceChange: (Place) -> Unit,
     onTryFavoriteAdd: (Place) -> Unit,
@@ -32,14 +33,19 @@ fun PlacesScreen(
     Surface(
         Modifier.padding(top = 26.dp)
     ) {
-        val places = placeSelectorViewModel.getFilteredPlaceByCategory(title)
+        val places = placeSelectorViewModel.getFilteredPlaceByCategory(category)
         val currentPlace = placeSelectorViewModel.currentPlace.collectAsState().value.asOptional()
-        val favorites = placeSelectorViewModel.favoriteAttendanceLog.collectAsState().value.asOptional()
+        val favorites =
+            placeSelectorViewModel.favoriteAttendanceLog.collectAsState().value.asOptional()
 
         Column {
             PlaceSelectorTopBar(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                title = if (title == "기타 장소 기타 장소 및 사유") "기타 장소 및 사유" else title,
+                title = when (category) {
+                    is PlaceCategory.FloorCategory -> category.building.value + " " + category.floor.toString()
+                    is PlaceCategory.NamedCategory -> category.name
+                    PlaceCategory.None -> ""
+                },
                 onBackNavigation = onBackNavigation,
                 showSearchIcon = false,
                 onSearch = { },
@@ -52,7 +58,8 @@ fun PlacesScreen(
             ) {
                 item { Spacer(Modifier) }
                 items(places.sortedBy { it.name }) { place ->
-                    val favoriteAttLog = favorites.map { it.find { it.placeId == place._id } }.orElse(null)
+                    val favoriteAttLog =
+                        favorites.map { it.find { it.placeId == place._id } }.orElse(null)
                     val isFavorite = favoriteAttLog != null
                     val isSelected = place._id == currentPlace.map { it._id }.orElse(null)
                     PlaceItem(
@@ -64,7 +71,8 @@ fun PlacesScreen(
                                 onTryFavoriteAdd(place)
                             } else {
                                 placeSelectorViewModel.removeFavoriteAttendanceLog(
-                                    favorites.map { it.find { it.placeId == place._id } }.orElse(null)
+                                    favorites.map { it.find { it.placeId == place._id } }
+                                        .orElse(null)
                                         ?: return@onFavoriteChange,
                                     onFavoriteRemove
                                 )
