@@ -15,7 +15,6 @@ class AuthenticationInterceptor(
                 val accessToken = localSharedPreferenceManager.accessToken
                 if (accessToken != null) {
                     addHeader("Authorization", "Bearer $accessToken")
-                    Log.d(TAG, "intercept: $accessToken")
                 }
             }
             .build().let { chain.proceed(it) }
