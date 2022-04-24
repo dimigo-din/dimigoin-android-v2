@@ -1,6 +1,7 @@
 package `in`.dimigo.dimigoin.ui
 
 import `in`.dimigo.dimigoin.R
+import `in`.dimigo.dimigoin.domain.entity.place.FavoritePlaces
 import `in`.dimigo.dimigoin.domain.entity.place.Place
 import `in`.dimigo.dimigoin.domain.util.josa
 import `in`.dimigo.dimigoin.ui.composables.BottomNavigation
@@ -11,10 +12,7 @@ import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
 import `in`.dimigo.dimigoin.ui.screen.*
 import `in`.dimigo.dimigoin.ui.screen.meal.MealScreen
 import `in`.dimigo.dimigoin.ui.screen.meal.MealTimeScreen
-import `in`.dimigo.dimigoin.ui.screen.placeselector.BuildingScreen
-import `in`.dimigo.dimigoin.ui.screen.placeselector.PlaceSearchScreen
-import `in`.dimigo.dimigoin.ui.screen.placeselector.PlacesScreen
-import `in`.dimigo.dimigoin.ui.screen.placeselector.ReasonScreen
+import `in`.dimigo.dimigoin.ui.screen.placeselector.*
 import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
@@ -421,18 +419,20 @@ fun NavGraphBuilder.placeSelectorNavGraph(
         BuildingScreen(
             modifier = Modifier.systemBarsPadding(),
             placeSelectorViewModel = placeSelectorViewModel,
-            title = placeSelectorViewModel.selectedBuilding.value,
+            buildingDisplayable = FavoritePlaces, // TODO fix this
             onBackNavigation = { navController.popBackStack() },
             onSearch = { navController.navigate(PlaceSelectorScreen.Search.route) },
-            onBuildingClick = { placeSelectorViewModel.selectedBuilding.value = it.name },
-            onTryPlaceChange = navigateToRemark,
-            onPlaceChange = onPlaceChange,
-            onCategoryClick = {
-                val category = "${placeSelectorViewModel.selectedBuilding.value} ${it.name}"
-                navController.navigate(PlaceSelectorScreen.Category.category(category))
-            },
-            onTryFavoriteAdd = navigateToRemarkFavorite,
-            onFavoriteRemove = onFavoriteRemove,
+            onBuildingClick = { placeSelectorViewModel.selectedBuilding.value = it.type.value },
+            callbacks = PlaceSelectorCallbacks(
+                onTryPlaceChange = navigateToRemark,
+                onPlaceChange = onPlaceChange,
+                onCategoryClick = {
+                    val category = placeSelectorViewModel.selectedBuilding.value // TODO fix this
+                    navController.navigate(PlaceSelectorScreen.Category.category(category))
+                },
+                onTryFavoriteAdd = navigateToRemarkFavorite,
+                onFavoriteRemove = onFavoriteRemove,
+            )
         )
     }
     composable(

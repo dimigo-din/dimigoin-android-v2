@@ -43,7 +43,11 @@ fun PlaceCategoryItem(
             text = category.description, style = DTheme.typography.t5, color = DTheme.colors.c2,
         )
         Text(
-            text = category.name, style = DTheme.typography.t4, color = DTheme.colors.c1,
+            text = when (category) {
+                is PlaceCategory.FloorCategory -> category.floor.toString()
+                is PlaceCategory.NamedCategory -> category.name
+            },
+            style = DTheme.typography.t4, color = DTheme.colors.c1,
         )
     }
 
@@ -58,7 +62,7 @@ fun PlaceCategoryItem(
 @Composable
 fun PlaceCategoryPreview() {
     PlaceCategoryItem(
-        category = PlaceCategory("B1층", "급식실"),
+        category = PlaceCategory.MAIN.B1,
         icon = R.drawable.ic_main,
         onClick = { },
     )

@@ -1,5 +1,6 @@
 package `in`.dimigo.dimigoin.data.model.place
 
+import `in`.dimigo.dimigoin.domain.entity.place.BuildingType
 import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
 
 data class GetPlacesResponseModel(
@@ -11,6 +12,6 @@ data class PlaceResponseModel(
     val type: PlaceType,
     val name: String,
     val nick: String?,
-    val building: String,
+    val building: BuildingType,
     val floor: Int,
 )

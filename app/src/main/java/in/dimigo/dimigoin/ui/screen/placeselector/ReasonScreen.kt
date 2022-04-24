@@ -1,5 +1,7 @@
 package `in`.dimigo.dimigoin.ui.screen.placeselector
 
+import `in`.dimigo.dimigoin.domain.entity.place.BuildingType
+import `in`.dimigo.dimigoin.domain.entity.place.Floor
 import `in`.dimigo.dimigoin.domain.entity.place.Place
 import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
 import `in`.dimigo.dimigoin.domain.util.josa
@@ -217,7 +219,7 @@ private fun CustomTextField(
 @Composable
 fun ReasonScreenPreview1() {
     ReasonScreen(
-        place = Place("", "집", "", "", "", "", PlaceType.ETC),
+        place = Place("", "집", "", "", BuildingType.ETC, Floor.none(), PlaceType.ETC),
         onConfirm = { _, _, _ -> },
         isFavoriteRegister = false,
         onBackNavigation = { }
@@ -228,7 +230,7 @@ fun ReasonScreenPreview1() {
 @Composable
 fun ReasonScreenPreview2() {
     ReasonScreen(
-        place = Place("", "집", "", "", "", "", PlaceType.ETC),
+        place = Place("", "집", "", "", BuildingType.ETC, Floor.none(), PlaceType.ETC),
         onConfirm = { _, _, _-> },
         isFavoriteRegister = true,
         onBackNavigation = { }

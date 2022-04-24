@@ -106,33 +106,33 @@ class PlaceRepositoryImpl(
         return Result.success(
             listOf(
                 Building(
-                    "학교", "본관",
+                    BuildingType.MAIN,
                     listOf(
-                        PlaceCategory("B1층", "급식실"),
-                        PlaceCategory("1층", "교무실, 교실"),
-                        PlaceCategory("2층", "교실, 특별실"),
-                        PlaceCategory("3층", "동아리실, 방과후실"),
+                        PlaceCategory.MAIN.B1,
+                        PlaceCategory.MAIN.F1,
+                        PlaceCategory.MAIN.F2,
+                        PlaceCategory.MAIN.F3,
                     )
                 ),
                 Building(
-                    "학교", "신관",
+                    BuildingType.NEWBUILDING,
                     listOf(
-                        PlaceCategory("1층", "교무실, 특별실"),
-                        PlaceCategory("2층", "교실, 특별실"),
-                        PlaceCategory("3층", "열람실, 특별실"),
-                        PlaceCategory("4층", "대강당"),
+                        PlaceCategory.NEW.F1,
+                        PlaceCategory.NEW.F2,
+                        PlaceCategory.NEW.F3,
+                        PlaceCategory.NEW.F4,
                     )
                 ),
                 Building(
-                    "생활관", "학봉관",
+                    BuildingType.HAKBONG,
                     listOf(
                         Place(
                             "620fcff7a0469d4750585a34",
                             "학봉관 호실",
                             "남호실",
                             "생활관",
-                            "학봉관",
-                            null,
+                            BuildingType.HAKBONG,
+                            Floor.none(),
                             PlaceType.DORMITORY,
                         ),
                         Place(
@@ -140,8 +140,8 @@ class PlaceRepositoryImpl(
                             "미술실",
                             "미술실",
                             "1층",
-                            "학봉관",
-                            "1층",
+                            BuildingType.HAKBONG,
+                            Floor.of(1),
                             PlaceType.ETC,
                         ),
                         Place(
@@ -149,8 +149,8 @@ class PlaceRepositoryImpl(
                             "ATM기",
                             "ATM",
                             "1층",
-                            "학봉관",
-                            "1층",
+                            BuildingType.HAKBONG,
+                            Floor.of(1),
                             PlaceType.ETC,
                         )
                     ),
@@ -160,22 +160,22 @@ class PlaceRepositoryImpl(
                             "학봉관 세탁",
                             "세탁",
                             "세탁하러 오셨나요?",
-                            "학봉관",
-                            null,
+                            BuildingType.HAKBONG,
+                            Floor.none(),
                             PlaceType.LAUNDRY,
                         )
                     )
                 ),
                 Building(
-                    "생활관", "우정학사",
+                    BuildingType.UJEONG,
                     listOf(
                         Place(
                             "620fd105a0469d4750585a37",
                             "우정학사 호실",
                             "여호실",
                             "생활관",
-                            "우정학사",
-                            null,
+                            BuildingType.UJEONG,
+                            Floor.none(),
                             PlaceType.DORMITORY,
                         )
                     ),
@@ -185,22 +185,22 @@ class PlaceRepositoryImpl(
                             "우정학사 세탁",
                             "세탁",
                             "세탁하러 오셨나요?",
-                            "우정학사",
-                            null,
+                            BuildingType.UJEONG,
+                            Floor.none(),
                             PlaceType.DORMITORY,
                         )
                     )
                 ),
                 Building(
-                    "기타", "기타 장소",
+                    BuildingType.ETC,
                     listOf(
                         Place(
                             "620fcb32c1ce4101d43d5fa4",
                             "스마트팜",
                             "농장",
                             "지상",
-                            "기타 장소",
-                            "지상",
+                            BuildingType.ETC,
+                            Floor.ground(),
                             PlaceType.FARM,
                         ),
                         Place(
@@ -208,8 +208,8 @@ class PlaceRepositoryImpl(
                             "운동장",
                             "운동장",
                             "지상",
-                            "기타 장소",
-                            "지상",
+                            BuildingType.ETC,
+                            Floor.ground(),
                             PlaceType.PLAYGROUND,
                         ),
                         Place(
@@ -217,12 +217,12 @@ class PlaceRepositoryImpl(
                             "체육관",
                             "체육관",
                             "지하",
-                            "기타 장소",
-                            "지하",
+                            BuildingType.ETC,
+                            Floor.underground(),
                             PlaceType.GYM,
                         ),
                     ),
-                    listOf(PlaceCategory("기타 장소 및 사유", "저는 다른 곳에 있어요"))
+                    listOf(PlaceCategory.ETC)
                 ),
             )
         )

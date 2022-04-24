@@ -2,6 +2,7 @@ package `in`.dimigo.dimigoin.ui.composables
 
 import `in`.dimigo.dimigoin.R
 import `in`.dimigo.dimigoin.domain.entity.place.Building
+import `in`.dimigo.dimigoin.domain.entity.place.BuildingType
 import `in`.dimigo.dimigoin.ui.theme.DTheme
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -23,7 +24,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 fun BuildingItem(
     modifier: Modifier = Modifier,
     building: Building,
-    @DrawableRes image: Int? = getBuildingImage(building),
+    @DrawableRes image: Int? = getBuildingImage(building.type),
     onClick: () -> Unit,
 ) = Surface(
     modifier
@@ -35,14 +36,14 @@ fun BuildingItem(
         val (typeText, nameText, imageRef) = createRefs()
 
         Text(
-            text = building.type, style = DTheme.typography.t5, color = DTheme.colors.c2,
+            text = building.type.category.value, style = DTheme.typography.t5, color = DTheme.colors.c2,
             modifier = Modifier.constrainAs(typeText) {
                 top.linkTo(parent.top, 25.dp)
                 start.linkTo(parent.start, 25.dp)
             }
         )
         Text(
-            text = building.name, style = DTheme.typography.t4, color = DTheme.colors.c1,
+            text = building.type.value, style = DTheme.typography.t4, color = DTheme.colors.c1,
             modifier = Modifier.constrainAs(nameText) {
                 top.linkTo(typeText.bottom, 5.dp)
                 start.linkTo(typeText.start)
@@ -65,18 +66,17 @@ fun BuildingItem(
 @Composable
 fun BuildingItemPreview() {
     BuildingItem(
-        building = Building(type = "학교", name = "본관",  listOf()),
+        building = Building(type = BuildingType.MAIN, listOf()),
         onClick = { }
     )
 }
 
-fun getBuildingImage(building: Building): Int? {
-    return when (building.name) {
-        "본관" -> R.drawable.bongwan
-        "신관" -> R.drawable.singwan
-        "학봉관" -> R.drawable.hakbonggwan
-        "우정학사" -> R.drawable.woojeonghaksa
-        "기타 장소" -> R.drawable.cheyuggwan
-        else -> null
+fun getBuildingImage(building: BuildingType): Int {
+    return when (building) {
+        BuildingType.MAIN -> R.drawable.bongwan
+        BuildingType.NEWBUILDING -> R.drawable.singwan
+        BuildingType.HAKBONG -> R.drawable.hakbonggwan
+        BuildingType.UJEONG -> R.drawable.woojeonghaksa
+        BuildingType.ETC -> R.drawable.cheyuggwan
     }
 }

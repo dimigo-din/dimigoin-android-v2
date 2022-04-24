@@ -4,6 +4,7 @@ import java.lang.IllegalStateException
 import java.util.*
 
 sealed class Future<T : Any> {
+    class Nothing<T : Any> : Future<T>()
     class Loading<T : Any> : Future<T>()
     class Success<T : Any>(val data: T) : Future<T>()
     class Failure<T : Any>(val throwable: Throwable) : Future<T>()
@@ -14,6 +15,7 @@ sealed class Future<T : Any> {
     }
 
     companion object {
+        fun <T : Any> nothing() = Nothing<T>()
         fun <T : Any> loading() = Loading<T>()
         fun <T : Any> success(data: T) = Success(data)
         fun <T : Any> failure(throwable: Throwable) = Failure<T>(throwable)

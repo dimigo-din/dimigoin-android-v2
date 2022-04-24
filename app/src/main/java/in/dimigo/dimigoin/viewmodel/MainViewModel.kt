@@ -2,6 +2,8 @@ package `in`.dimigo.dimigoin.viewmodel
 
 import `in`.dimigo.dimigoin.domain.entity.meal.Meal
 import `in`.dimigo.dimigoin.domain.entity.meal.MealTime
+import `in`.dimigo.dimigoin.domain.entity.place.BuildingType
+import `in`.dimigo.dimigoin.domain.entity.place.Floor
 import `in`.dimigo.dimigoin.domain.entity.place.Place
 import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
 import `in`.dimigo.dimigoin.domain.entity.user.User
@@ -64,8 +66,8 @@ class MainViewModel(
                     "${myIdentity?.grade}학년 ${myIdentity?.`class`}반",
                     "",
                     "",
-                    "",
-                    null,
+                    BuildingType.ETC,
+                    Floor.none(),
                     PlaceType.CLASSROOM
                 )
             _currentPlace.emit(Future.success(cp))

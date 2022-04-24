@@ -1,6 +1,8 @@
 package `in`.dimigo.dimigoin.ui.composables
 
 import `in`.dimigo.dimigoin.R
+import `in`.dimigo.dimigoin.domain.entity.place.BuildingType
+import `in`.dimigo.dimigoin.domain.entity.place.Floor
 import `in`.dimigo.dimigoin.domain.entity.place.Place
 import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
 import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
@@ -117,5 +119,5 @@ fun PlaceItemPreview4() {
     )
 }
 
-private val TestPlace = Place("", "1층 복도", "복도", "복도에 계신가요?", "본관", "1층", PlaceType.CORRIDOR)
+private val TestPlace = Place("", "1층 복도", "복도", "복도에 계신가요?", BuildingType.MAIN, Floor.of(1), PlaceType.CORRIDOR)
 // endregion

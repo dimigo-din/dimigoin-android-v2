@@ -149,6 +149,9 @@ fun LoginScreen(
                 isLoading = true
                 Spacer(modifier = Modifier.height(50.dp))
             }
+            is Future.Nothing -> {
+                Spacer(modifier = Modifier.height(50.dp))
+            }
         }
         Button(
             modifier = Modifier

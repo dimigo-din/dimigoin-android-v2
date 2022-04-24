@@ -1,16 +1,14 @@
 package `in`.dimigo.dimigoin.viewmodel
 
 import `in`.dimigo.dimigoin.data.datasource.LocalNotification
-import `in`.dimigo.dimigoin.domain.entity.place.AttendanceLog
-import `in`.dimigo.dimigoin.domain.entity.place.Building
-import `in`.dimigo.dimigoin.domain.entity.place.Place
-import `in`.dimigo.dimigoin.domain.entity.place.PlaceType
+import `in`.dimigo.dimigoin.domain.entity.place.*
 import `in`.dimigo.dimigoin.domain.entity.user.User
 import `in`.dimigo.dimigoin.domain.usecase.place.*
 import `in`.dimigo.dimigoin.domain.usecase.user.GetMyIdentityUseCase
 import `in`.dimigo.dimigoin.domain.util.josa
 import `in`.dimigo.dimigoin.ui.util.Future
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -69,7 +67,10 @@ class PlaceSelectorViewModel(
     }
 
     private fun getAllPlaces() = viewModelScope.launch {
-        getAllPlacesUseCase().onSuccess { allPlace = it }
+        getAllPlacesUseCase().onSuccess {
+            Log.d(TAG, "getAllPlaces: $it")
+            allPlace = it
+        }
     }
 
     fun getCurrentPlace() = viewModelScope.launch {
@@ -83,8 +84,8 @@ class PlaceSelectorViewModel(
                     "${myIdentity?.grade}학년 ${myIdentity?.`class`}반",
                     "",
                     "",
-                    "",
-                    null,
+                    BuildingType.ETC,
+                    Floor.none(),
                     PlaceType.CLASSROOM
                 )
             _currentPlace.emit(Future.success(cp))
@@ -219,7 +220,7 @@ class PlaceSelectorViewModel(
 
     companion object {
         private const val TAG = "PlaceSelectorViewModel"
-        private val fallbackPlace = Place("", "", "", "", "", null, PlaceType.ETC)
+        private val fallbackPlace = Place("", "", "", "", BuildingType.ETC, Floor.none(), PlaceType.ETC)
         private val FIRST = listOf(
             "ㄱ",
             "ㄲ",
