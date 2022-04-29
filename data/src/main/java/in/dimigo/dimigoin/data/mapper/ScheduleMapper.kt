@@ -45,7 +45,7 @@ private fun ICalDate.toLocalDate() =
 
 private operator fun LocalDate.rangeTo(that: LocalDate) = LocalDateRange(this, that)
 
-private class LocalDateRange(
+internal data class LocalDateRange(
     private val startInclusive: LocalDate,
     private val endExclusive: LocalDate,
 ) : Iterable<LocalDate> {
@@ -64,7 +64,7 @@ private class LocalDateRange(
     }
 }
 
-private fun repeatScheduleInDateRange(
+internal fun repeatScheduleInDateRange(
     type: ScheduleType,
     name: String,
     range: LocalDateRange,
