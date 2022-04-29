@@ -10,18 +10,6 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-def getUsername() {
-    Properties properties = new Properties()
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-    return properties.getProperty("username")
-}
-
-def getPassword() {
-    Properties properties = new Properties()
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-    return properties.getProperty("password")
-}
-
 android {
     compileSdk 31
     namespace "in.dimigo.dimigoin.data"
@@ -36,10 +24,6 @@ android {
     }
 
     buildTypes {
-        debug {
-            buildConfigField("String", "USERNAME", "\"" + getUsername() + "\"")
-            buildConfigField("String", "PASSWORD", "\"" + getPassword() + "\"")
-        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -56,15 +40,8 @@ android {
         useIR = true
     }
     testOptions {
-        junitPlatform {
-            filters {
-                engines {
-                    include 'spek2'
-                }
-            }
-        }
         unitTests.all {
-            testLogging.events = ["passed", "skipped", "failed"]
+            useJUnitPlatform()
         }
     }
     packagingOptions {
@@ -88,10 +65,11 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation "androidx.security:security-crypto:1.0.0"
 
-    testImplementation "org.spekframework.spek2:spek-dsl-jvm:$spek_version"
-    testImplementation "com.winterbe:expekt:0.5.0"
     testImplementation "org.jetbrains.kotlin:kotlin-reflect:1.6.10"
-    testRuntimeOnly "org.spekframework.spek2:spek-runner-junit5:$spek_version"
+    testImplementation "io.kotest:kotest-runner-junit5:$kotest_version"
+    testImplementation "io.kotest:kotest-runner-junit5:$kotest_version"
+    testImplementation "io.kotest:kotest-assertions-core:$kotest_version"
+    testImplementation "io.kotest:kotest-property:$kotest_version"
 
     // Data injection
     implementation "io.insert-koin:koin-core:3.1.4"
