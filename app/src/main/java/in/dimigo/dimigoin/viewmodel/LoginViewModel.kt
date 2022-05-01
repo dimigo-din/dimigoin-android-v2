@@ -13,7 +13,7 @@ class LoginViewModel(
     private val userLoginUseCase: UserLoginUseCase,
 ) : ViewModel() {
 
-    private val _loginResult = MutableStateFlow<Future<Boolean>>(Future.loading())
+    private val _loginResult = MutableStateFlow<Future<Boolean>>(Future.nothing())
     val loginResult = _loginResult.asStateFlow()
 
     fun login(username: String, password: String) = viewModelScope.launch {
