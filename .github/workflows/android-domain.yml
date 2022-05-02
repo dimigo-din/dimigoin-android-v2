@@ -1,0 +1,33 @@
+name: Android CI (:domain)
+
+on:
+  pull_request:
+    paths:
+      - "domain/**"
+      - "build.gradle"
+      - "gradle.properties"
+jobs:
+  app-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Assemble debug with Gradle
+        run: ./gradlew :domain:assemble
+        
+      # Execute unit tests
+      - name: Unit Test
+        run: ./gradlew :domain:test
+        
+      - name: Android Test Report
+        uses: asadmansr/android-test-report-action@v1.2.0
+        if: ${{ always() }} # IMPORTANT: run Android Test Report regardless
