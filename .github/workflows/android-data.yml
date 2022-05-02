@@ -1,0 +1,39 @@
+name: Android CI (:data)
+
+on:
+  pull_request:
+    paths:
+      - "data/**"
+      - "domain/**"
+      - "build.gradle"
+      - "gradle.properties"
+jobs:
+  app-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          
+      - name: Decode google-services.json
+        env:
+          GOOGLE_SERVICE_JSON: ${{ secrets.GOOGLE_SERVICE_JSON }}
+        run: echo $GOOGLE_SERVICE_JSON > ./app/google-services.json
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Assemble debug with Gradle
+        run: ./gradlew :data:assembleDebug
+        
+      # Execute unit tests
+      - name: Unit Test
+        run: ./gradlew :data:test
+        
+      - name: Android Test Report
+        uses: asadmansr/android-test-report-action@v1.2.0
+        if: ${{ always() }} # IMPORTANT: run Android Test Report regardless
