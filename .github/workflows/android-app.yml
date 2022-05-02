@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - "app/**"
+      - "data/**"
+      - "domain/**"
       - "build.gradle"
       - "gradle.properties"
 jobs:
