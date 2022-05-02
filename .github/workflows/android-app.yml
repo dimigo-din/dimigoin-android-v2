@@ -20,6 +20,11 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+          
+      - name: Decode google-services.json
+        env:
+          GOOGLE_SERVICE_JSON: ${{ secrets.GOOGLE_SERVICE_JSON }}
+        run: echo $GOOGLE_SERVICE_JSON > ./app/google-services.json
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
