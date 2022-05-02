@@ -3,6 +3,7 @@ name: Android CI (:app)
 on:
   pull_request:
     paths:
+      - ".github/workflows/**"
       - "app/**"
       - "data/**"
       - "domain/**"
