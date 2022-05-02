@@ -1,12 +1,18 @@
-package `in`.dimigo.dimigoin.data.repository
+package `in`.dimigo.dimigoin.data.repository.fake
 
+import `in`.dimigo.dimigoin.data.util.ExceptionWithStatusCode
 import `in`.dimigo.dimigoin.domain.entity.user.User
 import `in`.dimigo.dimigoin.domain.repository.UserRepository
 import java.time.LocalDate
 
 class FakeUserRepository : UserRepository {
-    override suspend fun login(username: String, password: String): Result<Boolean> =
-        Result.success(username == FAKE_USERNAME && password == FAKE_PASSWORD)
+    override suspend fun login(username: String, password: String): Result<Boolean> {
+        if (username == FAKE_USERNAME && password == FAKE_PASSWORD) {
+            return Result.success(true)
+        } else {
+            return Result.failure(ExceptionWithStatusCode("Incorrect credential.", 403))
+        }
+    }
 
     override suspend fun getMyIdentity(): Result<User> = Result.success(FAKE_USER)
 
