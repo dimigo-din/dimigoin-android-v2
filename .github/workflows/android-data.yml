@@ -1,4 +1,4 @@
-name: Android CI (:app)
+name: Android CI (:data)
 
 on:
   pull_request:
