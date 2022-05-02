@@ -1,7 +1,9 @@
 package `in`.dimigo.dimigoin.ui
 
 import `in`.dimigo.dimigoin.R
+import `in`.dimigo.dimigoin.data.repository.fake.FakeUserRepository
 import `in`.dimigo.dimigoin.domain.entity.place.Place
+import `in`.dimigo.dimigoin.domain.usecase.user.UserLoginUseCase
 import `in`.dimigo.dimigoin.domain.util.josa
 import `in`.dimigo.dimigoin.ui.composables.BottomNavigation
 import `in`.dimigo.dimigoin.ui.composables.BottomNavigationItem
@@ -19,6 +21,7 @@ import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.ui.theme.DimigoinTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.util.Future
+import `in`.dimigo.dimigoin.viewmodel.LoginViewModel
 import `in`.dimigo.dimigoin.viewmodel.PlaceSelectorViewModel
 import android.content.Intent
 import android.os.Bundle
@@ -53,6 +56,7 @@ import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
@@ -302,13 +306,17 @@ fun NavGraphBuilder.preMainNavGraph(
         )
     }
     composable(NoNavScreen.Login.route) {
+        val loginViewModel: LoginViewModel = getViewModel()
+
         LoginScreen(
             modifier = Modifier,
+            uiState = loginViewModel.uiState.collectAsState().value,
+            onLogin = { username, password -> loginViewModel.login(username, password)},
             onLoginSuccess = {
                 navController.navigate(NavScreen.Main.route) {
                     popUpTo(NoNavScreen.Login.route) { inclusive = true }
                 }
-            }
+            },
         )
     }
 }
