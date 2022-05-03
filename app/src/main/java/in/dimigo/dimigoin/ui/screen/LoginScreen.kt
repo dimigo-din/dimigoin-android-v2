@@ -1,15 +1,12 @@
 package `in`.dimigo.dimigoin.ui.screen
 
 import `in`.dimigo.dimigoin.R
-import `in`.dimigo.dimigoin.data.util.ExceptionWithStatusCode
-import `in`.dimigo.dimigoin.ui.composables.modifiers.noRippleClickable
 import `in`.dimigo.dimigoin.ui.theme.BorderTextField
 import `in`.dimigo.dimigoin.ui.theme.DTheme
 import `in`.dimigo.dimigoin.ui.theme.Point
 import `in`.dimigo.dimigoin.ui.theme.Red
-import `in`.dimigo.dimigoin.ui.util.Future
+import `in`.dimigo.dimigoin.viewmodel.LoginState
 import `in`.dimigo.dimigoin.viewmodel.LoginViewModel
-import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -28,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -39,20 +35,18 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    loginViewModel: LoginViewModel = getViewModel(),
+    uiState: LoginViewModel.UiState,
+    onLogin: (username: String, password: String) -> Unit,
     onLoginSuccess: () -> Unit,
 ) = Box(modifier.fillMaxSize()) {
     val focusManager = LocalFocusManager.current
     var username by remember { mutableStateOf(TextFieldValue()) }
     var password by remember { mutableStateOf(TextFieldValue()) }
-    var color = DTheme.colors.c2
-    var isLoading by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
     val bringIntoViewRequester = BringIntoViewRequester()
@@ -90,7 +84,12 @@ fun LoginScreen(
                 focusManager.moveFocus(FocusDirection.Down)
             }),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            color = color
+            borderColor = if (uiState.loginState is LoginState.CredentialError) {
+                DTheme.colors.error
+            } else {
+                DTheme.colors.c2
+            },
+            textColor = DTheme.colors.onSurface
         )
         Spacer(modifier = Modifier.height(10.dp))
         BorderTextField(
@@ -112,59 +111,60 @@ fun LoginScreen(
                 focusManager.clearFocus()
             }),
             visualTransformation = PasswordVisualTransformation(),
-            color = color
+            borderColor = if (uiState.loginState is LoginState.CredentialError) {
+                DTheme.colors.error
+            } else {
+                DTheme.colors.c2
+            },
+            textColor = DTheme.colors.onSurface
         )
-        when (val v = loginViewModel.loginResult.collectAsState().value) {
-            is Future.Success -> {
-                LaunchedEffect(v) {
-                    onLoginSuccess()
+
+        Box(
+            Modifier.height(60.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            when (val state = uiState.loginState) {
+                is LoginState.Success -> {
+                    LaunchedEffect(state) {
+                        onLoginSuccess()
+                    }
                 }
-                Spacer(modifier = Modifier.height(50.dp))
-            }
-            is Future.Failure -> {
-                val errorMessage = if (v.throwable is ExceptionWithStatusCode) {
-                    "존재하지 않는 아이디거나 잘못된 패스워드입니다."
-                } else {
-                    "네트워크 연결을 확인해주세요."
+                is LoginState.CredentialError -> {
+                    Text(
+                        text = "존재하지 않는 아이디거나 잘못된 패스워드입니다.",
+                        style = DTheme.typography.t6,
+                        color = Red
+                    )
                 }
-                color = Red
-                isLoading = false
-                Spacer(modifier = Modifier.height(18.dp))
-                Text(
-                    modifier = modifier
-                        .noRippleClickable {
-                            Toast.makeText(
-                                LocalContext.current,
-                                "Login failed. ${v.throwable.message}",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        },
-                    text = errorMessage,
-                    style = DTheme.typography.t6,
-                    color = Red
-                )
-                Spacer(modifier = Modifier.height(17.dp))
-            }
-            is Future.Loading -> {
-                isLoading = true
-                Spacer(modifier = Modifier.height(50.dp))
-            }
-            is Future.Nothing -> {
-                Spacer(modifier = Modifier.height(50.dp))
+                is LoginState.NetworkError -> {
+                    Text(
+                        text = "네트워크 연결을 확인해주세요.",
+                        style = DTheme.typography.t6,
+                        color = Red
+                    )
+                }
+                else -> {}
             }
         }
+
+        val hasEnoughCredentials = username.text.isNotBlank() && password.text.isNotBlank()
+        val isLoginInProgress = uiState.loginState is LoginState.InProgress
         Button(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .height(52.dp),
+            enabled = hasEnoughCredentials && !isLoginInProgress,
             onClick = {
-                if (username.text.isNotBlank() && password.text.isNotBlank()) {
-                    loginViewModel.login(username.text, password.text)
+                if (hasEnoughCredentials) {
+                    onLogin(username.text, password.text)
                 }
             },
             shape = RoundedCornerShape(30),
             colors = ButtonDefaults.buttonColors(contentColor = Point)
         ) {
-            if (!isLoading) {
+            if (uiState.loginState is LoginState.InProgress) {
+                CircularProgressIndicator(modifier = Modifier.size(20.dp), color = Color.White)
+            } else {
                 Text(
                     modifier = Modifier.padding(vertical = 8.dp),
                     textAlign = TextAlign.Center,
@@ -172,8 +172,6 @@ fun LoginScreen(
                     style = DTheme.typography.t5,
                     color = Color.White,
                 )
-            } else {
-                CircularProgressIndicator(modifier = Modifier, color = Color.White)
             }
         }
 

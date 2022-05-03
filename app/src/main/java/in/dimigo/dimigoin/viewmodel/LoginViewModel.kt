@@ -1,5 +1,6 @@
 package `in`.dimigo.dimigoin.viewmodel
 
+import `in`.dimigo.dimigoin.data.util.ExceptionWithStatusCode
 import `in`.dimigo.dimigoin.domain.usecase.user.UserLoginUseCase
 import `in`.dimigo.dimigoin.ui.util.Future
 import android.util.Log
@@ -13,15 +14,23 @@ class LoginViewModel(
     private val userLoginUseCase: UserLoginUseCase,
 ) : ViewModel() {
 
-    private val _loginResult = MutableStateFlow<Future<Boolean>>(Future.nothing())
-    val loginResult = _loginResult.asStateFlow()
+    private val _uiState = MutableStateFlow(UiState(LoginState.NotPerformed))
+    val uiState = _uiState.asStateFlow()
 
     fun login(username: String, password: String) = viewModelScope.launch {
-        _loginResult.emit(Future.loading())
+        _uiState.emit(uiState.value.copy(loginState = LoginState.InProgress))
         userLoginUseCase(username, password).onSuccess {
-            _loginResult.emit(Future.success(true))
+            if (it) {
+                _uiState.emit(uiState.value.copy(loginState = LoginState.Success))
+            } else {
+                _uiState.emit(uiState.value.copy(loginState = LoginState.Success))
+            }
         }.onFailure {
-            _loginResult.emit(Future.failure(it))
+            if (it is ExceptionWithStatusCode) {
+                _uiState.emit(uiState.value.copy(loginState = LoginState.CredentialError(it)))
+            } else {
+                _uiState.emit(uiState.value.copy(loginState = LoginState.NetworkError(it)))
+            }
             Log.d(TAG, "login: $it")
         }
     }
@@ -29,4 +38,16 @@ class LoginViewModel(
     companion object {
         private const val TAG = "LoginViewModel"
     }
+
+    data class UiState(
+        val loginState: LoginState
+    )
+}
+
+sealed class LoginState {
+    object NotPerformed : LoginState()
+    object InProgress : LoginState()
+    data class NetworkError(val throwable: Throwable) : LoginState()
+    data class CredentialError(val throwable: Throwable) : LoginState()
+    object Success : LoginState()
 }

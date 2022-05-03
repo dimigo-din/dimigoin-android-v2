@@ -26,7 +26,9 @@ fun BorderTextField(
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
     label: String,
-    color: Color = DTheme.colors.c2,
+    borderColor: Color = DTheme.colors.c2,
+    hintColor: Color = DTheme.colors.c2,
+    textColor: Color = DTheme.colors.c2,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -35,17 +37,17 @@ fun BorderTextField(
     BasicTextField(
         modifier = modifier
             .fillMaxWidth()
-            .border(width = 1.dp, color = color, shape = RoundedCornerShape(11.dp))
+            .border(width = 1.dp, color = borderColor, shape = RoundedCornerShape(11.dp))
             .padding(vertical = 15.dp, horizontal = 25.dp),
         value = value,
         onValueChange = onValueChange,
-        textStyle = TextStyle.Default.copy(fontSize = 16.sp, color = color),
+        textStyle = TextStyle.Default.copy(fontSize = 16.sp, color = textColor),
         singleLine = true,
         maxLines = 1,
         keyboardOptions = keyboardOptions,
         decorationBox = {
             if (value.text.isEmpty()) {
-                Text(text = label, color = color, style = DTheme.typography.t5)
+                Text(text = label, color = hintColor, style = DTheme.typography.t5)
             }
             it()
         },

@@ -1,5 +1,6 @@
 package `in`.dimigo.dimigoin.data.repository
 
+import `in`.dimigo.dimigoin.data.repository.fake.FakePlaceRepository
 import `in`.dimigo.dimigoin.domain.entity.place.AttendanceLog
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.TestCaseOrder

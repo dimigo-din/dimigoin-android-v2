@@ -1,4 +1,4 @@
-package `in`.dimigo.dimigoin.data.repository
+package `in`.dimigo.dimigoin.data.repository.fake
 
 import `in`.dimigo.dimigoin.domain.entity.schedule.AnnualSchedule
 import `in`.dimigo.dimigoin.domain.entity.schedule.DailyTimetable
